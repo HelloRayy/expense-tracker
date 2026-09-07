@@ -240,52 +240,63 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // User Profile & Greeting
-        Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: PirschColors.mintGreen.withValues(alpha: 0.15),
-                border: Border.all(color: PirschColors.mintGreen.withValues(alpha: 0.4), width: 1.5),
+        // User Profile & Greeting (Expanded to prevent overflow)
+        Expanded(
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: PirschColors.mintGreen.withValues(alpha: 0.15),
+                  border: Border.all(color: PirschColors.mintGreen.withValues(alpha: 0.4), width: 1.5),
+                ),
+                alignment: Alignment.center,
+                child: const Icon(Icons.person_rounded, color: PirschColors.mintGreen, size: 22),
               ),
-              alignment: Alignment.center,
-              child: const Icon(Icons.person_rounded, color: PirschColors.mintGreen, size: 24),
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Halo, Jajaner',
-                  style: TextStyle(
-                    color: textSecondary,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Halo, Jajaner',
+                      style: TextStyle(
+                        color: textSecondary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      'Mental Budget',
+                      style: TextStyle(
+                        color: textPrimary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.3,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
-                Text(
-                  'Mental Budget',
-                  style: TextStyle(
-                    color: textPrimary,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.3,
-                  ),
-                ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
+        const SizedBox(width: 8),
 
         // Live Status Pill & Quick Action Icons
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             // Glowing Mint Dot Status Pill (Pirsch Live Indicator)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
               decoration: BoxDecoration(
                 color: PirschColors.mintGreen.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
@@ -295,14 +306,14 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    width: 7,
-                    height: 7,
+                    width: 6,
+                    height: 6,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: PirschColors.mintGreen,
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 5),
                   Text(
                     'Sisa $daysLeft hari',
                     style: const TextStyle(
@@ -314,28 +325,32 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 ],
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
 
             // Shopee Watcher Button
-            IconButton(
-              tooltip: 'ShopeePay & Notifikasi',
-              visualDensity: VisualDensity.compact,
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: elevatedColor,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: borderColor),
-                ),
-                child: Icon(Icons.storefront_rounded, color: textPrimary, size: 18),
-              ),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ShopeeSettingsScreen(repository: widget.repository),
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ShopeeSettingsScreen(repository: widget.repository),
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: elevatedColor,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: borderColor),
                   ),
-                );
-              },
+                  alignment: Alignment.center,
+                  child: Icon(Icons.storefront_rounded, color: textPrimary, size: 18),
+                ),
+              ),
             ),
           ],
         ),
@@ -379,39 +394,29 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Subheader & Period Label
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'SISA UANG JAJAN',
-                style: TextStyle(
-                  color: textSecondary,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.8,
+          // Period Badge
+          if (formattedPeriod.isNotEmpty) ...[
+            Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: elevatedColor,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: borderColor),
+                ),
+                child: Text(
+                  formattedPeriod,
+                  style: TextStyle(
+                    color: textSecondary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-              if (formattedPeriod.isNotEmpty)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: elevatedColor,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: borderColor),
-                  ),
-                  child: Text(
-                    formattedPeriod,
-                    style: TextStyle(
-                      color: textSecondary,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 14),
+            ),
+            const SizedBox(height: 10),
+          ],
 
           // Main Hero Nominal
           Text(

@@ -206,4 +206,28 @@ void main() {
       print('PIRSCH LIGHT DASHBOARD SAVED: $outPath');
     });
   });
+
+  testWidgets('Verify DashboardScreen on narrow 360dp phone has zero overflow', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 3.0; // exactly 360dp width
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final repo = MockBudgetRepo();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Inter',
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: PirschColors.darkBg,
+        ),
+        home: DashboardScreen(repository: repo),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
 }
