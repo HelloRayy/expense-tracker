@@ -29,44 +29,50 @@ class ShopeeAccessibilityService : AccessibilityService() {
     private var lastTriggerTime: Long = 0
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        if (event == null) return
+        try {
+            if (event == null) return
 
-        val pkgName = event.packageName?.toString() ?: return
-        val isShopee = pkgName.contains("shopee", ignoreCase = true)
+            val pkgName = event.packageName?.toString() ?: return
+            val isShopee = pkgName.contains("shopee", ignoreCase = true)
 
-        if (isShopee) {
-            // 1. Specific Click Detection: "Bayar QRIS" or ShopeePay button
-            if (event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED) {
-                if (isQrisOrPayClick(event)) {
-                    val now = System.currentTimeMillis()
-                    if (now - lastTriggerTime > COOLDOWN_QRIS_MS) {
-                        lastTriggerTime = now
-                        hasShownInSession = true
-                        triggerNudge(isFromQris = true)
-                    }
-                    return
-                }
-            }
-
-            // 2. Window State Change: Opening Shopee / Entering flow
-            if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-                if (!hasShownInSession) {
-                    val now = System.currentTimeMillis()
-                    if (now - lastTriggerTime > COOLDOWN_GENERAL_MS) {
-                        lastTriggerTime = now
-                        hasShownInSession = true
-                        // 1.2s delayed retry to bypass initial splash screen & promo popups
-                        handler.postDelayed({
-                            triggerNudge(isFromQris = false)
-                        }, 1200)
+            if (isShopee) {
+                // 1. Specific Click Detection: "Bayar QRIS" or ShopeePay button
+                if (event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED) {
+                    if (isQrisOrPayClick(event)) {
+                        val now = System.currentTimeMillis()
+                        if (now - lastTriggerTime > COOLDOWN_QRIS_MS) {
+                            lastTriggerTime = now
+                            hasShownInSession = true
+                            triggerNudge(isFromQris = true)
+                        }
+                        return
                     }
                 }
+
+                // 2. Window State Change: Opening Shopee / Entering flow
+                if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+                    if (!hasShownInSession) {
+                        val now = System.currentTimeMillis()
+                        if (now - lastTriggerTime > COOLDOWN_GENERAL_MS) {
+                            lastTriggerTime = now
+                            hasShownInSession = true
+                            // 1.2s delayed retry to bypass initial splash screen & promo popups
+                            handler.postDelayed({
+                                try {
+                                    triggerNudge(isFromQris = false)
+                                } catch (_: Throwable) {}
+                            }, 1200)
+                        }
+                    }
+                }
+            } else {
+                // User left Shopee -> Reset session state so it's ready for the next visit
+                if (hasShownInSession) {
+                    hasShownInSession = false
+                }
             }
-        } else {
-            // User left Shopee -> Reset session state so it's ready for the next visit
-            if (hasShownInSession) {
-                hasShownInSession = false
-            }
+        } catch (t: Throwable) {
+            t.printStackTrace()
         }
     }
 

@@ -76,14 +76,18 @@ class FloatingBubbleService : Service() {
     }
 
     private fun startForegroundServiceNotification() {
-        val notification = NotificationCompat.Builder(this, BUBBLE_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_quick_tile)
-            .setContentTitle("Floating Bubble Jajan Aktif")
-            .setContentText("Ketuk gelembung di layar untuk kalkulator jajan instan")
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .build()
+        try {
+            val notification = NotificationCompat.Builder(this, BUBBLE_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_quick_tile)
+                .setContentTitle("Floating Bubble Jajan Aktif")
+                .setContentText("Ketuk gelembung di layar untuk kalkulator jajan instan")
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .build()
 
-        startForeground(FOREGROUND_ID, notification)
+            startForeground(FOREGROUND_ID, notification)
+        } catch (_: Throwable) {
+            // Safe fallback on Android 14+ to prevent MissingForegroundServiceTypeException crash
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -422,11 +426,11 @@ class FloatingBubbleService : Service() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
                 return
             }
-            val intent = Intent(context, FloatingBubbleService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
+            try {
+                val intent = Intent(context, FloatingBubbleService::class.java)
                 context.startService(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
 
@@ -434,20 +438,24 @@ class FloatingBubbleService : Service() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
                 return
             }
-            val intent = Intent(context, FloatingBubbleService::class.java).apply {
-                putExtra(EXTRA_OPEN_CALCULATOR, true)
-                putExtra(EXTRA_STANDALONE, true)
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
+            try {
+                val intent = Intent(context, FloatingBubbleService::class.java).apply {
+                    putExtra(EXTRA_OPEN_CALCULATOR, true)
+                    putExtra(EXTRA_STANDALONE, true)
+                }
                 context.startService(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
 
         fun stop(context: Context) {
-            val intent = Intent(context, FloatingBubbleService::class.java)
-            context.stopService(intent)
+            try {
+                val intent = Intent(context, FloatingBubbleService::class.java)
+                context.stopService(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }
