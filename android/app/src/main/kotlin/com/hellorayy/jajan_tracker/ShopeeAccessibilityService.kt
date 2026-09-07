@@ -1,23 +1,17 @@
 package com.hellorayy.jajan_tracker
 
 import android.accessibilityservice.AccessibilityService
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
-import android.widget.TextView
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.app.NotificationCompat
 import java.text.NumberFormat
 import java.util.Locale
@@ -25,55 +19,80 @@ import java.util.Locale
 class ShopeeAccessibilityService : AccessibilityService() {
 
     private val handler = Handler(Looper.getMainLooper())
-    private var hasShownInSession: Boolean = false
-    private var lastTriggerTime: Long = 0
-    private var lastEventTime: Long = 0
+    private var hasShownGeneralInSession: Boolean = false
+    private var lastGeneralTriggerTime: Long = 0
+    private var lastQrisTriggerTime: Long = 0
+    private var lastShopeeActivityTime: Long = 0
+
+    private val generalNudgeRunnable = Runnable {
+        try {
+            val now = System.currentTimeMillis()
+            // Only fire general nudge if QRIS was not triggered recently
+            if (now - lastQrisTriggerTime > COOLDOWN_QRIS_MS) {
+                triggerNudge(isFromQris = false)
+            }
+        } catch (_: Throwable) {}
+    }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         try {
             if (event == null) return
 
-            val now = System.currentTimeMillis()
-            // 1. ULTRA FAST-PATH: If within cooldown, discard instantly without any allocations (0 CPU)
-            if (now - lastTriggerTime < COOLDOWN_QRIS_MS) {
-                return
-            }
-
             val pkgName = event.packageName?.toString() ?: return
             val isShopee = pkgName.contains("shopee", ignoreCase = true)
 
-            if (isShopee) {
-                // Auto-reset session if user was away from Shopee for > 25 seconds
-                if (now - lastEventTime > 25000) {
-                    hasShownInSession = false
-                }
-                lastEventTime = now
+            if (!isShopee) {
+                // User navigated away from Shopee -> Reset session state
+                hasShownGeneralInSession = false
+                handler.removeCallbacks(generalNudgeRunnable)
+                return
+            }
 
-                // 2. Specific Click Detection: "Bayar QRIS" or ShopeePay button
-                if (event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED) {
-                    if (isQrisOrPayClick(event)) {
-                        lastTriggerTime = now
-                        hasShownInSession = true
+            val now = System.currentTimeMillis()
+
+            // Auto-reset general session if user was idle/away from Shopee for > 20 seconds
+            if (now - lastShopeeActivityTime > 20000) {
+                hasShownGeneralInSession = false
+            }
+            lastShopeeActivityTime = now
+
+            // =========================================================================
+            // 1. QRIS BUTTON CLICK DETECTION (typeViewClicked)
+            // =========================================================================
+            if (event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED) {
+                if (isQrisClick(event)) {
+                    if (now - lastQrisTriggerTime > COOLDOWN_QRIS_MS) {
+                        lastQrisTriggerTime = now
+                        handler.removeCallbacks(generalNudgeRunnable)
                         triggerNudge(isFromQris = true)
-                        return
                     }
+                    return
+                }
+            }
+
+            // =========================================================================
+            // 2. WINDOW STATE CHANGED (Screen navigation: Scanner Screen or App Open)
+            // =========================================================================
+            if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+                // Priority Check: Did user enter the QRIS Scanner Screen?
+                if (isQrScannerScreen(event)) {
+                    if (now - lastQrisTriggerTime > COOLDOWN_QRIS_MS) {
+                        lastQrisTriggerTime = now
+                        handler.removeCallbacks(generalNudgeRunnable)
+                        triggerNudge(isFromQris = true)
+                    }
+                    return
                 }
 
-                // 3. Window State Change: Opening Shopee / Entering flow
-                if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-                    if (!hasShownInSession && (now - lastTriggerTime > COOLDOWN_GENERAL_MS)) {
-                        lastTriggerTime = now
-                        hasShownInSession = true
-                        handler.postDelayed({
-                            try {
-                                triggerNudge(isFromQris = false)
-                            } catch (_: Throwable) {}
-                        }, 800)
+                // General Shopee Open Nudge (e.g. user just opened Shopee app)
+                if (!hasShownGeneralInSession && (now - lastGeneralTriggerTime > COOLDOWN_GENERAL_MS)) {
+                    if (now - lastQrisTriggerTime > COOLDOWN_QRIS_MS) {
+                        hasShownGeneralInSession = true
+                        lastGeneralTriggerTime = now
+                        handler.removeCallbacks(generalNudgeRunnable)
+                        handler.postDelayed(generalNudgeRunnable, 500)
                     }
                 }
-            } else {
-                // User left Shopee -> Reset session state so it's ready for the next visit
-                hasShownInSession = false
             }
         } catch (t: Throwable) {
             t.printStackTrace()
@@ -81,20 +100,116 @@ class ShopeeAccessibilityService : AccessibilityService() {
     }
 
     override fun onInterrupt() {
-        // Nothing needed
+        handler.removeCallbacks(generalNudgeRunnable)
     }
 
-    private fun isQrisOrPayClick(event: AccessibilityEvent): Boolean {
-        // Purely inspect event payload - zero Binder IPC view tree overhead
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(generalNudgeRunnable)
+    }
+
+    /**
+     * Detects if the clicked view is a QRIS / Scan / ShopeePay payment button.
+     * Checks event payload, source viewId, contentDescription, text, and direct children.
+     */
+    private fun isQrisClick(event: AccessibilityEvent): Boolean {
+        // Fast-path 1: Direct event payload (0 IPC cost)
         val text = event.text?.joinToString(" ") ?: ""
         val contentDesc = event.contentDescription?.toString() ?: ""
+        val combined = "$text $contentDesc".lowercase()
 
-        val keywords = listOf("qris", "bayar", "shopeepay", "saldo", "pay")
+        val keywords = listOf(
+            "qris", "scan", "pindai", "kode qr", "qr code", "scanner", "bayar qris", "shopeepay"
+        )
         for (kw in keywords) {
-            if (text.contains(kw, ignoreCase = true) || contentDesc.contains(kw, ignoreCase = true)) {
+            if (combined.contains(kw)) return true
+        }
+
+        // Fast-path 2: Check event source node properties if available
+        try {
+            val source = event.source ?: return false
+            val viewId = source.viewIdResourceName?.lowercase() ?: ""
+            if (viewId.contains("qris") || viewId.contains("scan") || viewId.contains("qr")) {
                 return true
             }
+
+            val nodeDesc = source.contentDescription?.toString()?.lowercase() ?: ""
+            for (kw in keywords) {
+                if (nodeDesc.contains(kw)) return true
+            }
+
+            val nodeText = source.text?.toString()?.lowercase() ?: ""
+            for (kw in keywords) {
+                if (nodeText.contains(kw)) return true
+            }
+
+            // Check immediate children (shallow check, max 6 children)
+            val childCount = source.childCount.coerceAtMost(6)
+            for (i in 0 until childCount) {
+                val child = source.getChild(i) ?: continue
+                val cDesc = child.contentDescription?.toString()?.lowercase() ?: ""
+                val cText = child.text?.toString()?.lowercase() ?: ""
+                val cId = child.viewIdResourceName?.lowercase() ?: ""
+                for (kw in keywords) {
+                    if (cDesc.contains(kw) || cText.contains(kw) || cId.contains(kw)) {
+                        return true
+                    }
+                }
+            }
+        } catch (_: Throwable) {}
+
+        return false
+    }
+
+    /**
+     * Detects if the current screen is Shopee's QRIS Scanner screen.
+     * Matches Image 2: "Scan QRIS", "Sentuh untuk menerangi", "Kode QR", "Bayar QRIS".
+     */
+    private fun isQrScannerScreen(event: AccessibilityEvent): Boolean {
+        // 1. Check Activity/Window class name
+        val className = event.className?.toString()?.lowercase() ?: ""
+        if (className.contains("scan") ||
+            className.contains("qris") ||
+            className.contains("qrcode") ||
+            className.contains("camera") ||
+            className.contains("capture")) {
+            return true
         }
+
+        // 2. Direct event payload text / content description
+        val text = event.text?.joinToString(" ") ?: ""
+        val desc = event.contentDescription?.toString() ?: ""
+        val combined = "$text $desc".lowercase()
+
+        val screenKeywords = listOf(
+            "scan qris",
+            "sentuh untuk menerangi",
+            "kode qr",
+            "bayar qris",
+            "pindai kode",
+            "pindai qr"
+        )
+        for (kw in screenKeywords) {
+            if (combined.contains(kw)) return true
+        }
+
+        if (combined.contains("qris") || (combined.contains("scan") && combined.contains("qr"))) {
+            return true
+        }
+
+        // 3. Search window text for distinctive scanner UI elements (only on window change)
+        try {
+            val root = rootInActiveWindow
+            if (root != null) {
+                val targets = listOf("Scan QRIS", "Sentuh untuk menerangi", "Kode QR", "Bayar QRIS")
+                for (target in targets) {
+                    val nodes = root.findAccessibilityNodeInfosByText(target)
+                    if (!nodes.isNullOrEmpty()) {
+                        return true
+                    }
+                }
+            }
+        } catch (_: Throwable) {}
 
         return false
     }
@@ -126,8 +241,8 @@ class ShopeeAccessibilityService : AccessibilityService() {
     }
 
     companion object {
-        private const val COOLDOWN_QRIS_MS: Long = 6000 // 6 seconds for QRIS click
-        private const val COOLDOWN_GENERAL_MS: Long = 12000 // 12 seconds for general open
+        private const val COOLDOWN_QRIS_MS: Long = 3500 // 3.5 seconds for QRIS button click / scanner screen
+        private const val COOLDOWN_GENERAL_MS: Long = 15000 // 15 seconds for general Shopee open
         const val CHANNEL_ID = "jajan_nudge_channel"
         const val NOTIFICATION_ID = 3001
 
