@@ -30,6 +30,12 @@ class JajanNotificationListenerService : NotificationListenerService() {
 
             if (fullContent.isEmpty()) return
 
+            // Discard top-up or incoming funds
+            val isExcluded = EXCLUDE_KEYWORDS.any { kw ->
+                fullContent.contains(kw, ignoreCase = true)
+            }
+            if (isExcluded) return
+
             // Check for payment/transaction confirmation keywords
             val isPayment = PAYMENT_KEYWORDS.any { kw ->
                 fullContent.contains(kw, ignoreCase = true)
@@ -37,7 +43,7 @@ class JajanNotificationListenerService : NotificationListenerService() {
 
             if (!isPayment) return
 
-            // Extract amount using regex
+            // Extract amount using robust regex
             val match = AMOUNT_REGEX.find(fullContent) ?: return
             val rawNum = match.groupValues[1].replace(".", "").split(",")[0]
             val amount = rawNum.toLongOrNull() ?: return
@@ -66,6 +72,15 @@ class JajanNotificationListenerService : NotificationListenerService() {
         private var lastTriggerTime: Long = 0
         private var lastAmount: Long = 0
 
+        private val EXCLUDE_KEYWORDS = listOf(
+            "top up",
+            "isi saldo",
+            "terima uang",
+            "dana masuk",
+            "transfer masuk",
+            "cashback"
+        )
+
         private val PAYMENT_KEYWORDS = listOf(
             "pembayaran berhasil",
             "berhasil bayar",
@@ -76,11 +91,12 @@ class JajanNotificationListenerService : NotificationListenerService() {
             "berhasil ditransfer",
             "pesanan berhasil dibayar",
             "berhasil melakukan transaksi",
-            "pembayaran qris berhasil"
+            "pembayaran qris berhasil",
+            "transaksi sukses"
         )
 
         private val AMOUNT_REGEX = Regex(
-            """(?:Rp|IDR)\s*([0-9]{1,3}(?:\.[0-9]{3})*(?:,[0-9]+)?)""",
+            """(?:Rp\.?|IDR)\s*([0-9]{1,3}(?:\.[0-9]{3})+(?:,[0-9]+)?|[0-9]+)""",
             RegexOption.IGNORE_CASE
         )
 
@@ -89,8 +105,12 @@ class JajanNotificationListenerService : NotificationListenerService() {
                 pkg.contains("shopee") -> "ShopeePay"
                 pkg.contains("gojek") -> "GoPay"
                 pkg.contains("dana") -> "DANA"
+                pkg.contains("ovo") -> "OVO"
                 pkg.contains("bca") -> "BCA QRIS"
                 pkg.contains("mandiri") -> "Livin QRIS"
+                pkg.contains("bri") -> "BRImo QRIS"
+                pkg.contains("seabank") -> "SeaBank"
+                pkg.contains("blu") -> "blu BCA"
                 content.contains("qris", ignoreCase = true) -> "QRIS"
                 else -> "Jajan"
             }

@@ -87,24 +87,33 @@ class BudgetModel {
     );
   }
 
+  /// Helper to safely clamp target day to max days of the month (e.g. 31 in Feb -> 28/29)
+  static DateTime _safeDate(int year, int month, int targetDay) {
+    final lastDay = DateTime(year, month + 1, 0).day;
+    final clamped = targetDay > lastDay ? lastDay : (targetDay < 1 ? 1 : targetDay);
+    return DateTime(year, month, clamped);
+  }
+
   /// Calculates the current period based on payday day
   static BudgetModel createDefault({int total = 1000000, int payday = 25}) {
     final now = DateTime.now();
     DateTime start;
     DateTime end;
 
-    if (now.day >= payday) {
-      start = DateTime(now.year, now.month, payday);
+    final todayClamped = _safeDate(now.year, now.month, payday);
+
+    if (now.day >= todayClamped.day) {
+      start = todayClamped;
       // Next month payday - 1 day
       final nextMonth = now.month == 12 ? 1 : now.month + 1;
       final nextYear = now.month == 12 ? now.year + 1 : now.year;
-      end = DateTime(nextYear, nextMonth, payday).subtract(const Duration(days: 1));
+      end = _safeDate(nextYear, nextMonth, payday).subtract(const Duration(days: 1));
     } else {
       // Previous month payday
       final prevMonth = now.month == 1 ? 12 : now.month - 1;
       final prevYear = now.month == 1 ? now.year - 1 : now.year;
-      start = DateTime(prevYear, prevMonth, payday);
-      end = DateTime(now.year, now.month, payday).subtract(const Duration(days: 1));
+      start = _safeDate(prevYear, prevMonth, payday);
+      end = todayClamped.subtract(const Duration(days: 1));
     }
 
     return BudgetModel(
