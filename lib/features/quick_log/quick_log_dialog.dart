@@ -40,17 +40,88 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
   bool _isSaving = false;
 
   int _evaluate(String expr) {
-    if (expr.isEmpty) return 0;
-    final parts = expr.split('+');
-    int total = 0;
-    for (final part in parts) {
-      final clean = part.replaceAll('.', '').replaceAll(' ', '').trim();
-      total += int.tryParse(clean) ?? 0;
+    if (expr.trim().isEmpty) return 0;
+
+    final rawTokens = expr.trim().split(RegExp(r'\s+'));
+    if (rawTokens.isEmpty) return 0;
+
+    final List<dynamic> tokens = [];
+    for (final t in rawTokens) {
+      if (t == '+' || t == '-' || t == '×' || t == '÷' || t == '*' || t == '/') {
+        tokens.add(t == '*' ? '×' : (t == '/' ? '÷' : t));
+      } else {
+        if (t.endsWith('%')) {
+          final clean = t.replaceAll('%', '').replaceAll('.', '').replaceAll(',', '').trim();
+          final val = double.tryParse(clean) ?? 0.0;
+          tokens.add(val / 100.0);
+        } else {
+          final clean = t.replaceAll('.', '').replaceAll(',', '').trim();
+          final val = double.tryParse(clean) ?? 0.0;
+          tokens.add(val);
+        }
+      }
     }
-    return total;
+
+    if (tokens.isEmpty) return 0;
+
+    // Discard trailing operator if expression is mid-typing (e.g. "25.000 × ")
+    if (tokens.last is String) {
+      tokens.removeLast();
+    }
+    if (tokens.isEmpty) return 0;
+
+    // Pass 1: Multiplication and Division (× and ÷)
+    final List<dynamic> pass1 = [];
+    int i = 0;
+    while (i < tokens.length) {
+      final token = tokens[i];
+      if (token == '×' || token == '÷') {
+        if (pass1.isNotEmpty && i + 1 < tokens.length && tokens[i + 1] is num) {
+          final prev = (pass1.removeLast() as num).toDouble();
+          final next = (tokens[i + 1] as num).toDouble();
+          if (token == '×') {
+            pass1.add(prev * next);
+          } else {
+            pass1.add(next != 0 ? prev / next : 0.0);
+          }
+          i += 2;
+          continue;
+        }
+      }
+      pass1.add(token);
+      i++;
+    }
+
+    // Pass 2: Addition and Subtraction (+ and -)
+    if (pass1.isEmpty) return 0;
+    double result = pass1[0] is num ? (pass1[0] as num).toDouble() : 0.0;
+    int j = 1;
+    while (j < pass1.length) {
+      final op = pass1[j];
+      if (j + 1 < pass1.length && pass1[j + 1] is num) {
+        final val = (pass1[j + 1] as num).toDouble();
+        if (op == '+') {
+          result += val;
+        } else if (op == '-') {
+          result -= val;
+        }
+        j += 2;
+      } else {
+        j++;
+      }
+    }
+
+    return result.round().clamp(0, 999999999);
   }
 
   int get _currentTotal => _evaluate(_expression);
+
+  bool get _hasOperator =>
+      _expression.contains(' + ') ||
+      _expression.contains(' - ') ||
+      _expression.contains(' × ') ||
+      _expression.contains(' ÷ ') ||
+      _expression.contains('%');
 
   void _onKeyPress(String key) {
     HapticFeedback.selectionClick();
@@ -59,38 +130,73 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
         _expression = '';
       } else if (key == '⌫') {
         if (_expression.isNotEmpty) {
-          if (_expression.endsWith(' + ')) {
+          if (_expression.endsWith(' + ') ||
+              _expression.endsWith(' - ') ||
+              _expression.endsWith(' × ') ||
+              _expression.endsWith(' ÷ ')) {
             _expression = _expression.substring(0, _expression.length - 3);
           } else {
             _expression = _expression.substring(0, _expression.length - 1);
           }
         }
-      } else if (key == '+') {
-        if (_expression.isNotEmpty && !_expression.endsWith(' + ')) {
-          _expression += ' + ';
+      } else if (key == '+' || key == '-' || key == '×' || key == '÷') {
+        if (_expression.isNotEmpty) {
+          if (_expression.endsWith(' + ') ||
+              _expression.endsWith(' - ') ||
+              _expression.endsWith(' × ') ||
+              _expression.endsWith(' ÷ ')) {
+            _expression = '${_expression.substring(0, _expression.length - 3)} $key ';
+          } else {
+            _expression += ' $key ';
+          }
+        }
+      } else if (key == '%') {
+        if (_expression.isNotEmpty && !_expression.endsWith(' ') && !_expression.endsWith('%')) {
+          _expression += '%';
         }
       } else if (key == '000') {
-        if (_expression.isNotEmpty && !_expression.endsWith(' + ') && _expression.length <= 9) {
+        if (_expression.isNotEmpty && !_expression.endsWith(' ') && _expression.length <= 11) {
           _expression += '000';
         }
       } else if (key == '00') {
-        if (_expression.isNotEmpty && !_expression.endsWith(' + ') && _expression.length <= 10) {
+        if (_expression.isNotEmpty && !_expression.endsWith(' ') && _expression.length <= 12) {
           _expression += '00';
         }
-      } else if (key.startsWith('+') && key.endsWith('rb')) {
-        // Preset shortcuts (+5rb, +10rb, +25rb, +50rb)
-        final numStr = key.replaceAll('+', '').replaceAll('rb', '');
-        final addAmount = (int.tryParse(numStr) ?? 0) * 1000;
-        final total = _currentTotal + addAmount;
-        _expression = total.toString();
       } else if (key == '=') {
         _submit();
       } else {
         // Digits 0-9
-        if (_expression.length <= 12) {
+        if (_expression.length <= 14) {
           _expression += key;
         }
       }
+    });
+  }
+
+  void _onShortcutTap(int amount) {
+    HapticFeedback.selectionClick();
+    setState(() {
+      if (_expression.isEmpty || _expression == '0') {
+        _expression = amount.toString();
+      } else if (_expression.endsWith(' + ') ||
+          _expression.endsWith(' - ') ||
+          _expression.endsWith(' × ') ||
+          _expression.endsWith(' ÷ ')) {
+        _expression += amount.toString();
+      } else {
+        _expression += ' + $amount';
+      }
+    });
+  }
+
+  String _formatDisplay(String expr) {
+    if (expr.isEmpty) return '0';
+    return expr.replaceAllMapped(RegExp(r'\d+'), (match) {
+      final val = int.tryParse(match.group(0)!);
+      if (val != null) {
+        return CurrencyFormatter.format(val).replaceAll('Rp ', '');
+      }
+      return match.group(0)!;
     });
   }
 
@@ -106,7 +212,9 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
 
     if (mounted) {
       widget.onComplete?.call();
-      Navigator.of(context).pop();
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
     }
   }
 
@@ -127,28 +235,9 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     final textPrimary = isDark ? Colors.white : Colors.black;
     final textSecondary = isDark ? const Color(0xFF8E8E93) : const Color(0xFF707070);
 
-    // Formatted display string
-    String displayString = '0';
-    if (_expression.isNotEmpty) {
-      if (_expression.contains(' + ')) {
-        displayString = _expression;
-      } else {
-        final val = int.tryParse(_expression);
-        if (val != null) {
-          displayString = CurrencyFormatter.format(val).replaceAll('Rp ', '');
-        } else {
-          displayString = _expression;
-        }
-      }
-    }
+    final displayString = _formatDisplay(_expression);
 
     return Container(
-      padding: EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 14,
-        bottom: 24 + bottomInset,
-      ),
       decoration: BoxDecoration(
         color: sheetBg,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
@@ -160,11 +249,20 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Drag handle
+      child: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 14,
+            bottom: 24 + bottomInset,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Drag handle
           Center(
             child: Container(
               width: 44,
@@ -181,20 +279,27 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  const Icon(Icons.calculate_rounded, color: PirschColors.mintGreen, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Kalkulator Jajan',
-                    style: TextStyle(
-                      color: textPrimary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
+              Expanded(
+                child: Row(
+                  children: [
+                    const Icon(Icons.calculate_rounded, color: PirschColors.mintGreen, size: 20),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        'Kalkulator Jajan',
+                        style: TextStyle(
+                          color: textPrimary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
@@ -213,16 +318,16 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
 
-          // Large Calculator Display (Right Aligned - Reference Style)
+          // Large Calculator Display (Right Aligned)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             alignment: Alignment.centerRight,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                if (_expression.contains(' + '))
+                if (_hasOperator)
                   Text(
                     '= ${CurrencyFormatter.format(_currentTotal)}',
                     style: const TextStyle(
@@ -238,7 +343,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                     displayString,
                     style: TextStyle(
                       color: textPrimary,
-                      fontSize: 48,
+                      fontSize: 46,
                       fontWeight: FontWeight.w400,
                       letterSpacing: -1,
                     ),
@@ -247,9 +352,9 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
 
-          // Inline Note / Category Chips Input
+          // Inline Note / Category Chips Input (As per User Reference Image)
           Row(
             children: [
               Expanded(
@@ -257,15 +362,18 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                   height: 40,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    color: btnBg.withValues(alpha: 0.5),
+                    color: btnBg.withValues(alpha: 0.6),
                     borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.05),
+                    ),
                   ),
                   alignment: Alignment.centerLeft,
                   child: TextField(
                     controller: _noteController,
                     style: TextStyle(color: textPrimary, fontSize: 13),
                     decoration: InputDecoration(
-                      hintText: 'Keterangan (opsional, cth: Kopi, Mie Ayam)',
+                      hintText: 'Keterangan (opsional, cth: Kopi, Mie ...)',
                       hintStyle: TextStyle(color: textSecondary, fontSize: 12),
                       border: InputBorder.none,
                       isDense: true,
@@ -281,14 +389,20 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
               _buildCategoryChip(Icons.local_cafe_rounded, 'Kopi', btnBg, textSecondary),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
 
-          // 4-Column Thumb-Friendly Circular Keypad
+          // Preset Shortcut Chips Strip (Horizontal on Top of Keypad)
+          _buildShortcutRow(btnBg: btnBg, textSecondary: textSecondary, isDark: isDark),
+          const SizedBox(height: 12),
+
+          // 4-Column Standard Calculator Keypad (×, ÷, -, +, =)
           _buildKeypadGrid(btnBg: btnBg, textPrimary: textPrimary, isDark: isDark),
         ],
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 
   Widget _buildCategoryChip(IconData icon, String text, Color bg, Color iconColor) {
     return InkWell(
@@ -298,7 +412,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
       },
       borderRadius: BorderRadius.circular(10),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
         decoration: BoxDecoration(
           color: bg,
           borderRadius: BorderRadius.circular(10),
@@ -308,60 +422,109 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     );
   }
 
+  Widget _buildShortcutRow({
+    required Color btnBg,
+    required Color textSecondary,
+    required bool isDark,
+  }) {
+    final presets = [
+      {'label': '+5rb', 'amount': 5000},
+      {'label': '+10rb', 'amount': 10000},
+      {'label': '+20rb', 'amount': 20000},
+      {'label': '+50rb', 'amount': 50000},
+      {'label': '+100rb', 'amount': 100000},
+    ];
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      child: Row(
+        children: presets.map((p) {
+          final label = p['label'] as String;
+          final amount = p['amount'] as int;
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: InkWell(
+              onTap: () => _onShortcutTap(amount),
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF18181A) : const Color(0xFFEBE6DA),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+                  ),
+                ),
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: isDark ? const Color(0xFFCCCCCC) : const Color(0xFF444444),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   Widget _buildKeypadGrid({
     required Color btnBg,
     required Color textPrimary,
     required bool isDark,
   }) {
-    // 5 Rows x 4 Columns Thumb-Friendly Circular Buttons
+    // 5 Rows x 4 Columns Standard Calculator Layout
     final rows = [
-      // Row 1: C, ⌫, 000, +
+      // Row 1: C, ⌫, %, ÷
       [
         {'label': 'C', 'type': 'clear', 'color': PirschColors.roseRed},
         {'label': '⌫', 'type': 'backspace', 'color': PirschColors.roseRed},
-        {'label': '000', 'type': 'action', 'color': textPrimary},
-        {'label': '+', 'type': 'operator', 'color': PirschColors.mintGreen},
+        {'label': '%', 'type': 'operator', 'color': textPrimary},
+        {'label': '÷', 'type': 'operator', 'color': PirschColors.mintGreen},
       ],
-      // Row 2: 7, 8, 9, +5rb
+      // Row 2: 7, 8, 9, ×
       [
         {'label': '7', 'type': 'digit', 'color': textPrimary},
         {'label': '8', 'type': 'digit', 'color': textPrimary},
         {'label': '9', 'type': 'digit', 'color': textPrimary},
-        {'label': '+5rb', 'type': 'preset', 'color': isDark ? const Color(0xFF9E9E9E) : const Color(0xFF555555)},
+        {'label': '×', 'type': 'operator', 'color': PirschColors.mintGreen},
       ],
-      // Row 3: 4, 5, 6, +10rb
+      // Row 3: 4, 5, 6, -
       [
         {'label': '4', 'type': 'digit', 'color': textPrimary},
         {'label': '5', 'type': 'digit', 'color': textPrimary},
         {'label': '6', 'type': 'digit', 'color': textPrimary},
-        {'label': '+10rb', 'type': 'preset', 'color': isDark ? const Color(0xFF9E9E9E) : const Color(0xFF555555)},
+        {'label': '-', 'type': 'operator', 'color': PirschColors.mintGreen},
       ],
-      // Row 4: 1, 2, 3, +25rb
+      // Row 4: 1, 2, 3, +
       [
         {'label': '1', 'type': 'digit', 'color': textPrimary},
         {'label': '2', 'type': 'digit', 'color': textPrimary},
         {'label': '3', 'type': 'digit', 'color': textPrimary},
-        {'label': '+25rb', 'type': 'preset', 'color': isDark ? const Color(0xFF9E9E9E) : const Color(0xFF555555)},
+        {'label': '+', 'type': 'operator', 'color': PirschColors.mintGreen},
       ],
-      // Row 5: 00, 0, +50rb, = (Large Green Submit)
+      // Row 5: 00, 0, 000, =
       [
         {'label': '00', 'type': 'action', 'color': textPrimary},
         {'label': '0', 'type': 'digit', 'color': textPrimary},
-        {'label': '+50rb', 'type': 'preset', 'color': isDark ? const Color(0xFF9E9E9E) : const Color(0xFF555555)},
+        {'label': '000', 'type': 'action', 'color': textPrimary},
         {'label': '=', 'type': 'submit', 'color': Colors.white},
       ],
     ];
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Calculate circle diameter to maintain perfect roundness
         final availableWidth = constraints.maxWidth;
-        final buttonSize = ((availableWidth - (3 * 12)) / 4).clamp(54.0, 72.0);
+        final buttonSize = ((availableWidth - (3 * 12)) / 4).clamp(52.0, 70.0);
 
         return Column(
           children: rows.map((row) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.only(bottom: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: row.map((btn) {
@@ -391,7 +554,6 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     final isSubmit = type == 'submit';
     final isOperator = type == 'operator';
 
-    // Background color: Green for '=', slightly lighter for operators, standard circular for digits
     Color circleBg = btnBg;
     if (isSubmit) {
       circleBg = const Color(0xFF00897B); // Vibrant Emerald Green
@@ -419,10 +581,8 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                       color: textColor,
                       fontSize: isSubmit
                           ? 32
-                          : (type == 'preset'
-                              ? 13
-                              : (type == 'action' ? 18 : 24)),
-                      fontWeight: (isSubmit || type == 'digit' || type == 'clear')
+                          : (isOperator ? 24 : (type == 'action' ? 18 : 24)),
+                      fontWeight: (isSubmit || type == 'digit' || type == 'clear' || isOperator)
                           ? FontWeight.w600
                           : FontWeight.w500,
                     ),

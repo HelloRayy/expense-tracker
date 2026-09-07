@@ -111,12 +111,16 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    // Type 2 5 0 0 0
+    // Type 2 5 0 0 0 × 2
     await tester.tap(find.text('2'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('5'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('000'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('×'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('2'));
     await tester.pumpAndSettle();
 
     await tester.runAsync(() async {

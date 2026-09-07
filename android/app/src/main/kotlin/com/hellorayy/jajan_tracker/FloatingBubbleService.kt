@@ -263,11 +263,27 @@ class FloatingBubbleService : Service() {
             }
         }
 
-        // Plus / Operator Button
+        // Operator Buttons (÷, ×, -, +, %)
         view.findViewById<View>(R.id.btn_calc_plus)?.setOnClickListener {
             triggerHaptic(it)
-            if (expression.isNotEmpty() && !expression.endsWith(" + ")) {
-                expression += " + "
+            onOperator("+")
+        }
+        view.findViewById<View>(R.id.btn_calc_minus)?.setOnClickListener {
+            triggerHaptic(it)
+            onOperator("-")
+        }
+        view.findViewById<View>(R.id.btn_calc_mul)?.setOnClickListener {
+            triggerHaptic(it)
+            onOperator("×")
+        }
+        view.findViewById<View>(R.id.btn_calc_div)?.setOnClickListener {
+            triggerHaptic(it)
+            onOperator("÷")
+        }
+        view.findViewById<View>(R.id.btn_calc_percent)?.setOnClickListener {
+            triggerHaptic(it)
+            if (expression.isNotEmpty() && !expression.endsWith(" ") && !expression.endsWith("%")) {
+                expression += "%"
                 updateCalculatorDisplay()
             }
         }
@@ -276,7 +292,10 @@ class FloatingBubbleService : Service() {
         view.findViewById<View>(R.id.num_backspace)?.setOnClickListener {
             triggerHaptic(it)
             if (expression.isNotEmpty()) {
-                expression = if (expression.endsWith(" + ")) {
+                expression = if (expression.endsWith(" + ") ||
+                    expression.endsWith(" - ") ||
+                    expression.endsWith(" × ") ||
+                    expression.endsWith(" ÷ ")) {
                     expression.substring(0, expression.length - 3)
                 } else {
                     expression.substring(0, expression.length - 1)
@@ -285,7 +304,7 @@ class FloatingBubbleService : Service() {
             }
         }
 
-        // Preset Chips (+5rb, +10rb, +25rb, +50rb)
+        // Preset Chips (+5rb, +10rb, +20rb, +50rb, +100rb)
         view.findViewById<View>(R.id.chip_5k)?.setOnClickListener {
             triggerHaptic(it)
             onAddPreset(5000L)
@@ -294,13 +313,17 @@ class FloatingBubbleService : Service() {
             triggerHaptic(it)
             onAddPreset(10000L)
         }
-        view.findViewById<View>(R.id.chip_25k)?.setOnClickListener {
+        view.findViewById<View>(R.id.chip_20k)?.setOnClickListener {
             triggerHaptic(it)
-            onAddPreset(25000L)
+            onAddPreset(20000L)
         }
         view.findViewById<View>(R.id.chip_50k)?.setOnClickListener {
             triggerHaptic(it)
             onAddPreset(50000L)
+        }
+        view.findViewById<View>(R.id.chip_100k)?.setOnClickListener {
+            triggerHaptic(it)
+            onAddPreset(100000L)
         }
 
         // Save / Equal Button
@@ -320,27 +343,96 @@ class FloatingBubbleService : Service() {
         } catch (_: Exception) {}
     }
 
-    private fun evaluateExpression(expr: String): Long {
-        if (expr.isEmpty()) return 0L
-        val parts = expr.split("+")
-        var total = 0L
-        for (part in parts) {
-            val clean = part.replace(".", "").replace(" ", "").trim()
-            total += clean.toLongOrNull() ?: 0L
+    private fun onOperator(op: String) {
+        if (expression.isNotEmpty()) {
+            expression = if (expression.endsWith(" + ") ||
+                expression.endsWith(" - ") ||
+                expression.endsWith(" × ") ||
+                expression.endsWith(" ÷ ")) {
+                expression.substring(0, expression.length - 3) + " $op "
+            } else {
+                expression + " $op "
+            }
+            updateCalculatorDisplay()
         }
-        return total
+    }
+
+    private fun evaluateExpression(expr: String): Long {
+        if (expr.trim().isEmpty()) return 0L
+        val rawTokens = expr.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+        if (rawTokens.isEmpty()) return 0L
+
+        val tokens = mutableListOf<Any>()
+        for (t in rawTokens) {
+            when (t) {
+                "+", "-", "×", "÷", "*", "/" -> tokens.add(if (t == "*") "×" else if (t == "/") "÷" else t)
+                else -> {
+                    if (t.endsWith("%")) {
+                        val clean = t.replace("%", "").replace(".", "").replace(",", "").trim()
+                        val v = clean.toDoubleOrNull() ?: 0.0
+                        tokens.add(v / 100.0)
+                    } else {
+                        val clean = t.replace(".", "").replace(",", "").trim()
+                        val v = clean.toDoubleOrNull() ?: 0.0
+                        tokens.add(v)
+                    }
+                }
+            }
+        }
+
+        if (tokens.isEmpty()) return 0L
+        if (tokens.last() is String) tokens.removeAt(tokens.size - 1)
+        if (tokens.isEmpty()) return 0L
+
+        // Pass 1: × and ÷
+        val pass1 = mutableListOf<Any>()
+        var i = 0
+        while (i < tokens.size) {
+            val token = tokens[i]
+            if ((token == "×" || token == "÷") && pass1.isNotEmpty() && i + 1 < tokens.size && tokens[i + 1] is Double) {
+                val prev = pass1.removeAt(pass1.size - 1) as Double
+                val next = tokens[i + 1] as Double
+                if (token == "×") {
+                    pass1.add(prev * next)
+                } else {
+                    pass1.add(if (next != 0.0) prev / next else 0.0)
+                }
+                i += 2
+                continue
+            }
+            pass1.add(token)
+            i++
+        }
+
+        // Pass 2: + and -
+        if (pass1.isEmpty()) return 0L
+        var result = if (pass1[0] is Double) pass1[0] as Double else 0.0
+        var j = 1
+        while (j < pass1.size) {
+            val op = pass1[j]
+            if (j + 1 < pass1.size && pass1[j + 1] is Double) {
+                val v = pass1[j + 1] as Double
+                if (op == "+") result += v
+                else if (op == "-") result -= v
+                j += 2
+            } else {
+                j++
+            }
+        }
+
+        return result.toLong().coerceIn(0L, 999999999L)
     }
 
     private fun getCurrentTotal(): Long = evaluateExpression(expression)
 
     private fun onNumpadDigit(digit: String) {
         if (digit == "000" || digit == "00") {
-            if (expression.isNotEmpty() && !expression.endsWith(" + ") && expression.length <= 10) {
+            if (expression.isNotEmpty() && !expression.endsWith(" ") && expression.length <= 11) {
                 expression += digit
                 updateCalculatorDisplay()
             }
         } else {
-            if (expression.length <= 12) {
+            if (expression.length <= 14) {
                 expression += digit
                 updateCalculatorDisplay()
             }
@@ -348,8 +440,16 @@ class FloatingBubbleService : Service() {
     }
 
     private fun onAddPreset(nominal: Long) {
-        val total = getCurrentTotal() + nominal
-        expression = total.toString()
+        if (expression.isEmpty() || expression == "0") {
+            expression = nominal.toString()
+        } else if (expression.endsWith(" + ") ||
+            expression.endsWith(" - ") ||
+            expression.endsWith(" × ") ||
+            expression.endsWith(" ÷ ")) {
+            expression += nominal.toString()
+        } else {
+            expression += " + $nominal"
+        }
         updateCalculatorDisplay()
     }
 
@@ -362,11 +462,23 @@ class FloatingBubbleService : Service() {
             maximumFractionDigits = 0
         }
 
+        val hasOp = expression.contains(" + ") ||
+            expression.contains(" - ") ||
+            expression.contains(" × ") ||
+            expression.contains(" ÷ ") ||
+            expression.contains("%")
+
         if (expression.isEmpty()) {
             display?.text = "0"
             formula?.visibility = View.GONE
-        } else if (expression.contains(" + ")) {
-            display?.text = expression
+        } else if (hasOp) {
+            // Format numbers inside expression for display
+            val formatted = Regex("\\d+").replace(expression) { matchResult ->
+                val num = matchResult.value.toLongOrNull()
+                if (num != null) formatter.format(num).replace("Rp", "").trim()
+                else matchResult.value
+            }
+            display?.text = formatted
             val total = getCurrentTotal()
             formula?.text = "= ${formatter.format(total)}"
             formula?.visibility = View.VISIBLE
