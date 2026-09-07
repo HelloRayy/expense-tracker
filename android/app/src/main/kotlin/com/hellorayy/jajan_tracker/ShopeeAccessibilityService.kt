@@ -19,16 +19,14 @@ import java.util.Locale
 class ShopeeAccessibilityService : AccessibilityService() {
 
     private val handler = Handler(Looper.getMainLooper())
-    private var hasShownGeneralInSession: Boolean = false
     private var lastGeneralTriggerTime: Long = 0
     private var lastQrisTriggerTime: Long = 0
-    private var lastShopeeActivityTime: Long = 0
 
     private val generalNudgeRunnable = Runnable {
         try {
             val now = System.currentTimeMillis()
-            // Only fire general nudge if QRIS was not triggered recently
-            if (now - lastQrisTriggerTime > COOLDOWN_QRIS_MS) {
+            // Only fire general nudge if QRIS was not triggered recently and not muted
+            if (!isMutedForSession && (now - lastQrisTriggerTime > COOLDOWN_QRIS_MS)) {
                 triggerNudge(isFromQris = false)
             }
         } catch (_: Throwable) {}
@@ -40,21 +38,28 @@ class ShopeeAccessibilityService : AccessibilityService() {
 
             val pkgName = event.packageName?.toString() ?: return
             val isShopee = pkgName.contains("shopee", ignoreCase = true)
+            val now = System.currentTimeMillis()
 
             if (!isShopee) {
-                // User navigated away from Shopee -> Reset session state
-                hasShownGeneralInSession = false
+                // User navigated away from Shopee -> Record exit timestamp
+                if (shopeeExitTime == 0L) {
+                    shopeeExitTime = now
+                }
                 handler.removeCallbacks(generalNudgeRunnable)
                 return
             }
 
-            val now = System.currentTimeMillis()
-
-            // Auto-reset general session if user was idle/away from Shopee for > 20 seconds
-            if (now - lastShopeeActivityTime > 20000) {
+            // User is in Shopee! Check if this is a fresh visit after being away for > 15 seconds
+            if (shopeeExitTime > 0L && now - shopeeExitTime > 15000L) {
+                isMutedForSession = false
                 hasShownGeneralInSession = false
             }
-            lastShopeeActivityTime = now
+            shopeeExitTime = 0L
+
+            // 0% CPU & Zero Spam: If user muted this session (via 'Oke' action), do nothing while in Shopee
+            if (isMutedForSession) {
+                return
+            }
 
             // =========================================================================
             // 1. QRIS BUTTON CLICK DETECTION (typeViewClicked)
@@ -241,6 +246,12 @@ class ShopeeAccessibilityService : AccessibilityService() {
     }
 
     companion object {
+        @Volatile
+        var isMutedForSession: Boolean = false
+        @Volatile
+        var hasShownGeneralInSession: Boolean = false
+        private var shopeeExitTime: Long = 0
+
         private const val COOLDOWN_QRIS_MS: Long = 3500 // 3.5 seconds for QRIS button click / scanner screen
         private const val COOLDOWN_GENERAL_MS: Long = 15000 // 15 seconds for general Shopee open
         const val CHANNEL_ID = "jajan_nudge_channel"
@@ -286,6 +297,18 @@ class ShopeeAccessibilityService : AccessibilityService() {
             }
             val pendingIntent = PendingIntent.getActivity(context, 1002, intent, flags)
 
+            // Action "Oke": Mutes all Shopee notifications for the rest of this active app session
+            val muteIntent = Intent(context, NotificationActionReceiver::class.java).apply {
+                action = NotificationActionReceiver.ACTION_MUTE_SHOPEE
+                putExtra(NotificationActionReceiver.EXTRA_NOTIF_ID, NOTIFICATION_ID)
+            }
+            val mutePendingIntent = PendingIntent.getBroadcast(
+                context,
+                1003,
+                muteIntent,
+                flags
+            )
+
             val title = if (isFromQris) {
                 "⚡ QRIS • Sisa Uang Jajan Anda: $formattedBalance"
             } else {
@@ -308,11 +331,17 @@ class ShopeeAccessibilityService : AccessibilityService() {
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
+                .setDeleteIntent(mutePendingIntent) // If swiped away, also mute for session
                 .setTimeoutAfter(8000) // Disappear after 8 seconds
                 .addAction(
                     R.drawable.ic_quick_tile,
                     "⚡ Catat Jajan",
                     pendingIntent
+                )
+                .addAction(
+                    android.R.drawable.checkbox_on_background,
+                    "Oke",
+                    mutePendingIntent
                 )
 
             try {

@@ -95,6 +95,7 @@
                 <action android:name="com.hellorayy.jajan_tracker.ACTION_AUTO_LOG" />
                 <action android:name="com.hellorayy.jajan_tracker.ACTION_OPEN_CALC" />
                 <action android:name="com.hellorayy.jajan_tracker.ACTION_DISMISS" />
+                <action android:name="com.hellorayy.jajan_tracker.ACTION_MUTE_SHOPEE" />
             </intent-filter>
         </receiver>
 

@@ -56,6 +56,10 @@ class NotificationActionReceiver : BroadcastReceiver() {
             ACTION_DISMISS -> {
                 // Already canceled above
             }
+            ACTION_MUTE_SHOPEE -> {
+                ShopeeAccessibilityService.isMutedForSession = true
+                ShopeeAccessibilityService.hasShownGeneralInSession = true
+            }
         }
     }
 
@@ -171,6 +175,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
         const val ACTION_AUTO_LOG = "com.hellorayy.jajan_tracker.ACTION_AUTO_LOG"
         const val ACTION_OPEN_CALC = "com.hellorayy.jajan_tracker.ACTION_OPEN_CALC"
         const val ACTION_DISMISS = "com.hellorayy.jajan_tracker.ACTION_DISMISS"
+        const val ACTION_MUTE_SHOPEE = "com.hellorayy.jajan_tracker.ACTION_MUTE_SHOPEE"
 
         const val EXTRA_AMOUNT = "EXTRA_AMOUNT"
         const val EXTRA_NOTE = "EXTRA_NOTE"

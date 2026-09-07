@@ -74,6 +74,7 @@ class MainActivity : FlutterActivity() {
                         maximumFractionDigits = 0
                     }
                     val balanceStr = formatter.format(balance)
+                    ShopeeAccessibilityService.isMutedForSession = false
                     ShopeeAccessibilityService.showHeadsUpNotification(this, balanceStr, "Rp 50.000", isFromQris = true)
                     result.success(true)
                 }
