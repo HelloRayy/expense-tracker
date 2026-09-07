@@ -80,6 +80,26 @@ class NativeBridge {
     } catch (_) {}
   }
 
+  /// Toggle floating bubble service
+  Future<void> toggleFloatingBubble(bool enabled) async {
+    try {
+      await _shopeeChannel.invokeMethod('toggleFloatingBubble', {
+        'enabled': enabled,
+      });
+    } catch (_) {}
+  }
+
+  /// Check if floating bubble is currently active
+  Future<bool> isFloatingBubbleRunning() async {
+    try {
+      final bool running =
+          await _shopeeChannel.invokeMethod('isFloatingBubbleRunning') ?? false;
+      return running;
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Check if app was opened via Widget Quick-Log action
   Future<String?> getInitialAction() async {
     try {

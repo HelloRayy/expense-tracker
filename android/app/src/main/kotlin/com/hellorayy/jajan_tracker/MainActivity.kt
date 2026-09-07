@@ -78,6 +78,18 @@ class MainActivity : FlutterActivity() {
                     ShopeeAccessibilityService.displayFloatingChip(this, balance)
                     result.success(true)
                 }
+                "toggleFloatingBubble" -> {
+                    val enabled = call.argument<Boolean>("enabled") ?: false
+                    if (enabled) {
+                        FloatingBubbleService.start(this)
+                    } else {
+                        FloatingBubbleService.stop(this)
+                    }
+                    result.success(true)
+                }
+                "isFloatingBubbleRunning" -> {
+                    result.success(FloatingBubbleService.isRunning)
+                }
                 else -> result.notImplemented()
             }
         }

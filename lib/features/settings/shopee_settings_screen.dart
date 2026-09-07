@@ -18,6 +18,7 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
   final NativeBridge _bridge = NativeBridge.instance;
   bool _hasOverlayPermission = false;
   bool _hasAccessibilityPermission = false;
+  bool _isBubbleActive = false;
   bool _isChecking = true;
 
   @override
@@ -44,10 +45,12 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
     setState(() => _isChecking = true);
     final overlay = await _bridge.checkOverlayPermission();
     final access = await _bridge.checkAccessibilityPermission();
+    final bubble = await _bridge.isFloatingBubbleRunning();
     if (mounted) {
       setState(() {
         _hasOverlayPermission = overlay;
         _hasAccessibilityPermission = access;
+        _isBubbleActive = bubble;
         _isChecking = false;
       });
     }
@@ -167,7 +170,90 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
                     await _bridge.openAccessibilitySettings();
                   },
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
+
+                // Floating Bubble Card
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: _isBubbleActive
+                          ? AppColors.primary.withValues(alpha: 0.5)
+                          : Colors.white10,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.15),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Text('💬', style: TextStyle(fontSize: 18)),
+                          ),
+                          const SizedBox(width: 12),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Gelembung Melayang (Floating Bubble)',
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 2),
+                                Text(
+                                  'Kalkulator jajan mengambang ala Messenger',
+                                  style: TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Switch(
+                            value: _isBubbleActive,
+                            activeThumbColor: AppColors.primary,
+                            onChanged: (val) async {
+                              if (val && !_hasOverlayPermission) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Aktifkan izin "Tampilkan di Atas Aplikasi Lain" terlebih dahulu.',
+                                    ),
+                                  ),
+                                );
+                                await _bridge.openOverlaySettings();
+                                return;
+                              }
+                              await _bridge.toggleFloatingBubble(val);
+                              setState(() => _isBubbleActive = val);
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Saat aktif, gelembung kecil akan menempel di tepi layar HP kamu. Ketuk gelembung kapan saja dari aplikasi apa pun untuk memunculkan kalkulator jajan instan!',
+                        style: TextStyle(
+                          color: AppColors.textMuted,
+                          fontSize: 12,
+                          height: 1.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
 
                 // Test floating reminder button
                 Container(

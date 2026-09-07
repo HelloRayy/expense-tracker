@@ -70,6 +70,12 @@
             </intent-filter>
         </service>
 
+        <!-- Floating Bubble & Calculator Service -->
+        <service
+            android:name=".FloatingBubbleService"
+            android:enabled="true"
+            android:exported="false" />
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
