@@ -2,6 +2,7 @@
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:label="Jajan Tracker"
@@ -24,7 +25,7 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <!-- Intent filter for Quick-Log action from widget -->
+            <!-- Intent filter for Quick-Log action from widget and quick tile -->
             <intent-filter>
                 <action android:name="ACTION_QUICK_LOG" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -55,6 +56,18 @@
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/shopee_accessibility_service_config" />
+        </service>
+
+        <!-- Quick Settings Tile Service (Panel Pintasan Atas) -->
+        <service
+            android:name=".JajanQuickTileService"
+            android:label="Catat Jajan"
+            android:icon="@drawable/ic_quick_tile"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
         </service>
 
         <!-- Don't delete the meta-data below.

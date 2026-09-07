@@ -26,6 +26,7 @@ class MainActivity : FlutterActivity() {
             when (call.method) {
                 "updateWidget" -> {
                     JajanWidgetProvider.updateAllWidgets(applicationContext)
+                    JajanQuickTileService.requestTileUpdate(applicationContext)
                     result.success(true)
                 }
                 "getInitialAction" -> {
@@ -69,6 +70,11 @@ class MainActivity : FlutterActivity() {
                 }
                 "showFloatingReminder" -> {
                     val balance = (call.argument<Number>("balance"))?.toLong() ?: 0L
+                    val formatter = java.text.NumberFormat.getCurrencyInstance(java.util.Locale("id", "ID")).apply {
+                        maximumFractionDigits = 0
+                    }
+                    val balanceStr = formatter.format(balance)
+                    ShopeeAccessibilityService.showHeadsUpNotification(this, balanceStr, "Rp 50.000", isFromQris = true)
                     ShopeeAccessibilityService.displayFloatingChip(this, balance)
                     result.success(true)
                 }

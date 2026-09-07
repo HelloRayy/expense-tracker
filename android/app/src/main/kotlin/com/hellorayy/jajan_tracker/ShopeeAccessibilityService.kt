@@ -2,6 +2,8 @@ package com.hellorayy.jajan_tracker
 
 import android.accessibilityservice.AccessibilityService
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -16,18 +18,54 @@ import android.view.View
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.widget.TextView
+import androidx.core.app.NotificationCompat
 import java.text.NumberFormat
 import java.util.Locale
 
 class ShopeeAccessibilityService : AccessibilityService() {
 
+    private val handler = Handler(Looper.getMainLooper())
+    private var hasShownInSession: Boolean = false
+    private var lastTriggerTime: Long = 0
+
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
 
-        if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            val pkgName = event.packageName?.toString() ?: return
-            if (pkgName.contains("shopee", ignoreCase = true)) {
-                checkAndShowNudge()
+        val pkgName = event.packageName?.toString() ?: return
+        val isShopee = pkgName.contains("shopee", ignoreCase = true)
+
+        if (isShopee) {
+            // 1. Specific Click Detection: "Bayar QRIS" or ShopeePay button
+            if (event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED) {
+                if (isQrisOrPayClick(event)) {
+                    val now = System.currentTimeMillis()
+                    if (now - lastTriggerTime > COOLDOWN_QRIS_MS) {
+                        lastTriggerTime = now
+                        hasShownInSession = true
+                        triggerNudge(isFromQris = true)
+                    }
+                    return
+                }
+            }
+
+            // 2. Window State Change: Opening Shopee / Entering flow
+            if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+                if (!hasShownInSession) {
+                    val now = System.currentTimeMillis()
+                    if (now - lastTriggerTime > COOLDOWN_GENERAL_MS) {
+                        lastTriggerTime = now
+                        hasShownInSession = true
+                        // 1.2s delayed retry to bypass initial splash screen & promo popups
+                        handler.postDelayed({
+                            triggerNudge(isFromQris = false)
+                        }, 1200)
+                    }
+                }
+            }
+        } else {
+            // User left Shopee -> Reset session state so it's ready for the next visit
+            if (hasShownInSession) {
+                hasShownInSession = false
             }
         }
     }
@@ -36,32 +74,129 @@ class ShopeeAccessibilityService : AccessibilityService() {
         // Nothing needed
     }
 
-    private fun checkAndShowNudge() {
-        val now = System.currentTimeMillis()
-        if (now - lastShownTime < COOLDOWN_MS) {
-            return // Cooldown active, don't spam
+    private fun isQrisOrPayClick(event: AccessibilityEvent): Boolean {
+        val text = event.text?.joinToString(" ") ?: ""
+        val contentDesc = event.contentDescription?.toString() ?: ""
+
+        val keywords = listOf("qris", "bayar", "shopeepay", "saldo", "pay")
+        for (kw in keywords) {
+            if (text.contains(kw, ignoreCase = true) || contentDesc.contains(kw, ignoreCase = true)) {
+                return true
+            }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-            return // No overlay permission
-        }
+        try {
+            val source = event.source
+            if (source != null) {
+                val sText = source.text?.toString() ?: ""
+                val sDesc = source.contentDescription?.toString() ?: ""
+                for (kw in keywords) {
+                    if (sText.contains(kw, ignoreCase = true) || sDesc.contains(kw, ignoreCase = true)) {
+                        return true
+                    }
+                }
+            }
+        } catch (_: Exception) {}
 
-        lastShownTime = now
+        return false
+    }
+
+    private fun triggerNudge(isFromQris: Boolean) {
         val prefs = getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
-        val remaining = if (prefs.contains("flutter.remaining_balance")) {
-            prefs.getLong("flutter.remaining_balance", 0L)
-        } else {
-            prefs.getInt("remaining_balance", 0).toLong()
+        val allEntries = prefs.all
+
+        var remaining = 1500000L
+        val rawRemaining = allEntries["flutter.remaining_balance"] ?: allEntries["remaining_balance"]
+        if (rawRemaining is Number) {
+            remaining = rawRemaining.toLong()
         }
 
-        Handler(Looper.getMainLooper()).post {
-            displayFloatingChip(this, remaining)
+        var dailySafe = 50000L
+        val rawDaily = allEntries["flutter.daily_safe"] ?: allEntries["daily_safe"]
+        if (rawDaily is Number) {
+            dailySafe = rawDaily.toLong()
+        }
+
+        val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID")).apply {
+            maximumFractionDigits = 0
+        }
+        val formattedBalance = formatter.format(remaining)
+        val formattedDaily = formatter.format(dailySafe)
+
+        // 1. Show High-Priority Heads-Up Notification (meluncur dari atas status bar)
+        showHeadsUpNotification(this, formattedBalance, formattedDaily, isFromQris)
+
+        // 2. Also show Floating Chip if overlay permission is granted
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
+            handler.post {
+                displayFloatingChip(this, remaining)
+            }
         }
     }
 
     companion object {
-        private var lastShownTime: Long = 0
-        private const val COOLDOWN_MS: Long = 15000 // 15 seconds cooldown
+        private const val COOLDOWN_QRIS_MS: Long = 6000 // 6 seconds for QRIS click
+        private const val COOLDOWN_GENERAL_MS: Long = 12000 // 12 seconds for general open
+        const val CHANNEL_ID = "jajan_nudge_channel"
+        const val NOTIFICATION_ID = 3001
+
+        fun showHeadsUpNotification(
+            context: Context,
+            formattedBalance: String,
+            formattedDaily: String,
+            isFromQris: Boolean
+        ) {
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return
+
+            // Create notification channel for Android 8+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(
+                    CHANNEL_ID,
+                    "Pengingat Sisa Uang Jajan",
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = "Notifikasi sisa uang jajan saat membuka Shopee atau scan QRIS"
+                    enableVibration(true)
+                }
+                notificationManager.createNotificationChannel(channel)
+            }
+
+            val intent = Intent(context, MainActivity::class.java).apply {
+                action = JajanWidgetProvider.ACTION_QUICK_LOG
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            } else {
+                PendingIntent.FLAG_UPDATE_CURRENT
+            }
+            val pendingIntent = PendingIntent.getActivity(context, 1002, intent, flags)
+
+            val title = if (isFromQris) {
+                "⚡ Mau Bayar QRIS? Sisa Jajan: $formattedBalance"
+            } else {
+                "🛍️ Ingat Sisa Uang Jajan: $formattedBalance"
+            }
+
+            val subtitle = "Aman jajan ~$formattedDaily / hari lagi sebelum gajian. Tap buat catat!"
+
+            val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_quick_tile)
+                .setContentTitle(title)
+                .setContentText(subtitle)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .setTimeoutAfter(7000) // Disappear after 7 seconds
+
+            try {
+                notificationManager.notify(NOTIFICATION_ID, builder.build())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
 
         @SuppressLint("InflateParams")
         fun displayFloatingChip(context: Context, balance: Long) {
@@ -88,7 +223,7 @@ class ShopeeAccessibilityService : AccessibilityService() {
                 PixelFormat.TRANSLUCENT
             ).apply {
                 gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-                y = 120 // 120px below top notch/status bar
+                y = 120
             }
 
             val inflater = LayoutInflater.from(context)
@@ -114,12 +249,10 @@ class ShopeeAccessibilityService : AccessibilityService() {
                 }
             }
 
-            // Close button
             view.findViewById<View>(R.id.btn_nudge_close)?.setOnClickListener {
                 dismiss()
             }
 
-            // Tapping body opens Quick-Log in the app
             view.findViewById<View>(R.id.btn_nudge_click)?.setOnClickListener {
                 dismiss()
                 val intent = Intent(context, MainActivity::class.java).apply {
@@ -131,7 +264,6 @@ class ShopeeAccessibilityService : AccessibilityService() {
 
             try {
                 windowManager.addView(view, params)
-                // Auto dismiss after 6 seconds
                 Handler(Looper.getMainLooper()).postDelayed({
                     dismiss()
                 }, 6000)

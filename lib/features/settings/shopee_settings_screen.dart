@@ -122,7 +122,7 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
                       ),
                       const SizedBox(height: 14),
                       const Text(
-                        'Begitu aplikasi Shopee dibuka di HP kamu, pengingat mengambang (floating chip) akan muncul di layar secara otomatis menampilkan sisa saldo jajanmu.',
+                        '1. Saat aplikasi Shopee dibuka, notifikasi atas & chip mengambang otomatis mengingatkan sisa saldo jajanmu.\n2. Saat kamu menekan tombol "Bayar QRIS" atau ShopeePay di kasir, pengingat langsung meluncur tepat di atas kamera scanner!\n3. Tersedia juga tombol pintasan di Control Center (tarik panel atas HP) untuk Quick-Log kapan saja.',
                         style: TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 13,

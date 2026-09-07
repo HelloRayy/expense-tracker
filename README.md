@@ -72,10 +72,18 @@ File APK akan berada di folder `build/app/outputs/flutter-apk/app-release.apk`.
 3. Cari **Jajan Tracker**, lalu drag widget ke layar.
 4. Saldo jajanmu akan langsung tampil. Tekan widget kapan saja untuk quick-log instan!
 
-### Mengaktifkan Fitur Pengingat Shopee:
+### Mengaktifkan Fitur Pengingat Shopee (Heads-Up & Bayar QRIS):
 1. Buka aplikasi **Jajan Tracker**.
 2. Tap ikon tas belanja `🛍️` di pojok kanan atas.
-3. Berikan dua izin:
+3. Berikan izin:
    - **Tampilkan di Atas Aplikasi Lain** (*Display over other apps*)
    - **Layanan Aksesibilitas** (*Accessibility Services* -> aktifkan **Jajan Tracker**)
-4. Tekan tombol *"Simulasi Buka Shopee"* untuk memastikan chip pengingat muncul dengan baik.
+4. Tekan tombol *"Simulasi Buka Shopee"* untuk memastikan chip & heads-up banner muncul.
+5. Saat kamu membuka Shopee atau mengetuk tombol **"Bayar QRIS"** di kasir, sisa saldo jajan otomatis muncul melayang di atas kamera scanner!
+
+### Memasang Tombol Pintasan di Control Center (Quick Settings Tile):
+1. Tarik panel notifikasi / Control Center dari atas layar HP kamu ke bawah ⬇️.
+2. Tap ikon **Edit / Pensil** (atau menu "Area yang diperluas").
+3. Cari tombol **⚡ Catat Jajan**.
+4. Tarik (*drag*) tombol tersebut ke jajaran atas tombol pintasan aktif kamu.
+5. Selesai! Kini kamu bisa melihat saldo jajanmu dan mencatat pengeluaran jajan hanya dengan 1 tap dari mana saja!
