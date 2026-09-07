@@ -75,7 +75,6 @@ class MainActivity : FlutterActivity() {
                     }
                     val balanceStr = formatter.format(balance)
                     ShopeeAccessibilityService.showHeadsUpNotification(this, balanceStr, "Rp 50.000", isFromQris = true)
-                    ShopeeAccessibilityService.displayFloatingChip(this, balance)
                     result.success(true)
                 }
                 "toggleFloatingBubble" -> {

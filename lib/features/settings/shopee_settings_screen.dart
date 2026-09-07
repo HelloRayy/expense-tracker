@@ -332,28 +332,27 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
                       ),
                       const SizedBox(height: 10),
 
-                      // Button 2: Test Floating Chip
+                      // Button 2: Test Native System Notification (Heads-Up)
                       SizedBox(
                         width: double.infinity,
                         height: 46,
                         child: OutlinedButton.icon(
                           onPressed: () async {
-                            if (!_hasOverlayPermission) {
+                            await _bridge.showShopeeFloatingTest(balance);
+                            if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
-                                    'Harap izinkan "Tampilkan di Atas Aplikasi Lain" terlebih dahulu.',
+                                    'Notifikasi sistem pengingat jajan dikirim meluncur dari atas status bar!',
                                   ),
                                 ),
                               );
-                              return;
                             }
-                            await _bridge.showShopeeFloatingTest(balance);
                           },
                           icon: const Icon(Icons.touch_app, size: 18),
-                          label: const Text('Simulasi Buka Shopee (Munculkan Chip)'),
+                          label: const Text('Simulasi Notifikasi Sistem Shopee (Status Bar)'),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.textSecondary,
+                            foregroundColor: AppColors.textPrimary,
                             side: const BorderSide(color: Colors.white24),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),

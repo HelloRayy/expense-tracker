@@ -27,49 +27,53 @@ class ShopeeAccessibilityService : AccessibilityService() {
     private val handler = Handler(Looper.getMainLooper())
     private var hasShownInSession: Boolean = false
     private var lastTriggerTime: Long = 0
+    private var lastEventTime: Long = 0
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         try {
             if (event == null) return
 
+            val now = System.currentTimeMillis()
+            // 1. ULTRA FAST-PATH: If within cooldown, discard instantly without any allocations (0 CPU)
+            if (now - lastTriggerTime < COOLDOWN_QRIS_MS) {
+                return
+            }
+
             val pkgName = event.packageName?.toString() ?: return
             val isShopee = pkgName.contains("shopee", ignoreCase = true)
 
             if (isShopee) {
-                // 1. Specific Click Detection: "Bayar QRIS" or ShopeePay button
+                // Auto-reset session if user was away from Shopee for > 25 seconds
+                if (now - lastEventTime > 25000) {
+                    hasShownInSession = false
+                }
+                lastEventTime = now
+
+                // 2. Specific Click Detection: "Bayar QRIS" or ShopeePay button
                 if (event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED) {
                     if (isQrisOrPayClick(event)) {
-                        val now = System.currentTimeMillis()
-                        if (now - lastTriggerTime > COOLDOWN_QRIS_MS) {
-                            lastTriggerTime = now
-                            hasShownInSession = true
-                            triggerNudge(isFromQris = true)
-                        }
+                        lastTriggerTime = now
+                        hasShownInSession = true
+                        triggerNudge(isFromQris = true)
                         return
                     }
                 }
 
-                // 2. Window State Change: Opening Shopee / Entering flow
+                // 3. Window State Change: Opening Shopee / Entering flow
                 if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-                    if (!hasShownInSession) {
-                        val now = System.currentTimeMillis()
-                        if (now - lastTriggerTime > COOLDOWN_GENERAL_MS) {
-                            lastTriggerTime = now
-                            hasShownInSession = true
-                            // 1.2s delayed retry to bypass initial splash screen & promo popups
-                            handler.postDelayed({
-                                try {
-                                    triggerNudge(isFromQris = false)
-                                } catch (_: Throwable) {}
-                            }, 1200)
-                        }
+                    if (!hasShownInSession && (now - lastTriggerTime > COOLDOWN_GENERAL_MS)) {
+                        lastTriggerTime = now
+                        hasShownInSession = true
+                        handler.postDelayed({
+                            try {
+                                triggerNudge(isFromQris = false)
+                            } catch (_: Throwable) {}
+                        }, 800)
                     }
                 }
             } else {
                 // User left Shopee -> Reset session state so it's ready for the next visit
-                if (hasShownInSession) {
-                    hasShownInSession = false
-                }
+                hasShownInSession = false
             }
         } catch (t: Throwable) {
             t.printStackTrace()
@@ -81,6 +85,7 @@ class ShopeeAccessibilityService : AccessibilityService() {
     }
 
     private fun isQrisOrPayClick(event: AccessibilityEvent): Boolean {
+        // Purely inspect event payload - zero Binder IPC view tree overhead
         val text = event.text?.joinToString(" ") ?: ""
         val contentDesc = event.contentDescription?.toString() ?: ""
 
@@ -90,19 +95,6 @@ class ShopeeAccessibilityService : AccessibilityService() {
                 return true
             }
         }
-
-        try {
-            val source = event.source
-            if (source != null) {
-                val sText = source.text?.toString() ?: ""
-                val sDesc = source.contentDescription?.toString() ?: ""
-                for (kw in keywords) {
-                    if (sText.contains(kw, ignoreCase = true) || sDesc.contains(kw, ignoreCase = true)) {
-                        return true
-                    }
-                }
-            }
-        } catch (_: Exception) {}
 
         return false
     }
@@ -129,15 +121,8 @@ class ShopeeAccessibilityService : AccessibilityService() {
         val formattedBalance = formatter.format(remaining)
         val formattedDaily = formatter.format(dailySafe)
 
-        // 1. Show High-Priority Heads-Up Notification (meluncur dari atas status bar)
+        // Show High-Priority Heads-Up Notification by system only (100% native system notification, zero UI overlay)
         showHeadsUpNotification(this, formattedBalance, formattedDaily, isFromQris)
-
-        // 2. Also show Floating Chip if overlay permission is granted
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
-            handler.post {
-                displayFloatingChip(this, remaining)
-            }
-        }
     }
 
     companion object {
@@ -168,10 +153,17 @@ class ShopeeAccessibilityService : AccessibilityService() {
                 notificationManager.createNotificationChannel(channel)
             }
 
-            val intent = Intent(context, MainActivity::class.java).apply {
-                action = JajanWidgetProvider.ACTION_QUICK_LOG
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(context)) {
+                Intent(context, QuickTileTrampolineActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
+            } else {
+                Intent(context, MainActivity::class.java).apply {
+                    action = JajanWidgetProvider.ACTION_QUICK_LOG
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
             }
+
             val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             } else {
@@ -185,7 +177,7 @@ class ShopeeAccessibilityService : AccessibilityService() {
                 "🛍️ Ingat Sisa Uang Jajan: $formattedBalance"
             }
 
-            val subtitle = "Aman jajan ~$formattedDaily / hari lagi sebelum gajian. Tap buat catat!"
+            val subtitle = "Aman jajan ~$formattedDaily / hari lagi sebelum gajian. Ketuk untuk catat!"
 
             val builder = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_quick_tile)
@@ -195,85 +187,18 @@ class ShopeeAccessibilityService : AccessibilityService() {
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
-                .setTimeoutAfter(7000) // Disappear after 7 seconds
+                .setTimeoutAfter(8000) // Disappear after 8 seconds
+                .addAction(
+                    R.drawable.ic_quick_tile,
+                    "⚡ Catat Jajan",
+                    pendingIntent
+                )
 
             try {
                 notificationManager.notify(NOTIFICATION_ID, builder.build())
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-
-        @SuppressLint("InflateParams")
-        fun displayFloatingChip(context: Context, balance: Long) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
-                return
-            }
-
-            val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager ?: return
-
-            val layoutFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            } else {
-                @Suppress("DEPRECATION")
-                WindowManager.LayoutParams.TYPE_PHONE
-            }
-
-            val params = WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                layoutFlag,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
-                        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                PixelFormat.TRANSLUCENT
-            ).apply {
-                gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-                y = 120
-            }
-
-            val inflater = LayoutInflater.from(context)
-            val view: View
-            try {
-                view = inflater.inflate(R.layout.floating_shopee_nudge, null)
-            } catch (e: Exception) {
-                return
-            }
-
-            val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID")).apply {
-                maximumFractionDigits = 0
-            }
-            view.findViewById<TextView>(R.id.tv_nudge_balance)?.text = formatter.format(balance)
-
-            var isDismissed = false
-            fun dismiss() {
-                if (!isDismissed) {
-                    isDismissed = true
-                    try {
-                        windowManager.removeView(view)
-                    } catch (_: Exception) {}
-                }
-            }
-
-            view.findViewById<View>(R.id.btn_nudge_close)?.setOnClickListener {
-                dismiss()
-            }
-
-            view.findViewById<View>(R.id.btn_nudge_click)?.setOnClickListener {
-                dismiss()
-                val intent = Intent(context, MainActivity::class.java).apply {
-                    action = JajanWidgetProvider.ACTION_QUICK_LOG
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                }
-                context.startActivity(intent)
-            }
-
-            try {
-                windowManager.addView(view, params)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    dismiss()
-                }, 6000)
-            } catch (_: Exception) {}
         }
     }
 }
