@@ -37,6 +37,7 @@ class FloatingBubbleService : Service() {
     private lateinit var calcParams: WindowManager.LayoutParams
 
     private var currentAmount: Long = 0L
+    private var isStandalone: Boolean = false
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -50,6 +51,14 @@ class FloatingBubbleService : Service() {
 
         initBubble()
         initCalculator()
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.getBooleanExtra(EXTRA_OPEN_CALCULATOR, false) == true) {
+            isStandalone = intent.getBooleanExtra(EXTRA_STANDALONE, false)
+            expandToCalculator()
+        }
+        return START_STICKY
     }
 
     private fun createNotificationChannel() {
@@ -140,7 +149,6 @@ class FloatingBubbleService : Service() {
                         if (isClick) {
                             expandToCalculator()
                         } else {
-                            // Snap to nearest screen edge (left or right)
                             snapBubbleToEdge()
                         }
                         return true
@@ -198,8 +206,19 @@ class FloatingBubbleService : Service() {
         setupCalculatorControls()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupCalculatorControls() {
         val view = calcView ?: return
+
+        // Outside touch dismiss
+        view.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_OUTSIDE) {
+                collapseToBubble()
+                true
+            } else {
+                false
+            }
+        }
 
         // Close / Collapse Button
         view.findViewById<View>(R.id.btn_calc_close)?.setOnClickListener {
@@ -305,7 +324,11 @@ class FloatingBubbleService : Service() {
         updateCalculatorDisplay()
 
         try {
-            wm.addView(calcView, calcParams)
+            if (calcView?.isAttachedToWindow == true) {
+                wm.updateViewLayout(calcView, calcParams)
+            } else {
+                wm.addView(calcView, calcParams)
+            }
         } catch (_: Exception) {}
     }
 
@@ -313,12 +336,23 @@ class FloatingBubbleService : Service() {
         val wm = windowManager ?: return
 
         try {
-            wm.removeView(calcView)
+            if (calcView?.isAttachedToWindow == true) {
+                wm.removeView(calcView)
+            }
         } catch (_: Exception) {}
 
-        try {
-            bubbleView?.visibility = View.VISIBLE
-        } catch (_: Exception) {}
+        if (isStandalone && !isPermanentBubbleEnabled()) {
+            stopSelf()
+        } else {
+            try {
+                bubbleView?.visibility = View.VISIBLE
+            } catch (_: Exception) {}
+        }
+    }
+
+    private fun isPermanentBubbleEnabled(): Boolean {
+        val prefs = getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
+        return prefs.getBoolean("flutter.floating_bubble_enabled", false)
     }
 
     private fun saveExpense() {
@@ -371,7 +405,7 @@ class FloatingBubbleService : Service() {
         val wm = windowManager ?: return
 
         try {
-            if (bubbleView != null) wm.removeView(bubbleView)
+            if (bubbleView != null && bubbleView?.isAttachedToWindow == true) wm.removeView(bubbleView)
             if (calcView != null && calcView?.isAttachedToWindow == true) wm.removeView(calcView)
         } catch (_: Exception) {}
     }
@@ -379,6 +413,9 @@ class FloatingBubbleService : Service() {
     companion object {
         private const val FOREGROUND_ID = 4001
         private const val BUBBLE_CHANNEL_ID = "jajan_floating_bubble_channel"
+        const val EXTRA_OPEN_CALCULATOR = "EXTRA_OPEN_CALCULATOR"
+        const val EXTRA_STANDALONE = "EXTRA_STANDALONE"
+
         var isRunning: Boolean = false
 
         fun start(context: Context) {
@@ -386,6 +423,21 @@ class FloatingBubbleService : Service() {
                 return
             }
             val intent = Intent(context, FloatingBubbleService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
+        }
+
+        fun startWithCalculator(context: Context) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
+                return
+            }
+            val intent = Intent(context, FloatingBubbleService::class.java).apply {
+                putExtra(EXTRA_OPEN_CALCULATOR, true)
+                putExtra(EXTRA_STANDALONE, true)
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
             } else {

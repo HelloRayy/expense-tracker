@@ -21,8 +21,7 @@ class JajanQuickTileService : TileService() {
     override fun onClick() {
         super.onClick()
 
-        val intent = Intent(this, MainActivity::class.java).apply {
-            action = JajanWidgetProvider.ACTION_QUICK_LOG
+        val intent = Intent(this, QuickTileTrampolineActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
 

@@ -91,9 +91,8 @@ class JajanWidgetProvider : AppWidgetProvider() {
                 "⚠️ Saldo jajan sudah habis!"
             }
 
-            // PendingIntent to launch MainActivity directly to Quick-Log
-            val intent = Intent(context, MainActivity::class.java).apply {
-                action = ACTION_QUICK_LOG
+            // PendingIntent to launch Floating Calculator directly (via Trampoline)
+            val intent = Intent(context, QuickTileTrampolineActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
             val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
