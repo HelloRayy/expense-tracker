@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Jajan Tracker</string>
+    <string name="widget_description">Widget sisa saldo uang jajan dengan quick-log instan.</string>
+    <string name="accessibility_service_description">Mendeteksi pembukaan aplikasi Shopee untuk mengingatkan sisa uang jajan sebelum berbelanja.</string>
+</resources>
