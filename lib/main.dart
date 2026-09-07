@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'core/constants/app_colors.dart';
 import 'core/services/native_bridge.dart';
 import 'features/budget/repository/budget_repository.dart';
@@ -8,6 +9,7 @@ import 'features/quick_log/quick_log_dialog.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID', null);
 
   // Dark translucent system status bar
   SystemChrome.setSystemUIOverlayStyle(

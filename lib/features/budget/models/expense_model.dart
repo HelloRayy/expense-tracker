@@ -17,15 +17,23 @@ class ExpenseModel {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final expenseDate = DateTime(createdAt.year, createdAt.month, createdAt.day);
-
-    final timeStr = DateFormat('HH:mm').format(createdAt);
+    final hour = createdAt.hour.toString().padLeft(2, '0');
+    final minute = createdAt.minute.toString().padLeft(2, '0');
+    final timeStr = '$hour:$minute';
 
     if (expenseDate == today) {
       return 'Hari ini, $timeStr';
     } else if (expenseDate == today.subtract(const Duration(days: 1))) {
       return 'Kemarin, $timeStr';
     } else {
-      return DateFormat('d MMM, HH:mm', 'id_ID').format(createdAt);
+      try {
+        return DateFormat('d MMM, HH:mm', 'id_ID').format(createdAt);
+      } catch (_) {
+        const months = [
+          '', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+        ];
+        return '${createdAt.day} ${months[createdAt.month]}, $timeStr';
+      }
     }
   }
 

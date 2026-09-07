@@ -36,8 +36,17 @@ class BudgetModel {
   }
 
   String get formattedPeriod {
-    final f = DateFormat('d MMM', 'id_ID');
-    return '${f.format(startDate)} - ${f.format(endDate)}';
+    try {
+      final f = DateFormat('d MMM', 'id_ID');
+      return '${f.format(startDate)} - ${f.format(endDate)}';
+    } catch (_) {
+      const months = [
+        '', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+      ];
+      final startStr = '${startDate.day} ${months[startDate.month]}';
+      final endStr = '${endDate.day} ${months[endDate.month]}';
+      return '$startStr - $endStr';
+    }
   }
 
   Map<String, dynamic> toMap() {
