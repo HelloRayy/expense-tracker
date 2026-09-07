@@ -173,19 +173,20 @@ class JajanNotificationListenerService : NotificationListenerService() {
             val newRemaining = remaining - amount
             val newRemainingStr = formatter.format(newRemaining)
 
+            val title = "💳 Anda telah membayar $formattedAmount ($sourceNote)"
             val subtitle = if (newRemaining >= 0) {
-                "Sisa jajan jadi: $newRemainingStr"
+                "Sisa uang jajan Anda jadi: $newRemainingStr"
             } else {
-                "⚠️ Overbudget! Sisa: $newRemainingStr"
+                "⚠️ Overbudget! Sisa uang jajan Anda: $newRemainingStr"
             }
 
             val builder = NotificationCompat.Builder(context, TRANSACTION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_quick_tile)
-                .setContentTitle("🛍️ $sourceNote • $formattedAmount")
+                .setContentTitle(title)
                 .setContentText(subtitle)
                 .setStyle(
                     NotificationCompat.BigTextStyle()
-                        .setBigContentTitle("🛍️ $sourceNote • $formattedAmount")
+                        .setBigContentTitle(title)
                         .bigText(subtitle)
                 )
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
