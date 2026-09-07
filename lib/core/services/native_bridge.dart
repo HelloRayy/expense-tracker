@@ -109,4 +109,32 @@ class NativeBridge {
       return null;
     }
   }
+
+  /// Check if Notification Listener (Akses Notifikasi) permission is granted
+  Future<bool> checkNotificationListenerPermission() async {
+    try {
+      final bool enabled =
+          await _shopeeChannel.invokeMethod('checkNotificationListenerPermission') ?? false;
+      return enabled;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Open Notification Listener Settings screen
+  Future<void> openNotificationListenerSettings() async {
+    try {
+      await _shopeeChannel.invokeMethod('openNotificationListenerSettings');
+    } catch (_) {}
+  }
+
+  /// Simulate payment notification for testing
+  Future<void> simulatePaymentNotification({int amount = 35000, String note = 'ShopeePay'}) async {
+    try {
+      await _shopeeChannel.invokeMethod('simulatePaymentNotification', {
+        'amount': amount,
+        'note': note,
+      });
+    } catch (_) {}
+  }
 }

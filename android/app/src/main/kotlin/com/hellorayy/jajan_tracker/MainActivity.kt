@@ -90,9 +90,33 @@ class MainActivity : FlutterActivity() {
                 "isFloatingBubbleRunning" -> {
                     result.success(FloatingBubbleService.isRunning)
                 }
+                "checkNotificationListenerPermission" -> {
+                    result.success(isNotificationListenerEnabled(this))
+                }
+                "openNotificationListenerSettings" -> {
+                    val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                        Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                    } else {
+                        Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
+                    }
+                    startActivity(intent)
+                    result.success(true)
+                }
+                "simulatePaymentNotification" -> {
+                    val amount = (call.argument<Number>("amount"))?.toLong() ?: 35000L
+                    val note = call.argument<String>("note") ?: "ShopeePay"
+                    JajanNotificationListenerService.showActionableTransactionNotification(this, amount, note)
+                    result.success(true)
+                }
                 else -> result.notImplemented()
             }
         }
+    }
+
+    private fun isNotificationListenerEnabled(context: Context): Boolean {
+        val pkgName = context.packageName
+        val flat = Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners")
+        return flat != null && flat.contains(pkgName)
     }
 
     override fun onNewIntent(intent: Intent) {

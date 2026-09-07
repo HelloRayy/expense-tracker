@@ -18,6 +18,7 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
   final NativeBridge _bridge = NativeBridge.instance;
   bool _hasOverlayPermission = false;
   bool _hasAccessibilityPermission = false;
+  bool _hasNotificationListenerPermission = false;
   bool _isBubbleActive = false;
   bool _isChecking = true;
 
@@ -45,11 +46,13 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
     setState(() => _isChecking = true);
     final overlay = await _bridge.checkOverlayPermission();
     final access = await _bridge.checkAccessibilityPermission();
+    final notifListener = await _bridge.checkNotificationListenerPermission();
     final bubble = await _bridge.isFloatingBubbleRunning();
     if (mounted) {
       setState(() {
         _hasOverlayPermission = overlay;
         _hasAccessibilityPermission = access;
+        _hasNotificationListenerPermission = notifListener;
         _isBubbleActive = bubble;
         _isChecking = false;
       });
@@ -138,7 +141,7 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
                 const SizedBox(height: 24),
 
                 const Text(
-                  'IZIN YANG DIBUTUHKAN',
+                  'METODE DETEKSI BELANJA',
                   style: TextStyle(
                     color: AppColors.textMuted,
                     fontSize: 12,
@@ -148,11 +151,24 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
                 ),
                 const SizedBox(height: 12),
 
-                // Permission Item 1: Overlay
+                // Permission Item 1: Notification Listener (Recommended)
+                _permissionTile(
+                  title: 'Akses Notifikasi (0% CPU & Hemat Baterai)',
+                  description:
+                      'Mendeteksi pasif notifikasi transaksi dari ShopeePay, GoPay, DANA, & QRIS Bank. Menghadirkan tombol 1-tap "✓ Catat Langsung" di status bar tanpa membuat HP panas.',
+                  isGranted: _hasNotificationListenerPermission,
+                  badge: 'DIREKOMENDASIKAN',
+                  onAction: () async {
+                    await _bridge.openNotificationListenerSettings();
+                  },
+                ),
+                const SizedBox(height: 12),
+
+                // Permission Item 2: Overlay
                 _permissionTile(
                   title: 'Tampilkan di Atas Aplikasi Lain',
                   description:
-                      'Dibutuhkan untuk menampilkan floating reminder di atas Shopee.',
+                      'Dibutuhkan untuk menampilkan floating bubble kalkulator di atas aplikasi lain.',
                   isGranted: _hasOverlayPermission,
                   onAction: () async {
                     await _bridge.openOverlaySettings();
@@ -160,11 +176,11 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
                 ),
                 const SizedBox(height: 12),
 
-                // Permission Item 2: Accessibility
+                // Permission Item 3: Accessibility
                 _permissionTile(
-                  title: 'Layanan Aksesibilitas (Jajan Watcher)',
+                  title: 'Layanan Aksesibilitas (Opsional)',
                   description:
-                      'Dibutuhkan agar Android memberi tahu saat aplikasi Shopee dibuka.',
+                      'Mendeteksi saat membuka aplikasi Shopee & layar scanner QRIS.',
                   isGranted: _hasAccessibilityPermission,
                   onAction: () async {
                     await _bridge.openAccessibilitySettings();
@@ -283,6 +299,40 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
                         ),
                       ),
                       const SizedBox(height: 14),
+                      // Button 1: Test Notification Listener 1-Tap
+                      SizedBox(
+                        width: double.infinity,
+                        height: 46,
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            await _bridge.simulatePaymentNotification(
+                              amount: 35000,
+                              note: 'ShopeePay',
+                            );
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Notifikasi transaksi ShopeePay dikirim! Buka tirai notifikasi untuk coba tombol [✓ Catat Langsung].',
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.notifications_active, size: 18),
+                          label: const Text('Simulasi Transaksi Shopee (Rp 35.000)'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Button 2: Test Floating Chip
                       SizedBox(
                         width: double.infinity,
                         height: 46,
@@ -303,8 +353,8 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
                           icon: const Icon(Icons.touch_app, size: 18),
                           label: const Text('Simulasi Buka Shopee (Munculkan Chip)'),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.primary,
-                            side: const BorderSide(color: AppColors.primary),
+                            foregroundColor: AppColors.textSecondary,
+                            side: const BorderSide(color: Colors.white24),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -324,6 +374,7 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
     required String description,
     required bool isGranted,
     required VoidCallback onAction,
+    String? badge,
   }) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -346,13 +397,38 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    if (badge != null) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: AppColors.primary.withValues(alpha: 0.5)),
+                        ),
+                        child: Text(
+                          badge,
+                          style: const TextStyle(
+                            color: AppColors.primary,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ],
