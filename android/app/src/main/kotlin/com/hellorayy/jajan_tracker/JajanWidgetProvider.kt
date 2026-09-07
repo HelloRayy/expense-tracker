@@ -14,13 +14,21 @@ import java.util.Locale
 class JajanWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        updateWidgets(context, appWidgetManager, appWidgetIds)
+        try {
+            updateWidgets(context, appWidgetManager, appWidgetIds)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        super.onReceive(context, intent)
-        if (intent.action == ACTION_UPDATE_WIDGET) {
-            updateAllWidgets(context)
+        try {
+            super.onReceive(context, intent)
+            if (intent.action == ACTION_UPDATE_WIDGET) {
+                updateAllWidgets(context)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -29,36 +37,56 @@ class JajanWidgetProvider : AppWidgetProvider() {
         const val ACTION_QUICK_LOG = "ACTION_QUICK_LOG"
 
         fun updateAllWidgets(context: Context) {
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val componentName = ComponentName(context, JajanWidgetProvider::class.java)
-            val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
-            if (appWidgetIds != null && appWidgetIds.isNotEmpty()) {
-                updateWidgets(context, appWidgetManager, appWidgetIds)
+            try {
+                val appWidgetManager = AppWidgetManager.getInstance(context)
+                val componentName = ComponentName(context, JajanWidgetProvider::class.java)
+                val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
+                if (appWidgetIds != null && appWidgetIds.isNotEmpty()) {
+                    updateWidgets(context, appWidgetManager, appWidgetIds)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
 
         private fun updateWidgets(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-            val prefs = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
+            var remaining = 1500000L
+            var dailySafe = 50000L
 
-            // Keys in Flutter SharedPreferences are stored with "flutter." prefix
-            val remaining = if (prefs.contains("flutter.remaining_balance")) {
-                prefs.getLong("flutter.remaining_balance", 0L)
-            } else {
-                prefs.getInt("remaining_balance", 0).toLong()
-            }
+            try {
+                val prefs = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
+                val allEntries = prefs.all
 
-            val dailySafe = if (prefs.contains("flutter.daily_safe")) {
-                prefs.getLong("flutter.daily_safe", 0L)
-            } else {
-                prefs.getInt("daily_safe", 0).toLong()
+                // Safely read remaining_balance regardless of whether Flutter wrote it as Long or Int
+                val rawRemaining = allEntries["flutter.remaining_balance"] ?: allEntries["remaining_balance"]
+                if (rawRemaining is Number) {
+                    remaining = rawRemaining.toLong()
+                }
+
+                // Safely read daily_safe
+                val rawDaily = allEntries["flutter.daily_safe"] ?: allEntries["daily_safe"]
+                if (rawDaily is Number) {
+                    dailySafe = rawDaily.toLong()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
 
             val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID")).apply {
                 maximumFractionDigits = 0
             }
-            val balanceStr = formatter.format(remaining)
+            val balanceStr = try {
+                formatter.format(remaining)
+            } catch (_: Exception) {
+                "Rp $remaining"
+            }
+
             val dailyStr = if (remaining > 0) {
-                "Aman jajan ~${formatter.format(dailySafe)} / hari"
+                try {
+                    "Aman jajan ~${formatter.format(dailySafe)} / hari"
+                } catch (_: Exception) {
+                    "Aman jajan ~Rp $dailySafe / hari"
+                }
             } else {
                 "⚠️ Saldo jajan sudah habis!"
             }
@@ -76,15 +104,19 @@ class JajanWidgetProvider : AppWidgetProvider() {
             val pendingIntent = PendingIntent.getActivity(context, 1001, intent, flags)
 
             for (widgetId in appWidgetIds) {
-                val views = RemoteViews(context.packageName, R.layout.widget_jajan)
-                views.setTextViewText(R.id.widget_balance, balanceStr)
-                views.setTextViewText(R.id.widget_subtext, dailyStr)
+                try {
+                    val views = RemoteViews(context.packageName, R.layout.widget_jajan)
+                    views.setTextViewText(R.id.widget_balance, balanceStr)
+                    views.setTextViewText(R.id.widget_subtext, dailyStr)
 
-                // Tapping button or widget container triggers Quick-Log
-                views.setOnClickPendingIntent(R.id.widget_container, pendingIntent)
-                views.setOnClickPendingIntent(R.id.widget_btn_quick_log, pendingIntent)
+                    // Tapping button or widget container triggers Quick-Log
+                    views.setOnClickPendingIntent(R.id.widget_container, pendingIntent)
+                    views.setOnClickPendingIntent(R.id.widget_btn_quick_log, pendingIntent)
 
-                appWidgetManager.updateAppWidget(widgetId, views)
+                    appWidgetManager.updateAppWidget(widgetId, views)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
     }
