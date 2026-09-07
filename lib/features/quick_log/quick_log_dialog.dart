@@ -35,47 +35,74 @@ class QuickLogDialog extends StatefulWidget {
 }
 
 class _QuickLogDialogState extends State<QuickLogDialog> {
-  String _inputAmount = '';
+  String _expression = '';
   final TextEditingController _noteController = TextEditingController();
   bool _isSaving = false;
 
-  int get _numericAmount => int.tryParse(_inputAmount) ?? 0;
+  int _evaluate(String expr) {
+    if (expr.isEmpty) return 0;
+    final parts = expr.split('+');
+    int total = 0;
+    for (final part in parts) {
+      final clean = part.replaceAll('.', '').replaceAll(' ', '').trim();
+      total += int.tryParse(clean) ?? 0;
+    }
+    return total;
+  }
 
-  void _onNumpadPress(String val) {
+  int get _currentTotal => _evaluate(_expression);
+
+  void _onKeyPress(String key) {
     HapticFeedback.selectionClick();
     setState(() {
-      if (val == '⌫') {
-        if (_inputAmount.isNotEmpty) {
-          _inputAmount = _inputAmount.substring(0, _inputAmount.length - 1);
+      if (key == 'C') {
+        _expression = '';
+      } else if (key == '⌫') {
+        if (_expression.isNotEmpty) {
+          if (_expression.endsWith(' + ')) {
+            _expression = _expression.substring(0, _expression.length - 3);
+          } else {
+            _expression = _expression.substring(0, _expression.length - 1);
+          }
         }
-      } else if (val == '000') {
-        if (_inputAmount.isNotEmpty && _inputAmount.length <= 6) {
-          _inputAmount += '000';
+      } else if (key == '+') {
+        if (_expression.isNotEmpty && !_expression.endsWith(' + ')) {
+          _expression += ' + ';
         }
+      } else if (key == '000') {
+        if (_expression.isNotEmpty && !_expression.endsWith(' + ') && _expression.length <= 9) {
+          _expression += '000';
+        }
+      } else if (key == '00') {
+        if (_expression.isNotEmpty && !_expression.endsWith(' + ') && _expression.length <= 10) {
+          _expression += '00';
+        }
+      } else if (key.startsWith('+') && key.endsWith('rb')) {
+        // Preset shortcuts (+5rb, +10rb, +25rb, +50rb)
+        final numStr = key.replaceAll('+', '').replaceAll('rb', '');
+        final addAmount = (int.tryParse(numStr) ?? 0) * 1000;
+        final total = _currentTotal + addAmount;
+        _expression = total.toString();
+      } else if (key == '=') {
+        _submit();
       } else {
-        if (_inputAmount.length <= 8) {
-          _inputAmount += val;
+        // Digits 0-9
+        if (_expression.length <= 12) {
+          _expression += key;
         }
       }
     });
   }
 
-  void _onAddPreset(int amount) {
-    HapticFeedback.lightImpact();
-    setState(() {
-      final current = _numericAmount;
-      _inputAmount = (current + amount).toString();
-    });
-  }
-
   Future<void> _submit() async {
-    if (_numericAmount <= 0 || _isSaving) return;
+    final amount = _currentTotal;
+    if (amount <= 0 || _isSaving) return;
 
     setState(() => _isSaving = true);
     HapticFeedback.mediumImpact();
 
     final note = _noteController.text.trim().isEmpty ? 'Jajan' : _noteController.text.trim();
-    await widget.repository.addExpense(_numericAmount, note: note);
+    await widget.repository.addExpense(amount, note: note);
 
     if (mounted) {
       widget.onComplete?.call();
@@ -91,48 +118,79 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     final remaining = widget.repository.remainingBalance;
+
+    final sheetBg = isDark ? const Color(0xFF000000) : PirschColors.lightBg;
+    final btnBg = isDark ? const Color(0xFF18181A) : const Color(0xFFEBE6DA);
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final textSecondary = isDark ? const Color(0xFF8E8E93) : const Color(0xFF707070);
+
+    // Formatted display string
+    String displayString = '0';
+    if (_expression.isNotEmpty) {
+      if (_expression.contains(' + ')) {
+        displayString = _expression;
+      } else {
+        final val = int.tryParse(_expression);
+        if (val != null) {
+          displayString = CurrencyFormatter.format(val).replaceAll('Rp ', '');
+        } else {
+          displayString = _expression;
+        }
+      }
+    }
 
     return Container(
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
-        top: 20,
-        bottom: 20 + bottomInset,
+        top: 14,
+        bottom: 24 + bottomInset,
       ),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      decoration: BoxDecoration(
+        color: sheetBg,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.5),
+            blurRadius: 30,
+            offset: const Offset(0, -8),
+          ),
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Handle bar
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: AppColors.textMuted.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(2),
+          // Drag handle
+          Center(
+            child: Container(
+              width: 44,
+              height: 4.5,
+              decoration: BoxDecoration(
+                color: textSecondary.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(3),
+              ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
-          // Header: Title & Remaining Allowance Info
+          // Header Info Strip
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Row(
+              Row(
                 children: [
-                  Icon(Icons.bolt_rounded, color: PirschColors.mintGreen, size: 22),
-                  SizedBox(width: 6),
+                  const Icon(Icons.calculate_rounded, color: PirschColors.mintGreen, size: 20),
+                  const SizedBox(width: 8),
                   Text(
-                    'Catat Jajan',
+                    'Kalkulator Jajan',
                     style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      color: textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],
@@ -140,228 +198,238 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: remaining >= 0
-                      ? AppColors.primary.withValues(alpha: 0.15)
-                      : AppColors.danger.withValues(alpha: 0.15),
+                  color: PirschColors.mintGreen.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: PirschColors.mintGreen.withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   'Sisa: ${CurrencyFormatter.formatCompact(remaining)}',
-                  style: TextStyle(
-                    color: remaining >= 0 ? AppColors.primary : AppColors.danger,
-                    fontSize: 13,
+                  style: const TextStyle(
+                    color: PirschColors.mintGreen,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
-          // Amount Display Box
+          // Large Calculator Display (Right Aligned - Reference Style)
           Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-            decoration: BoxDecoration(
-              color: AppColors.background,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: _numericAmount > 0
-                    ? AppColors.primary.withValues(alpha: 0.5)
-                    : Colors.white10,
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            alignment: Alignment.centerRight,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Expanded(
+                if (_expression.contains(' + '))
+                  Text(
+                    '= ${CurrencyFormatter.format(_currentTotal)}',
+                    style: const TextStyle(
+                      color: PirschColors.mintGreen,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerRight,
                   child: Text(
-                    _numericAmount == 0
-                        ? 'Rp 0'
-                        : CurrencyFormatter.format(_numericAmount),
+                    displayString,
                     style: TextStyle(
-                      color: _numericAmount == 0
-                          ? AppColors.textMuted
-                          : AppColors.textPrimary,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
+                      color: textPrimary,
+                      fontSize: 48,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: -1,
                     ),
                   ),
                 ),
-                if (_inputAmount.isNotEmpty)
-                  GestureDetector(
-                    onTap: () {
-                      HapticFeedback.selectionClick();
-                      setState(() => _inputAmount = '');
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(
-                        color: Colors.white10,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.clear,
-                        size: 16,
-                        color: AppColors.textSecondary,
-                      ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // Inline Note / Category Chips Input
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 40,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: btnBg.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  alignment: Alignment.centerLeft,
+                  child: TextField(
+                    controller: _noteController,
+                    style: TextStyle(color: textPrimary, fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: 'Keterangan (opsional, cth: Kopi, Mie Ayam)',
+                      hintStyle: TextStyle(color: textSecondary, fontSize: 12),
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
                     ),
                   ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // Note Field (Compact)
-          TextField(
-            controller: _noteController,
-            style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
-            decoration: InputDecoration(
-              isDense: true,
-              hintText: 'Keterangan jajan (opsional, cth: Kopi, Cilok)',
-              hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 13),
-              filled: true,
-              fillColor: AppColors.background.withValues(alpha: 0.5),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
+                ),
               ),
-            ),
+              const SizedBox(width: 8),
+              // Category Quick Chips
+              _buildCategoryChip(Icons.restaurant_rounded, 'Makan', btnBg, textSecondary),
+              const SizedBox(width: 6),
+              _buildCategoryChip(Icons.local_cafe_rounded, 'Kopi', btnBg, textSecondary),
+            ],
           ),
-          const SizedBox(height: 12),
-
-          // Quick Presets Row
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _presetChip('+5rb', 5000),
-                _presetChip('+10rb', 10000),
-                _presetChip('+15rb', 15000),
-                _presetChip('+20rb', 20000),
-                _presetChip('+25rb', 25000),
-                _presetChip('+50rb', 50000),
-              ],
-            ),
-          ),
-          const SizedBox(height: 14),
-
-          // Custom Fast Numpad Grid
-          _buildNumpad(),
-
           const SizedBox(height: 16),
 
-          // Submit Button
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: _numericAmount > 0 && !_isSaving ? _submit : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                disabledBackgroundColor: AppColors.surfaceLight,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                elevation: 0,
-              ),
-              child: _isSaving
-                  ? const SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Text(
-                      'Simpan Pengeluaran (Catat)',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-            ),
-          ),
+          // 4-Column Thumb-Friendly Circular Keypad
+          _buildKeypadGrid(btnBg: btnBg, textPrimary: textPrimary, isDark: isDark),
         ],
       ),
     );
   }
 
-  Widget _presetChip(String label, int val) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: InkWell(
-        onTap: () => _onAddPreset(val),
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: AppColors.surfaceLight,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+  Widget _buildCategoryChip(IconData icon, String text, Color bg, Color iconColor) {
+    return InkWell(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        _noteController.text = text;
+      },
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(10),
         ),
+        child: Icon(icon, size: 18, color: iconColor),
       ),
     );
   }
 
-  Widget _buildNumpad() {
-    final buttons = [
-      ['7', '8', '9'],
-      ['4', '5', '6'],
-      ['1', '2', '3'],
-      ['000', '0', '⌫'],
+  Widget _buildKeypadGrid({
+    required Color btnBg,
+    required Color textPrimary,
+    required bool isDark,
+  }) {
+    // 5 Rows x 4 Columns Thumb-Friendly Circular Buttons
+    final rows = [
+      // Row 1: C, ⌫, 000, +
+      [
+        {'label': 'C', 'type': 'clear', 'color': PirschColors.roseRed},
+        {'label': '⌫', 'type': 'backspace', 'color': PirschColors.roseRed},
+        {'label': '000', 'type': 'action', 'color': textPrimary},
+        {'label': '+', 'type': 'operator', 'color': PirschColors.mintGreen},
+      ],
+      // Row 2: 7, 8, 9, +5rb
+      [
+        {'label': '7', 'type': 'digit', 'color': textPrimary},
+        {'label': '8', 'type': 'digit', 'color': textPrimary},
+        {'label': '9', 'type': 'digit', 'color': textPrimary},
+        {'label': '+5rb', 'type': 'preset', 'color': isDark ? const Color(0xFF9E9E9E) : const Color(0xFF555555)},
+      ],
+      // Row 3: 4, 5, 6, +10rb
+      [
+        {'label': '4', 'type': 'digit', 'color': textPrimary},
+        {'label': '5', 'type': 'digit', 'color': textPrimary},
+        {'label': '6', 'type': 'digit', 'color': textPrimary},
+        {'label': '+10rb', 'type': 'preset', 'color': isDark ? const Color(0xFF9E9E9E) : const Color(0xFF555555)},
+      ],
+      // Row 4: 1, 2, 3, +25rb
+      [
+        {'label': '1', 'type': 'digit', 'color': textPrimary},
+        {'label': '2', 'type': 'digit', 'color': textPrimary},
+        {'label': '3', 'type': 'digit', 'color': textPrimary},
+        {'label': '+25rb', 'type': 'preset', 'color': isDark ? const Color(0xFF9E9E9E) : const Color(0xFF555555)},
+      ],
+      // Row 5: 00, 0, +50rb, = (Large Green Submit)
+      [
+        {'label': '00', 'type': 'action', 'color': textPrimary},
+        {'label': '0', 'type': 'digit', 'color': textPrimary},
+        {'label': '+50rb', 'type': 'preset', 'color': isDark ? const Color(0xFF9E9E9E) : const Color(0xFF555555)},
+        {'label': '=', 'type': 'submit', 'color': Colors.white},
+      ],
     ];
 
-    return Column(
-      children: buttons.map((row) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Row(
-            children: row.map((btn) {
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: InkWell(
-                    onTap: () => _onNumpadPress(btn),
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      height: 46,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: btn == '⌫'
-                            ? AppColors.surfaceLight.withValues(alpha: 0.6)
-                            : AppColors.background.withValues(alpha: 0.7),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        btn,
-                        style: TextStyle(
-                          fontSize: btn == '000' || btn == '⌫' ? 17 : 20,
-                          fontWeight: FontWeight.w600,
-                          color: btn == '⌫'
-                              ? AppColors.danger
-                              : AppColors.textPrimary,
-                        ),
-                      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate circle diameter to maintain perfect roundness
+        final availableWidth = constraints.maxWidth;
+        final buttonSize = ((availableWidth - (3 * 12)) / 4).clamp(54.0, 72.0);
+
+        return Column(
+          children: rows.map((row) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: row.map((btn) {
+                  return _buildThumbButton(
+                    item: btn,
+                    size: buttonSize,
+                    btnBg: btnBg,
+                  );
+                }).toList(),
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  Widget _buildThumbButton({
+    required Map<String, dynamic> item,
+    required double size,
+    required Color btnBg,
+  }) {
+    final label = item['label'] as String;
+    final type = item['type'] as String;
+    final textColor = item['color'] as Color;
+
+    final isSubmit = type == 'submit';
+    final isOperator = type == 'operator';
+
+    // Background color: Green for '=', slightly lighter for operators, standard circular for digits
+    Color circleBg = btnBg;
+    if (isSubmit) {
+      circleBg = const Color(0xFF00897B); // Vibrant Emerald Green
+    } else if (isOperator) {
+      circleBg = btnBg.withValues(alpha: 0.9);
+    }
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Material(
+        color: circleBg,
+        shape: const CircleBorder(),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => _onKeyPress(label),
+          customBorder: const CircleBorder(),
+          splashColor: isSubmit ? Colors.white30 : PirschColors.mintGreen.withValues(alpha: 0.3),
+          child: Center(
+            child: type == 'backspace'
+                ? Icon(Icons.backspace_outlined, color: textColor, size: 22)
+                : Text(
+                    label,
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: isSubmit
+                          ? 32
+                          : (type == 'preset'
+                              ? 13
+                              : (type == 'action' ? 18 : 24)),
+                      fontWeight: (isSubmit || type == 'digit' || type == 'clear')
+                          ? FontWeight.w600
+                          : FontWeight.w500,
                     ),
                   ),
-                ),
-              );
-            }).toList(),
           ),
-        );
-      }).toList(),
+        ),
+      ),
     );
   }
 }

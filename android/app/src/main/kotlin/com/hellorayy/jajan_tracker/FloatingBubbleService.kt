@@ -38,6 +38,7 @@ class FloatingBubbleService : Service() {
     private lateinit var calcParams: WindowManager.LayoutParams
 
     private var currentAmount: Long = 0L
+    private var expression: String = ""
     private var isStandalone: Boolean = false
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -234,13 +235,15 @@ class FloatingBubbleService : Service() {
         // Clear Button
         view.findViewById<View>(R.id.btn_calc_clear)?.setOnClickListener {
             triggerHaptic(it)
+            expression = ""
             currentAmount = 0L
             updateCalculatorDisplay()
         }
 
-        // Numpad Buttons
+        // Numpad Buttons (0-9, 00, 000)
         val numIds = mapOf(
             R.id.num_0 to "0",
+            R.id.num_00 to "00",
             R.id.num_1 to "1",
             R.id.num_2 to "2",
             R.id.num_3 to "3",
@@ -260,19 +263,29 @@ class FloatingBubbleService : Service() {
             }
         }
 
+        // Plus / Operator Button
+        view.findViewById<View>(R.id.btn_calc_plus)?.setOnClickListener {
+            triggerHaptic(it)
+            if (expression.isNotEmpty() && !expression.endsWith(" + ")) {
+                expression += " + "
+                updateCalculatorDisplay()
+            }
+        }
+
         // Backspace Button
         view.findViewById<View>(R.id.num_backspace)?.setOnClickListener {
             triggerHaptic(it)
-            val s = currentAmount.toString()
-            currentAmount = if (s.length > 1) {
-                s.substring(0, s.length - 1).toLongOrNull() ?: 0L
-            } else {
-                0L
+            if (expression.isNotEmpty()) {
+                expression = if (expression.endsWith(" + ")) {
+                    expression.substring(0, expression.length - 3)
+                } else {
+                    expression.substring(0, expression.length - 1)
+                }
+                updateCalculatorDisplay()
             }
-            updateCalculatorDisplay()
         }
 
-        // Preset Chips
+        // Preset Chips (+5rb, +10rb, +25rb, +50rb)
         view.findViewById<View>(R.id.chip_5k)?.setOnClickListener {
             triggerHaptic(it)
             onAddPreset(5000L)
@@ -281,19 +294,23 @@ class FloatingBubbleService : Service() {
             triggerHaptic(it)
             onAddPreset(10000L)
         }
-        view.findViewById<View>(R.id.chip_20k)?.setOnClickListener {
+        view.findViewById<View>(R.id.chip_25k)?.setOnClickListener {
             triggerHaptic(it)
-            onAddPreset(20000L)
+            onAddPreset(25000L)
         }
         view.findViewById<View>(R.id.chip_50k)?.setOnClickListener {
             triggerHaptic(it)
             onAddPreset(50000L)
         }
 
-        // Save Button
+        // Save / Equal Button
         view.findViewById<View>(R.id.btn_calc_save)?.setOnClickListener {
             triggerHaptic(it)
-            saveExpense()
+            currentAmount = getCurrentTotal()
+            if (currentAmount > 0) {
+                saveExpense()
+                collapseToBubble()
+            }
         }
     }
 
@@ -303,27 +320,65 @@ class FloatingBubbleService : Service() {
         } catch (_: Exception) {}
     }
 
+    private fun evaluateExpression(expr: String): Long {
+        if (expr.isEmpty()) return 0L
+        val parts = expr.split("+")
+        var total = 0L
+        for (part in parts) {
+            val clean = part.replace(".", "").replace(" ", "").trim()
+            total += clean.toLongOrNull() ?: 0L
+        }
+        return total
+    }
+
+    private fun getCurrentTotal(): Long = evaluateExpression(expression)
+
     private fun onNumpadDigit(digit: String) {
-        val currentStr = if (currentAmount == 0L) "" else currentAmount.toString()
-        if (currentStr.length + digit.length <= 9) { // Up to 999 million
-            currentAmount = (currentStr + digit).toLongOrNull() ?: currentAmount
-            updateCalculatorDisplay()
+        if (digit == "000" || digit == "00") {
+            if (expression.isNotEmpty() && !expression.endsWith(" + ") && expression.length <= 10) {
+                expression += digit
+                updateCalculatorDisplay()
+            }
+        } else {
+            if (expression.length <= 12) {
+                expression += digit
+                updateCalculatorDisplay()
+            }
         }
     }
 
     private fun onAddPreset(nominal: Long) {
-        currentAmount += nominal
+        val total = getCurrentTotal() + nominal
+        expression = total.toString()
         updateCalculatorDisplay()
     }
 
     private fun updateCalculatorDisplay() {
         val view = calcView ?: return
         val display = view.findViewById<TextView>(R.id.tv_calc_display)
+        val formula = view.findViewById<TextView>(R.id.tv_calc_formula)
 
         val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID")).apply {
             maximumFractionDigits = 0
         }
-        display?.text = formatter.format(currentAmount)
+
+        if (expression.isEmpty()) {
+            display?.text = "0"
+            formula?.visibility = View.GONE
+        } else if (expression.contains(" + ")) {
+            display?.text = expression
+            val total = getCurrentTotal()
+            formula?.text = "= ${formatter.format(total)}"
+            formula?.visibility = View.VISIBLE
+        } else {
+            val num = expression.toLongOrNull()
+            if (num != null) {
+                display?.text = formatter.format(num).replace("Rp", "").trim()
+            } else {
+                display?.text = expression
+            }
+            formula?.visibility = View.GONE
+        }
     }
 
     private fun expandToCalculator() {
@@ -348,6 +403,7 @@ class FloatingBubbleService : Service() {
         }
         calcView?.findViewById<TextView>(R.id.tv_calc_remaining)?.text = "Sisa: ${formatter.format(remaining)}"
 
+        expression = ""
         currentAmount = 0L
         updateCalculatorDisplay()
 
