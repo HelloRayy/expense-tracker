@@ -22,7 +22,7 @@ class DbHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE budget (
@@ -43,9 +43,20 @@ class DbHelper {
           )
         ''');
 
+        await db.execute('''
+          CREATE INDEX IF NOT EXISTS idx_expenses_created_at ON expenses (created_at DESC)
+        ''');
+
         // Insert default initial budget (e.g. Rp 1.500.000, payday 25th)
         final defaultBudget = BudgetModel.createDefault(total: 1500000, payday: 25);
         await db.insert('budget', defaultBudget.toMap());
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('''
+            CREATE INDEX IF NOT EXISTS idx_expenses_created_at ON expenses (created_at DESC)
+          ''');
+        }
       },
     );
   }

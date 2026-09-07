@@ -96,5 +96,46 @@ void main() {
       );
       expect(expense.toMap()['note'], 'Jajan');
     });
+
+    test('ExpenseModel handles ISO-8601 string parsing with or without milliseconds', () {
+      final mapWithMs = {
+        'id': 2,
+        'amount': 30000,
+        'note': 'Makan Siang',
+        'created_at': '2026-09-07T21:15:30.123',
+      };
+      final exp1 = ExpenseModel.fromMap(mapWithMs);
+      expect(exp1.createdAt.year, 2026);
+      expect(exp1.createdAt.month, 9);
+      expect(exp1.createdAt.day, 7);
+
+      final mapWithoutMs = {
+        'id': 3,
+        'amount': 45000,
+        'note': 'Bensin',
+        'created_at': '2026-09-07T21:15:30',
+      };
+      final exp2 = ExpenseModel.fromMap(mapWithoutMs);
+      expect(exp2.amount, 45000);
+      expect(exp2.createdAt.year, 2026);
+    });
+  });
+
+  group('BudgetModel Default Creation & Rollover Tests', () {
+    test('createDefault produces valid start and end dates', () {
+      final budget = BudgetModel.createDefault(total: 2000000, payday: 25);
+      expect(budget.totalBudget, 2000000);
+      expect(budget.paydayDay, 25);
+      expect(budget.endDate.isAfter(budget.startDate), isTrue);
+      expect(budget.daysRemaining, greaterThan(0));
+    });
+
+    test('Budget period duration is approximately one month', () {
+      final budget = BudgetModel.createDefault(payday: 1);
+      final differenceInDays = budget.endDate.difference(budget.startDate).inDays;
+      expect(differenceInDays, greaterThanOrEqualTo(28));
+      expect(differenceInDays, lessThanOrEqualTo(32));
+    });
   });
 }
+

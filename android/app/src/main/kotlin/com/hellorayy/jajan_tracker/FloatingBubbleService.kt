@@ -14,6 +14,7 @@ import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
 import android.view.Gravity
+import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -226,11 +227,13 @@ class FloatingBubbleService : Service() {
 
         // Close / Collapse Button
         view.findViewById<View>(R.id.btn_calc_close)?.setOnClickListener {
+            triggerHaptic(it)
             collapseToBubble()
         }
 
         // Clear Button
         view.findViewById<View>(R.id.btn_calc_clear)?.setOnClickListener {
+            triggerHaptic(it)
             currentAmount = 0L
             updateCalculatorDisplay()
         }
@@ -252,12 +255,14 @@ class FloatingBubbleService : Service() {
 
         for ((id, strVal) in numIds) {
             view.findViewById<View>(id)?.setOnClickListener {
+                triggerHaptic(it)
                 onNumpadDigit(strVal)
             }
         }
 
         // Backspace Button
         view.findViewById<View>(R.id.num_backspace)?.setOnClickListener {
+            triggerHaptic(it)
             val s = currentAmount.toString()
             currentAmount = if (s.length > 1) {
                 s.substring(0, s.length - 1).toLongOrNull() ?: 0L
@@ -268,15 +273,34 @@ class FloatingBubbleService : Service() {
         }
 
         // Preset Chips
-        view.findViewById<View>(R.id.chip_5k)?.setOnClickListener { onAddPreset(5000L) }
-        view.findViewById<View>(R.id.chip_10k)?.setOnClickListener { onAddPreset(10000L) }
-        view.findViewById<View>(R.id.chip_20k)?.setOnClickListener { onAddPreset(20000L) }
-        view.findViewById<View>(R.id.chip_50k)?.setOnClickListener { onAddPreset(50000L) }
+        view.findViewById<View>(R.id.chip_5k)?.setOnClickListener {
+            triggerHaptic(it)
+            onAddPreset(5000L)
+        }
+        view.findViewById<View>(R.id.chip_10k)?.setOnClickListener {
+            triggerHaptic(it)
+            onAddPreset(10000L)
+        }
+        view.findViewById<View>(R.id.chip_20k)?.setOnClickListener {
+            triggerHaptic(it)
+            onAddPreset(20000L)
+        }
+        view.findViewById<View>(R.id.chip_50k)?.setOnClickListener {
+            triggerHaptic(it)
+            onAddPreset(50000L)
+        }
 
         // Save Button
         view.findViewById<View>(R.id.btn_calc_save)?.setOnClickListener {
+            triggerHaptic(it)
             saveExpense()
         }
+    }
+
+    private fun triggerHaptic(v: View?) {
+        try {
+            v?.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+        } catch (_: Exception) {}
     }
 
     private fun onNumpadDigit(digit: String) {
@@ -363,30 +387,97 @@ class FloatingBubbleService : Service() {
         if (currentAmount <= 0) return
 
         try {
-            // 1. Insert directly into SQLite database jajan_tracker.db
             val dbPath = getDatabasePath("jajan_tracker.db")
+            var exactRemaining: Long? = null
+            var exactDailySafe: Long? = null
+
+            // 1. Insert into SQLite with transaction and reconcile balance directly from DB
             if (dbPath.exists()) {
                 val db = SQLiteDatabase.openDatabase(dbPath.path, null, SQLiteDatabase.OPEN_READWRITE)
-                val values = ContentValues().apply {
-                    put("amount", currentAmount)
-                    put("note", "Jajan")
-                    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US)
-                    put("created_at", sdf.format(Date()))
+                try {
+                    db.beginTransaction()
+                    try {
+                        val values = ContentValues().apply {
+                            put("amount", currentAmount)
+                            put("note", "Jajan")
+                            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US)
+                            put("created_at", sdf.format(Date()))
+                        }
+                        db.insert("expenses", null, values)
+                        db.setTransactionSuccessful()
+                    } finally {
+                        db.endTransaction()
+                    }
+
+                    // Query exact active budget & total expenses to prevent any cache drift
+                    var totalBudget = 1500000L
+                    var startDate = ""
+                    var endDate = ""
+                    val budgetCursor = db.rawQuery("SELECT total_budget, start_date, end_date FROM budget WHERE id = 1 LIMIT 1", null)
+                    if (budgetCursor.moveToFirst()) {
+                        totalBudget = budgetCursor.getLong(0)
+                        startDate = budgetCursor.getString(1)
+                        endDate = budgetCursor.getString(2)
+                    }
+                    budgetCursor.close()
+
+                    var totalSpent = 0L
+                    if (startDate.isNotEmpty() && endDate.isNotEmpty()) {
+                        val sumCursor = db.rawQuery(
+                            "SELECT SUM(amount) FROM expenses WHERE created_at >= ? AND created_at <= ?",
+                            arrayOf(startDate, endDate)
+                        )
+                        if (sumCursor.moveToFirst()) {
+                            totalSpent = sumCursor.getLong(0)
+                        }
+                        sumCursor.close()
+                    } else {
+                        val sumCursor = db.rawQuery("SELECT SUM(amount) FROM expenses", null)
+                        if (sumCursor.moveToFirst()) {
+                            totalSpent = sumCursor.getLong(0)
+                        }
+                        sumCursor.close()
+                    }
+
+                    val computed = totalBudget - totalSpent
+                    exactRemaining = computed
+
+                    // Calculate days remaining if endDate available
+                    if (endDate.isNotEmpty()) {
+                        try {
+                            val sdfEnd = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+                            val endClean = endDate.split(".")[0]
+                            val endD = sdfEnd.parse(endClean)
+                            if (endD != null) {
+                                val diffMs = endD.time - System.currentTimeMillis()
+                                val days = Math.max(1L, Math.ceil(diffMs / (1000.0 * 60 * 60 * 24)).toLong())
+                                exactDailySafe = if (computed > 0) computed / days else 0L
+                            }
+                        } catch (_: Exception) {}
+                    }
+                } finally {
+                    db.close()
                 }
-                db.insert("expenses", null, values)
-                db.close()
             }
 
-            // 2. Update SharedPreferences
+            // 2. Update SharedPreferences atomically
             val prefs = getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
-            val all = prefs.all
-            var remaining = 1500000L
-            val raw = all["flutter.remaining_balance"] ?: all["remaining_balance"]
-            if (raw is Number) {
-                remaining = raw.toLong()
+            val editor = prefs.edit()
+            if (exactRemaining != null) {
+                editor.putLong("flutter.remaining_balance", exactRemaining)
+                if (exactDailySafe != null) {
+                    editor.putLong("flutter.daily_safe", exactDailySafe)
+                }
+            } else {
+                val all = prefs.all
+                var remaining = 1500000L
+                val raw = all["flutter.remaining_balance"] ?: all["remaining_balance"]
+                if (raw is Number) {
+                    remaining = raw.toLong()
+                }
+                editor.putLong("flutter.remaining_balance", remaining - currentAmount)
             }
-            val newRemaining = remaining - currentAmount
-            prefs.edit().putLong("flutter.remaining_balance", newRemaining).apply()
+            editor.apply()
 
             // 3. Update Widget & Quick Tile
             JajanWidgetProvider.updateAllWidgets(this)
