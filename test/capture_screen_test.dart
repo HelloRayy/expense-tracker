@@ -22,6 +22,10 @@ class MockBudgetRepo extends ChangeNotifier implements BudgetRepository {
     ExpenseModel(id: 2, amount: 35000, note: 'Nasi Padang Siang', createdAt: DateTime.now().subtract(const Duration(hours: 5))),
     ExpenseModel(id: 3, amount: 18000, note: 'Gojek Stasiun', createdAt: DateTime.now().subtract(const Duration(hours: 8))),
     ExpenseModel(id: 4, amount: 42000, note: 'ShopeePay Minimarket', createdAt: DateTime.now().subtract(const Duration(days: 1))),
+    ExpenseModel(id: 5, amount: 50000, note: 'Bensin Motor', createdAt: DateTime.now().subtract(const Duration(days: 1, hours: 4))),
+    ExpenseModel(id: 6, amount: 15000, note: 'Es Teh Manis', createdAt: DateTime.now().subtract(const Duration(days: 2))),
+    ExpenseModel(id: 7, amount: 28000, note: 'Mie Ayam Bakso', createdAt: DateTime.now().subtract(const Duration(days: 2, hours: 3))),
+    ExpenseModel(id: 8, amount: 20000, note: 'Cemilan Mart', createdAt: DateTime.now().subtract(const Duration(days: 3))),
   ];
 
   @override
@@ -229,5 +233,41 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Verify capping at 5 transactions and toggling expand/collapse', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.75;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final repo = MockBudgetRepo();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          fontFamily: 'Inter',
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: PirschColors.darkBg,
+        ),
+        home: DashboardScreen(repository: repo),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+    await tester.pumpAndSettle();
+
+    // Verify 5 items shown initially
+    expect(find.text('5 dari 8'), findsOneWidget);
+    expect(find.text('Kopi Kenangan'), findsOneWidget);
+    expect(find.text('Bensin Motor'), findsOneWidget); // 5th item
+    expect(find.text('Es Teh Manis'), findsNothing); // 6th item not shown
+
+    // Tap badge to expand
+    await tester.tap(find.text('5 dari 8'));
+    await tester.pumpAndSettle();
+
+    // Now all 8 items shown
+    expect(find.text('8 Transaksi'), findsOneWidget);
   });
 }

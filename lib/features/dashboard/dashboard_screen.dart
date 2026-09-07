@@ -17,6 +17,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingObserver {
+  bool _showAllTransactions = false;
+
   @override
   void initState() {
     super.initState();
@@ -67,6 +69,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         final dailyAllowance = widget.repository.dailyAllowance;
         final daysLeft = budget?.daysRemaining ?? 1;
         final expenses = widget.repository.expenses;
+        final displayedExpenses = _showAllTransactions ? expenses : expenses.take(5).toList();
         final isOverBudget = remaining < 0;
 
         return Scaffold(
@@ -152,46 +155,69 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Transaksi Terbaru',
-                                style: TextStyle(
-                                  color: textPrimary,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
+                              Expanded(
+                                child: Text(
+                                  'Transaksi Terbaru',
+                                  style: TextStyle(
+                                    color: textPrimary,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: elevatedColor,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: borderColor),
-                                ),
-                                child: Text(
-                                  '${expenses.length} Transaksi',
-                                  style: TextStyle(
-                                    color: textSecondary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
+                              const SizedBox(width: 8),
+                              if (expenses.isNotEmpty)
+                                Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: expenses.length > 5
+                                        ? () {
+                                            setState(() {
+                                              _showAllTransactions = !_showAllTransactions;
+                                            });
+                                          }
+                                        : null,
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: elevatedColor,
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(color: borderColor),
+                                      ),
+                                      child: Text(
+                                        expenses.length > 5 && !_showAllTransactions
+                                            ? '5 dari ${expenses.length}'
+                                            : '${expenses.length} Transaksi',
+                                        style: TextStyle(
+                                          color: expenses.length > 5
+                                              ? PirschColors.mintGreen
+                                              : textSecondary,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
                             ],
                           ),
                           const SizedBox(height: 12),
 
-                          // Transactions List
+                          // Transactions List (Capped to top 5 by default)
                           if (expenses.isEmpty)
                             _buildEmptyState(
                               elevatedColor: elevatedColor,
                               textPrimary: textPrimary,
                               textSecondary: textSecondary,
                             )
-                          else
-                            ...expenses.map((exp) => _buildExpenseItem(
+                          else ...[
+                            ...displayedExpenses.map((exp) => _buildExpenseItem(
                                   exp: exp,
                                   cardColor: cardColor,
                                   elevatedColor: elevatedColor,
@@ -199,6 +225,36 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                                   textPrimary: textPrimary,
                                   textSecondary: textSecondary,
                                 )),
+                            if (expenses.length > 5) ...[
+                              const SizedBox(height: 10),
+                              Center(
+                                child: TextButton.icon(
+                                  onPressed: () {
+                                    setState(() {
+                                      _showAllTransactions = !_showAllTransactions;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    _showAllTransactions
+                                        ? Icons.keyboard_arrow_up_rounded
+                                        : Icons.keyboard_arrow_down_rounded,
+                                    color: PirschColors.mintGreen,
+                                    size: 18,
+                                  ),
+                                  label: Text(
+                                    _showAllTransactions
+                                        ? 'Tampilkan Lebih Sedikit'
+                                        : 'Lihat Semua (${expenses.length} Transaksi)',
+                                    style: const TextStyle(
+                                      color: PirschColors.mintGreen,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
 
                           // Padding space for floating bottom bar
                           const SizedBox(height: 110),
@@ -634,14 +690,19 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Kategori Pengeluaran',
-              style: TextStyle(
-                color: textPrimary,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
+            Expanded(
+              child: Text(
+                'Kategori Pengeluaran',
+                style: TextStyle(
+                  color: textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(width: 8),
             Text(
               'Sentuh untuk catat',
               style: TextStyle(
