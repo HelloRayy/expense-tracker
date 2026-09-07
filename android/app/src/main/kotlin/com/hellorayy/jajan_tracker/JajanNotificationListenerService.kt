@@ -163,28 +163,39 @@ class JajanNotificationListenerService : NotificationListenerService() {
                 flags
             )
 
+            val prefs = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
+            val allEntries = prefs.all
+            var remaining = 1500000L
+            val rawRemaining = allEntries["flutter.remaining_balance"] ?: allEntries["remaining_balance"]
+            if (rawRemaining is Number) {
+                remaining = rawRemaining.toLong()
+            }
+            val newRemaining = remaining - amount
+            val newRemainingStr = formatter.format(newRemaining)
+
+            val subtitle = if (newRemaining >= 0) {
+                "Sisa jajan jadi: $newRemainingStr"
+            } else {
+                "⚠️ Overbudget! Sisa: $newRemainingStr"
+            }
+
             val builder = NotificationCompat.Builder(context, TRANSACTION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_quick_tile)
-                .setContentTitle("🛍️ Terdeteksi Jajan $formattedAmount")
-                .setContentText("Dari $sourceNote. Catat ke pengeluaran jajan sekarang?")
+                .setContentTitle("🛍️ $sourceNote • $formattedAmount")
+                .setContentText(subtitle)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_PROMO)
                 .setAutoCancel(true)
                 .setDeleteIntent(dismissPendingIntent)
                 .addAction(
                     android.R.drawable.checkbox_on_background,
-                    "✓ Catat Langsung",
+                    "✓ Catat $formattedAmount",
                     logPendingIntent
                 )
                 .addAction(
                     android.R.drawable.ic_menu_edit,
-                    "✎ Kalkulator",
+                    "✎ Ubah",
                     calcPendingIntent
-                )
-                .addAction(
-                    android.R.drawable.ic_menu_close_clear_cancel,
-                    "✕ Abaikan",
-                    dismissPendingIntent
                 )
 
             nm.notify(notifId, builder.build())

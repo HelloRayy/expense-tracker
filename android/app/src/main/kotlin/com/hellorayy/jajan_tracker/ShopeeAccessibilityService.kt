@@ -172,12 +172,12 @@ class ShopeeAccessibilityService : AccessibilityService() {
             val pendingIntent = PendingIntent.getActivity(context, 1002, intent, flags)
 
             val title = if (isFromQris) {
-                "⚡ Mau Bayar QRIS? Sisa Jajan: $formattedBalance"
+                "⚡ QRIS • Sisa $formattedBalance"
             } else {
-                "🛍️ Ingat Sisa Uang Jajan: $formattedBalance"
+                "🛍️ Sisa Jajan: $formattedBalance"
             }
 
-            val subtitle = "Aman jajan ~$formattedDaily / hari lagi sebelum gajian. Ketuk untuk catat!"
+            val subtitle = "Aman: $formattedDaily / hari"
 
             val builder = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_quick_tile)
