@@ -123,13 +123,19 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                '⚡ Catat Jajan',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              const Row(
+                children: [
+                  Icon(Icons.bolt_rounded, color: PirschColors.mintGreen, size: 22),
+                  SizedBox(width: 6),
+                  Text(
+                    'Catat Jajan',
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
