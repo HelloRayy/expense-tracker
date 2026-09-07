@@ -183,8 +183,14 @@ class JajanNotificationListenerService : NotificationListenerService() {
                 .setSmallIcon(R.drawable.ic_quick_tile)
                 .setContentTitle("🛍️ $sourceNote • $formattedAmount")
                 .setContentText(subtitle)
+                .setStyle(
+                    NotificationCompat.BigTextStyle()
+                        .setBigContentTitle("🛍️ $sourceNote • $formattedAmount")
+                        .bigText(subtitle)
+                )
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_PROMO)
+                .setCategory(NotificationCompat.CATEGORY_REMINDER)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setAutoCancel(true)
                 .setDeleteIntent(dismissPendingIntent)
                 .addAction(

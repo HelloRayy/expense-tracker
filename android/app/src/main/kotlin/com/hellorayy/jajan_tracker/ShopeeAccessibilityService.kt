@@ -298,7 +298,13 @@ class ShopeeAccessibilityService : AccessibilityService() {
                 .setSmallIcon(R.drawable.ic_quick_tile)
                 .setContentTitle(title)
                 .setContentText(subtitle)
+                .setStyle(
+                    NotificationCompat.BigTextStyle()
+                        .setBigContentTitle(title)
+                        .bigText(subtitle)
+                )
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
