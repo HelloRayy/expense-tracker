@@ -75,20 +75,26 @@ class JajanWidgetProvider : AppWidgetProvider() {
             val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID")).apply {
                 maximumFractionDigits = 0
             }
-            val balanceStr = try {
+            val dailyStr = if (remaining > 0 && dailySafe > 0) {
+                try {
+                    formatter.format(dailySafe)
+                } catch (_: Exception) {
+                    "Rp $dailySafe"
+                }
+            } else {
+                "Rp 0"
+            }
+
+            val totalStr = try {
                 formatter.format(remaining)
             } catch (_: Exception) {
                 "Rp $remaining"
             }
 
-            val dailyStr = if (remaining > 0) {
-                try {
-                    "Aman jajan ~${formatter.format(dailySafe)} / hari"
-                } catch (_: Exception) {
-                    "Aman jajan ~Rp $dailySafe / hari"
-                }
+            val subtext = if (remaining > 0) {
+                "Sisa periode: $totalStr"
             } else {
-                "⚠️ Saldo jajan sudah habis!"
+                "⚠️ Saldo periode habis!"
             }
 
             // PendingIntent to launch Floating Calculator directly (via Trampoline)
@@ -105,8 +111,14 @@ class JajanWidgetProvider : AppWidgetProvider() {
             for (widgetId in appWidgetIds) {
                 try {
                     val views = RemoteViews(context.packageName, R.layout.widget_jajan)
-                    views.setTextViewText(R.id.widget_balance, balanceStr)
-                    views.setTextViewText(R.id.widget_subtext, dailyStr)
+                    views.setTextViewText(R.id.widget_balance, dailyStr)
+                    views.setTextViewText(R.id.widget_subtext, subtext)
+
+                    if (remaining <= 0 || dailySafe <= 0) {
+                        views.setTextColor(R.id.widget_balance, android.graphics.Color.parseColor("#EF4444"))
+                    } else {
+                        views.setTextColor(R.id.widget_balance, android.graphics.Color.parseColor("#10B981"))
+                    }
 
                     // Tapping button or widget container triggers Quick-Log
                     views.setOnClickPendingIntent(R.id.widget_container, pendingIntent)
