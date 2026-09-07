@@ -1026,16 +1026,9 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             child: Container(
               width: 48,
               height: 48,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: PirschColors.mintGreen,
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: PirschColors.mintGreen.withValues(alpha: 0.35),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
               ),
               child: const Icon(Icons.add, color: Colors.black, size: 28),
             ),
