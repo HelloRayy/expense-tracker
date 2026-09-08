@@ -16,12 +16,16 @@ class NativeBridge {
     required int remainingBalance,
     required int totalBudget,
     required int dailySafe,
+    int totalSpent = 0,
+    String formattedPeriod = '',
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('remaining_balance', remainingBalance);
       await prefs.setInt('total_budget', totalBudget);
       await prefs.setInt('daily_safe', dailySafe);
+      await prefs.setInt('total_spent', totalSpent);
+      await prefs.setString('formatted_period', formattedPeriod);
       await prefs.setString('last_updated', DateTime.now().toIso8601String());
 
       // Notify native widget manager to refresh
@@ -29,6 +33,8 @@ class NativeBridge {
         'remaining_balance': remainingBalance,
         'total_budget': totalBudget,
         'daily_safe': dailySafe,
+        'total_spent': totalSpent,
+        'formatted_period': formattedPeriod,
       });
     } catch (e) {
       // Ignored on non-android platforms or if native channel not ready

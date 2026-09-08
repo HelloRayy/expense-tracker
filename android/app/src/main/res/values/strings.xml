@@ -2,5 +2,6 @@
 <resources>
     <string name="app_name">Jajan Tracker</string>
     <string name="widget_description">Widget sisa saldo uang jajan dengan quick-log instan.</string>
+    <string name="widget_4x2_description">Widget Batas Jajan Hari Ini ukuran 4x2 dengan ringkasan sisa saldo dan pengeluaran.</string>
     <string name="accessibility_service_description">Mendeteksi pembukaan aplikasi Shopee untuk mengingatkan sisa uang jajan sebelum berbelanja.</string>
 </resources>

@@ -44,6 +44,7 @@ class JajanWidgetProvider : AppWidgetProvider() {
                 if (appWidgetIds != null && appWidgetIds.isNotEmpty()) {
                     updateWidgets(context, appWidgetManager, appWidgetIds)
                 }
+                JajanWidget4x2Provider.updateAllWidgets(context)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

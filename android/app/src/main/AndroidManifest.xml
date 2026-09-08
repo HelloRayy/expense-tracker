@@ -32,9 +32,10 @@
             </intent-filter>
         </activity>
 
-        <!-- Home Screen AppWidget Receiver -->
+        <!-- Home Screen AppWidget Receiver (Standard) -->
         <receiver
             android:name=".JajanWidgetProvider"
+            android:label="Jajan Tracker"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -43,6 +44,20 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/jajan_widget_info" />
+        </receiver>
+
+        <!-- Home Screen AppWidget Receiver (4x2 Batas Jajan Card) -->
+        <receiver
+            android:name=".JajanWidget4x2Provider"
+            android:label="Batas Jajan Hari Ini (4x2)"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.hellorayy.jajan_tracker.UPDATE_WIDGET" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/jajan_widget_4x2_info" />
         </receiver>
 
         <!-- Shopee Accessibility Service -->

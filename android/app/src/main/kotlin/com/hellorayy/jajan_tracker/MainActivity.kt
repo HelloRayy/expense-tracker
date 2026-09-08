@@ -26,6 +26,7 @@ class MainActivity : FlutterActivity() {
             when (call.method) {
                 "updateWidget" -> {
                     JajanWidgetProvider.updateAllWidgets(applicationContext)
+                    JajanWidget4x2Provider.updateAllWidgets(applicationContext)
                     JajanQuickTileService.requestTileUpdate(applicationContext)
                     result.success(true)
                 }

@@ -146,6 +146,8 @@ class BudgetRepository extends ChangeNotifier {
       remainingBalance: remainingBalance,
       totalBudget: _budget!.weeklyIncome,
       dailySafe: remainingToday,
+      totalSpent: totalSpent,
+      formattedPeriod: _budget!.formattedPeriod,
     );
   }
 }
