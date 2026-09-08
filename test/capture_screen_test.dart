@@ -111,16 +111,16 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    // Type 2 5 0 0 0 × 2
-    await tester.tap(find.text('2'));
-    await tester.pumpAndSettle();
+    // Type 5 000 + 3 000 to match Gambar 2 exactly
     await tester.tap(find.text('5'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('000'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('×'));
+    await tester.tap(find.text('+'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('2'));
+    await tester.tap(find.text('3'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('000'));
     await tester.pumpAndSettle();
 
     await tester.runAsync(() async {

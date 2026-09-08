@@ -619,16 +619,16 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
   }) {
     final String message;
     if (isOverBudget) {
-      message = 'Batas jajan habis, tahan jajan dulu!';
+      message = 'Batas jajan habis. Tahan jajan dulu ya!';
     } else if (dailyAllowance < 20000) {
-      message = 'Jatah menipis, catat pengeluaran!';
+      message = 'Jatah jajan menipis, catat setiap pengeluaran!';
     } else {
-      message = 'Ada jajan yang belum dicatat?';
+      message = 'Ada jajan hari ini yang belum dicatat?';
     }
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(20),
@@ -645,21 +645,18 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                message,
-                style: TextStyle(
-                  color: textPrimary,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-                maxLines: 1,
+            child: Text(
+              message,
+              style: TextStyle(
+                color: textPrimary,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Material(
             color: isDark ? Colors.white : Colors.black,
             borderRadius: BorderRadius.circular(20),

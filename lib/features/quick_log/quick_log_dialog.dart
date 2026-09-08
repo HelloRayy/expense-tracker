@@ -36,7 +36,6 @@ class QuickLogDialog extends StatefulWidget {
 
 class _QuickLogDialogState extends State<QuickLogDialog> {
   String _expression = '';
-  final TextEditingController _noteController = TextEditingController();
   bool _isSaving = false;
 
   int _evaluate(String expr) {
@@ -117,10 +116,10 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
   int get _currentTotal => _evaluate(_expression);
 
   bool get _hasOperator =>
-      _expression.contains(' + ') ||
-      _expression.contains(' - ') ||
-      _expression.contains(' × ') ||
-      _expression.contains(' ÷ ') ||
+      _expression.contains('+') ||
+      _expression.contains('-') ||
+      _expression.contains('×') ||
+      _expression.contains('÷') ||
       _expression.contains('%');
 
   void _onKeyPress(String key) {
@@ -173,33 +172,6 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     });
   }
 
-  void _onShortcutTap(int amount) {
-    HapticFeedback.selectionClick();
-    setState(() {
-      if (_expression.isEmpty || _expression == '0') {
-        _expression = amount.toString();
-      } else if (_expression.endsWith(' + ') ||
-          _expression.endsWith(' - ') ||
-          _expression.endsWith(' × ') ||
-          _expression.endsWith(' ÷ ')) {
-        _expression += amount.toString();
-      } else {
-        _expression += ' + $amount';
-      }
-    });
-  }
-
-  String _formatDisplay(String expr) {
-    if (expr.isEmpty) return '0';
-    return expr.replaceAllMapped(RegExp(r'\d+'), (match) {
-      final val = int.tryParse(match.group(0)!);
-      if (val != null) {
-        return CurrencyFormatter.format(val).replaceAll('Rp ', '');
-      }
-      return match.group(0)!;
-    });
-  }
-
   Future<void> _submit() async {
     final amount = _currentTotal;
     if (amount <= 0 || _isSaving) return;
@@ -207,8 +179,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     setState(() => _isSaving = true);
     HapticFeedback.mediumImpact();
 
-    final note = _noteController.text.trim().isEmpty ? 'Jajan' : _noteController.text.trim();
-    await widget.repository.addExpense(amount, note: note);
+    await widget.repository.addExpense(amount, note: 'Jajan');
 
     if (mounted) {
       widget.onComplete?.call();
@@ -218,10 +189,114 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     }
   }
 
-  @override
-  void dispose() {
-    _noteController.dispose();
-    super.dispose();
+  Widget _buildExpressionWidget(Color textPrimary) {
+    const accentCyan = Color(0xFF00E5FF);
+
+    if (_expression.trim().isEmpty) {
+      return RichText(
+        textAlign: TextAlign.right,
+        text: TextSpan(
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontSize: 48,
+            fontWeight: FontWeight.w400,
+            color: textPrimary,
+            letterSpacing: -0.5,
+          ),
+          children: [
+            const TextSpan(text: '0'),
+            WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: Container(
+                margin: const EdgeInsets.only(left: 3),
+                width: 2.5,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: accentCyan,
+                  borderRadius: BorderRadius.circular(1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: accentCyan.withValues(alpha: 0.5),
+                      blurRadius: 4,
+                      spreadRadius: 0.5,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final spans = <InlineSpan>[];
+    final regex = RegExp(r'(\d+|[+\-×÷%])');
+    final matches = regex.allMatches(_expression);
+
+    for (final m in matches) {
+      final token = m.group(0)!;
+      if (token == '+' || token == '-' || token == '×' || token == '÷' || token == '%') {
+        spans.add(
+          TextSpan(
+            text: token,
+            style: const TextStyle(
+              fontFamily: 'Inter',
+              color: accentCyan,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        );
+      } else {
+        final val = int.tryParse(token);
+        final formattedNum = val != null
+            ? CurrencyFormatter.format(val).replaceAll('Rp ', '')
+            : token;
+        spans.add(
+          TextSpan(
+            text: formattedNum,
+            style: TextStyle(
+              fontFamily: 'Inter',
+              color: textPrimary,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        );
+      }
+    }
+
+    // Trailing active cursor matching Gambar 2
+    spans.add(
+      WidgetSpan(
+        alignment: PlaceholderAlignment.middle,
+        child: Container(
+          margin: const EdgeInsets.only(left: 3),
+          width: 2.5,
+          height: 40,
+          decoration: BoxDecoration(
+            color: accentCyan,
+            borderRadius: BorderRadius.circular(1.5),
+            boxShadow: [
+              BoxShadow(
+                color: accentCyan.withValues(alpha: 0.5),
+                blurRadius: 4,
+                spreadRadius: 0.5,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    return RichText(
+      textAlign: TextAlign.right,
+      text: TextSpan(
+        style: const TextStyle(
+          fontSize: 48,
+          letterSpacing: -0.5,
+        ),
+        children: spans,
+      ),
+    );
   }
 
   @override
@@ -234,8 +309,6 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     final btnBg = isDark ? const Color(0xFF18181A) : const Color(0xFFEBE6DA);
     final textPrimary = isDark ? Colors.white : Colors.black;
     final textSecondary = isDark ? const Color(0xFF8E8E93) : const Color(0xFF707070);
-
-    final displayString = _formatDisplay(_expression);
 
     return Container(
       decoration: BoxDecoration(
@@ -263,211 +336,96 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Drag handle
-          Center(
-            child: Container(
-              width: 44,
-              height: 4.5,
-              decoration: BoxDecoration(
-                color: textSecondary.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(3),
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 4.5,
+                  decoration: BoxDecoration(
+                    color: textSecondary.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-          // Header Info Strip
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    const Icon(Icons.calculate_rounded, color: PirschColors.mintGreen, size: 20),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
+              // Header Info Strip
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.calculate_rounded, color: PirschColors.mintGreen, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
                         'Kalkulator Jajan',
                         style: TextStyle(
                           color: textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: PirschColors.mintGreen.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: PirschColors.mintGreen.withValues(alpha: 0.3)),
+                    ),
+                    child: Text(
+                      'Sisa: ${CurrencyFormatter.formatCompact(remaining)}',
+                      style: const TextStyle(
+                        color: PirschColors.mintGreen,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Clean Calculator Display Matching Gambar 2
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                alignment: Alignment.centerRight,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    // Top line: Formatted expression with cyan operator and cursor
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: _buildExpressionWidget(textPrimary),
+                    ),
+                    const SizedBox(height: 10),
+                    // Bottom line: Evaluated sub-result in subtle gray matching Gambar 2
+                    SizedBox(
+                      height: 30,
+                      child: _hasOperator && _currentTotal > 0
+                          ? Text(
+                              CurrencyFormatter.format(_currentTotal).replaceAll('Rp ', ''),
+                              style: TextStyle(
+                                color: textSecondary,
+                                fontSize: 24,
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: -0.5,
+                              ),
+                            )
+                          : const SizedBox.shrink(),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: PirschColors.mintGreen.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: PirschColors.mintGreen.withValues(alpha: 0.3)),
-                ),
-                child: Text(
-                  'Sisa: ${CurrencyFormatter.formatCompact(remaining)}',
-                  style: const TextStyle(
-                    color: PirschColors.mintGreen,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+              const SizedBox(height: 10),
+
+              // 4-Column Standard Calculator Keypad (×, ÷, -, +, =)
+              _buildKeypadGrid(btnBg: btnBg, textPrimary: textPrimary, isDark: isDark),
             ],
           ),
-          const SizedBox(height: 10),
-
-          // Large Calculator Display (Right Aligned)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            alignment: Alignment.centerRight,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                if (_hasOperator)
-                  Text(
-                    '= ${CurrencyFormatter.format(_currentTotal)}',
-                    style: const TextStyle(
-                      color: PirschColors.mintGreen,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    displayString,
-                    style: TextStyle(
-                      color: textPrimary,
-                      fontSize: 46,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: -1,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 6),
-
-          // Inline Note / Category Chips Input (As per User Reference Image)
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: btnBg.withValues(alpha: 0.6),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.05),
-                    ),
-                  ),
-                  alignment: Alignment.centerLeft,
-                  child: TextField(
-                    controller: _noteController,
-                    style: TextStyle(color: textPrimary, fontSize: 13),
-                    decoration: InputDecoration(
-                      hintText: 'Keterangan (opsional, cth: Kopi, Mie ...)',
-                      hintStyle: TextStyle(color: textSecondary, fontSize: 12),
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              // Category Quick Chips
-              _buildCategoryChip(Icons.restaurant_rounded, 'Makan', btnBg, textSecondary),
-              const SizedBox(width: 6),
-              _buildCategoryChip(Icons.local_cafe_rounded, 'Kopi', btnBg, textSecondary),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // Preset Shortcut Chips Strip (Horizontal on Top of Keypad)
-          _buildShortcutRow(btnBg: btnBg, textSecondary: textSecondary, isDark: isDark),
-          const SizedBox(height: 12),
-
-          // 4-Column Standard Calculator Keypad (×, ÷, -, +, =)
-          _buildKeypadGrid(btnBg: btnBg, textPrimary: textPrimary, isDark: isDark),
-        ],
-      ),
-    ),
-  ),
-);
-}
-
-  Widget _buildCategoryChip(IconData icon, String text, Color bg, Color iconColor) {
-    return InkWell(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        _noteController.text = text;
-      },
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, size: 18, color: iconColor),
-      ),
-    );
-  }
-
-  Widget _buildShortcutRow({
-    required Color btnBg,
-    required Color textSecondary,
-    required bool isDark,
-  }) {
-    final presets = [
-      {'label': '+5rb', 'amount': 5000},
-      {'label': '+10rb', 'amount': 10000},
-      {'label': '+20rb', 'amount': 20000},
-      {'label': '+50rb', 'amount': 50000},
-      {'label': '+100rb', 'amount': 100000},
-    ];
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      child: Row(
-        children: presets.map((p) {
-          final label = p['label'] as String;
-          final amount = p['amount'] as int;
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: InkWell(
-              onTap: () => _onShortcutTap(amount),
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF18181A) : const Color(0xFFEBE6DA),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
-                  ),
-                ),
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: isDark ? const Color(0xFFCCCCCC) : const Color(0xFF444444),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          );
-        }).toList(),
       ),
     );
   }
