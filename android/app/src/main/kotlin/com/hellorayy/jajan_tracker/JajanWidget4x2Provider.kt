@@ -128,22 +128,23 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
                 "batas jajan hari ini ⌄"
             }
 
-            // Intent to open Main App Dashboard
-            val appIntent = Intent(context, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            }
-            val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             } else {
                 PendingIntent.FLAG_UPDATE_CURRENT
             }
-            val appPendingIntent = PendingIntent.getActivity(context, 2001, appIntent, flags)
+
+            // Intent to open Main App Dashboard
+            val appIntent = Intent(context, MainActivity::class.java).apply {
+                this.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            val appPendingIntent = PendingIntent.getActivity(context, 2001, appIntent, pendingIntentFlags)
 
             // Intent to open Quick-Log Floating Calculator
             val calcIntent = Intent(context, QuickTileTrampolineActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                this.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
-            val calcPendingIntent = PendingIntent.getActivity(context, 2002, calcIntent, flags)
+            val calcPendingIntent = PendingIntent.getActivity(context, 2002, calcIntent, pendingIntentFlags)
 
             for (widgetId in appWidgetIds) {
                 try {
