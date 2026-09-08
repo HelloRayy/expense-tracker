@@ -111,8 +111,9 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                         delegate: SliverChildListDelegate([
                           const SizedBox(height: 8),
 
-                          // Hero Balance Card (Pirsch 24px Radius)
+                          // Hero Balance Card (Refined Reference Layout)
                           _buildHeroBalanceCard(
+                            context: context,
                             remaining: remaining,
                             totalBudget: totalBudget,
                             spent: spent,
@@ -127,17 +128,20 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             textPrimary: textPrimary,
                             textSecondary: textSecondary,
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 12),
 
-                          // Pirsch Nudge Banner
+                          // Secondary Nudge & Action Card (Reference Pill Button Layout)
                           _buildNudgeBanner(
+                            context: context,
                             dailyAllowance: dailyAllowance,
                             remaining: remaining,
                             isOverBudget: isOverBudget,
+                            cardColor: cardColor,
                             elevatedColor: elevatedColor,
                             borderColor: borderColor,
                             textPrimary: textPrimary,
                             textSecondary: textSecondary,
+                            isDark: isDark,
                           ),
                           const SizedBox(height: 24),
 
@@ -416,6 +420,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
   }
 
   Widget _buildHeroBalanceCard({
+    required BuildContext context,
     required int remaining,
     required int totalBudget,
     required int spent,
@@ -449,233 +454,246 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Row: Title & Period Badge
+          // Header Row: Greeting & Period Dropdown (Left) + 3-Dots Menu (Right)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Text(
-                  'BATAS UANG JAJAN HARIAN',
-                  style: TextStyle(
-                    color: textSecondary,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.8,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Hi, Sobat',
+                      style: TextStyle(
+                        color: textPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    InkWell(
+                      onTap: () => EditBudgetDialog.show(context, widget.repository),
+                      borderRadius: BorderRadius.circular(6),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'batas jajan ',
+                            style: TextStyle(
+                              color: textSecondary,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            'hari ini ⌄',
+                            style: TextStyle(
+                              color: textPrimary,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              decoration: TextDecoration.underline,
+                              decorationColor: textSecondary,
+                            ),
+                          ),
+                          if (formattedPeriod.isNotEmpty) ...[
+                            const SizedBox(width: 6),
+                            Text(
+                              '• $formattedPeriod',
+                              style: TextStyle(
+                                color: textSecondary.withValues(alpha: 0.8),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(width: 8),
-              if (formattedPeriod.isNotEmpty)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: elevatedColor,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: borderColor),
-                  ),
-                  child: Text(
-                    formattedPeriod,
-                    style: TextStyle(
+              // 3-dots Menu Button
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => EditBudgetDialog.show(context, widget.repository),
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      Icons.more_vert_rounded,
                       color: textSecondary,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
+                      size: 22,
                     ),
                   ),
                 ),
-            ],
-          ),
-          const SizedBox(height: 14),
-
-          // Main Hero Nominal (Batas Uang Jajan Harian)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Text(
-                isOverBudget ? 'Rp 0' : CurrencyFormatter.format(dailyAllowance),
-                style: TextStyle(
-                  color: isOverBudget ? PirschColors.roseRed : textPrimary,
-                  fontSize: 34,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '/ hari',
-                style: TextStyle(
-                  color: isOverBudget ? PirschColors.roseRed.withValues(alpha: 0.7) : textSecondary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
               ),
             ],
-          ),
-          const SizedBox(height: 18),
-
-          // Pirsch Minimal Progress Bar
-          ClipRRect(
-            borderRadius: BorderRadius.circular(6),
-            child: LinearProgressIndicator(
-              value: pct,
-              minHeight: 6,
-              backgroundColor: elevatedColor,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                isOverBudget
-                    ? PirschColors.roseRed
-                    : pct > 0.8
-                        ? PirschColors.warmYellow
-                        : PirschColors.mintGreen,
-              ),
-            ),
           ),
           const SizedBox(height: 20),
 
-          // 3-Column Mini Metrics Strip (Pirsch Key Stats Layout)
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-            decoration: BoxDecoration(
-              color: elevatedColor,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: borderColor),
-            ),
+          // Main Hero Nominal: Left-aligned
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
               children: [
-                // Col 1: Sisa Saldo Total Periode
-                _buildStatColumn(
-                  label: 'Sisa Saldo',
-                  value: CurrencyFormatter.formatCompact(remaining),
-                  valueColor: isOverBudget ? PirschColors.roseRed : PirschColors.mintGreen,
-                  textSecondary: textSecondary,
-                  isBold: true,
+                Text(
+                  isOverBudget ? 'Rp 0' : CurrencyFormatter.format(dailyAllowance),
+                  style: TextStyle(
+                    color: isOverBudget ? PirschColors.roseRed : textPrimary,
+                    fontSize: 42,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -1.0,
+                  ),
                 ),
-                Container(width: 1, height: 28, color: borderColor),
-
-                // Col 2: Terpakai
-                _buildStatColumn(
-                  label: 'Terpakai',
-                  value: CurrencyFormatter.formatCompact(spent),
-                  valueColor: isOverBudget ? PirschColors.roseRed : textSecondary,
-                  textSecondary: textSecondary,
-                ),
-                Container(width: 1, height: 28, color: borderColor),
-
-                // Col 3: Total Budget / Alokasi
-                _buildStatColumn(
-                  label: 'Alokasi',
-                  value: CurrencyFormatter.formatCompact(totalBudget),
-                  valueColor: textPrimary,
-                  textSecondary: textSecondary,
+                const SizedBox(width: 6),
+                Text(
+                  '/ hari',
+                  style: TextStyle(
+                    color: isOverBudget ? PirschColors.roseRed.withValues(alpha: 0.7) : textSecondary,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 16),
+
+          // Sub-metrics Row below Hero: ↙ Sisa Saldo & ↗ Terpakai (Side-by-Side)
+          Row(
+            children: [
+              // Left: ↙ Sisa Saldo (Green)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.south_west_rounded,
+                    size: 15,
+                    color: PirschColors.mintGreen,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    CurrencyFormatter.format(remaining),
+                    style: TextStyle(
+                      color: isOverBudget ? PirschColors.roseRed : PirschColors.mintGreen,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 20),
+
+              // Right: ↗ Terpakai (Red)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.north_east_rounded,
+                    size: 15,
+                    color: PirschColors.roseRed,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    CurrencyFormatter.format(spent),
+                    style: const TextStyle(
+                      color: PirschColors.roseRed,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStatColumn({
-    required String label,
-    required String value,
-    required Color valueColor,
-    required Color textSecondary,
-    bool isBold = false,
-  }) {
-    return Column(
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: textSecondary,
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            color: valueColor,
-            fontSize: 14,
-            fontWeight: isBold ? FontWeight.w800 : FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildNudgeBanner({
+    required BuildContext context,
     required int dailyAllowance,
     required int remaining,
     required bool isOverBudget,
+    required Color cardColor,
     required Color elevatedColor,
     required Color borderColor,
     required Color textPrimary,
     required Color textSecondary,
+    required bool isDark,
   }) {
-    final String title;
-    final String description;
-    final Color accentColor;
-    final IconData iconData;
-
+    final String message;
     if (isOverBudget) {
-      iconData = Icons.warning_amber_rounded;
-      accentColor = PirschColors.roseRed;
-      title = 'Batas jajan periode ini telah habis!';
-      description = 'Batas harian Rp 0. Tahan jajan dulu hingga tanggal gajian untuk menjaga uang pokok tetap aman.';
+      message = 'Batas jajan habis. Tahan jajan dulu ya!';
     } else if (dailyAllowance < 20000) {
-      iconData = Icons.bolt_rounded;
-      accentColor = PirschColors.warmYellow;
-      title = 'Batas jajan harian menipis';
-      description = 'Batas aman tersisa ${CurrencyFormatter.format(dailyAllowance)}/hari. Sisa saldo total ${CurrencyFormatter.formatCompact(remaining)}.';
+      message = 'Jatah jajan menipis, catat setiap pengeluaran!';
     } else {
-      iconData = Icons.auto_awesome_rounded;
-      accentColor = PirschColors.mintGreen;
-      title = 'Batas Jajan Harian Aman';
-      description = 'Batas jajan aman ${CurrencyFormatter.format(dailyAllowance)}/hari. Total sisa saldo periode ${CurrencyFormatter.formatCompact(remaining)}.';
+      message = 'Ada jajan hari ini yang belum dicatat?';
     }
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
-        color: accentColor.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: accentColor.withValues(alpha: 0.2)),
+        color: cardColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(iconData, color: accentColor, size: 22),
-          const SizedBox(width: 12),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
+            child: Text(
+              message,
+              style: TextStyle(
+                color: textPrimary,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Material(
+            color: isDark ? Colors.white : Colors.black,
+            borderRadius: BorderRadius.circular(20),
+            child: InkWell(
+              onTap: () => QuickLogDialog.show(
+                context,
+                repository: widget.repository,
+                onComplete: () => setState(() {}),
+              ),
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                child: Text(
+                  'Catat sekarang',
                   style: TextStyle(
-                    color: accentColor,
-                    fontSize: 13,
+                    color: isDark ? Colors.black : Colors.white,
+                    fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 3),
-                Text(
-                  description,
-                  style: TextStyle(
-                    color: textSecondary,
-                    fontSize: 12,
-                    height: 1.3,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ],
