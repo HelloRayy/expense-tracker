@@ -486,21 +486,17 @@ class FloatingBubbleService : Service() {
         val view = calcView ?: return
         val display = view.findViewById<TextView>(R.id.tv_calc_display)
         val formula = view.findViewById<TextView>(R.id.tv_calc_formula)
-        val remainingBadge = view.findViewById<TextView>(R.id.tv_calc_remaining)
+        val remainingText = view.findViewById<TextView>(R.id.tv_calc_remaining)
 
         val total = getCurrentTotal()
         val isOverBudget = (total > 0 && total > dailyAllowance) || (dailyAllowance <= 0)
 
-        // Dynamic warning color for header badge
-        if (isOverBudget) {
-            remainingBadge?.setBackgroundResource(R.drawable.bg_calc_badge_warning)
-            remainingBadge?.setTextColor(Color.parseColor("#E87B7B"))
-            remainingBadge?.text = "⚠ Batas: ${formatCompactDaily(dailyAllowance)}"
-        } else {
-            remainingBadge?.setBackgroundResource(R.drawable.bg_calc_badge_normal)
-            remainingBadge?.setTextColor(Color.parseColor("#6ECE9D"))
-            remainingBadge?.text = "Batas Hari Ini: ${formatCompactDaily(dailyAllowance)}"
-        }
+        // Clean UI text in header (no badge styling)
+        remainingText?.background = null
+        remainingText?.setTextColor(Color.parseColor("#8E8E93"))
+        remainingText?.text = "Batas Hari Ini: ${formatCompactDaily(dailyAllowance)}"
+
+        val digitColor = if (isOverBudget) Color.parseColor("#E87B7B") else Color.WHITE
 
         // Format expression with cyan operators and cyan cursor matching Gambar 2
         val ssb = SpannableStringBuilder()
@@ -533,7 +529,16 @@ class FloatingBubbleService : Service() {
                 } else {
                     val num = token.toLongOrNull()
                     val formatted = if (num != null) formatter.format(num) else token
+                    val start = ssb.length
                     ssb.append(formatted)
+                    if (isOverBudget) {
+                        ssb.setSpan(
+                            ForegroundColorSpan(digitColor),
+                            start,
+                            ssb.length,
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
                 }
             }
 

@@ -189,8 +189,9 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     }
   }
 
-  Widget _buildExpressionWidget(Color textPrimary) {
+  Widget _buildExpressionWidget(Color textPrimary, {required bool isOverBudget}) {
     const accentCyan = Color(0xFF00E5FF);
+    final numberColor = isOverBudget ? PirschColors.roseRed : textPrimary;
 
     if (_expression.trim().isEmpty) {
       return RichText(
@@ -256,7 +257,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
             text: formattedNum,
             style: TextStyle(
               fontFamily: 'Inter',
-              color: textPrimary,
+              color: numberColor,
               fontWeight: FontWeight.w400,
             ),
           ),
@@ -310,14 +311,6 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     final btnBg = isDark ? const Color(0xFF18181A) : const Color(0xFFEBE6DA);
     final textPrimary = isDark ? Colors.white : Colors.black;
     final textSecondary = isDark ? const Color(0xFF8E8E93) : const Color(0xFF707070);
-
-    final badgeColor = isOverBudget ? PirschColors.roseRed : PirschColors.mintGreen;
-    final badgeBg = isOverBudget
-        ? PirschColors.roseRed.withValues(alpha: 0.15)
-        : PirschColors.mintGreen.withValues(alpha: 0.12);
-    final badgeBorder = isOverBudget
-        ? PirschColors.roseRed.withValues(alpha: 0.4)
-        : PirschColors.mintGreen.withValues(alpha: 0.3);
 
     return Container(
       decoration: BoxDecoration(
@@ -376,29 +369,13 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                       ),
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: badgeBg,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: badgeBorder),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (isOverBudget) ...[
-                          Icon(Icons.warning_amber_rounded, color: badgeColor, size: 14),
-                          const SizedBox(width: 4),
-                        ],
-                        Text(
-                          'Batas Hari Ini: ${CurrencyFormatter.formatCompact(dailyAllowance)}',
-                          style: TextStyle(
-                            color: badgeColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
+                  // Clean UI Text (No Badge Container)
+                  Text(
+                    'Batas Hari Ini: ${CurrencyFormatter.formatCompact(dailyAllowance)}',
+                    style: TextStyle(
+                      color: textSecondary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
@@ -412,11 +389,11 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    // Top line: Formatted expression with cyan operator and cursor
+                    // Top line: Formatted expression with warning color on nominal digits
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.centerRight,
-                      child: _buildExpressionWidget(textPrimary),
+                      child: _buildExpressionWidget(textPrimary, isOverBudget: isOverBudget),
                     ),
                     const SizedBox(height: 10),
                     // Bottom line: Evaluated sub-result in subtle gray or red warning when over budget
