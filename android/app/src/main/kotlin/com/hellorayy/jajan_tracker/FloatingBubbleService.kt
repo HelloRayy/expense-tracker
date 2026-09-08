@@ -8,11 +8,15 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
+import android.graphics.Color
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
@@ -39,6 +43,7 @@ class FloatingBubbleService : Service() {
 
     private var currentAmount: Long = 0L
     private var expression: String = ""
+    private var dailyAllowance: Long = 50000L
     private var isStandalone: Boolean = false
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -203,7 +208,9 @@ class FloatingBubbleService : Service() {
                     WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
             PixelFormat.TRANSLUCENT
         ).apply {
-            gravity = Gravity.CENTER
+            gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+            x = 0
+            y = (28 * resources.displayMetrics.density).toInt()
         }
 
         val inflater = LayoutInflater.from(this)
@@ -215,6 +222,7 @@ class FloatingBubbleService : Service() {
     @SuppressLint("ClickableViewAccessibility")
     private fun setupCalculatorControls() {
         val view = calcView ?: return
+        val wm = windowManager ?: return
 
         // Outside touch dismiss
         view.setOnTouchListener { _, event ->
@@ -225,6 +233,40 @@ class FloatingBubbleService : Service() {
                 false
             }
         }
+
+        // Moveable via Drag Handle and Header
+        val dragTouchListener = object : View.OnTouchListener {
+            private var initialX = 0
+            private var initialY = 0
+            private var initialTouchX = 0f
+            private var initialTouchY = 0f
+
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                if (event == null) return false
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        initialX = calcParams.x
+                        initialY = calcParams.y
+                        initialTouchX = event.rawX
+                        initialTouchY = event.rawY
+                        return true
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        val dx = (event.rawX - initialTouchX).toInt()
+                        val dy = (event.rawY - initialTouchY).toInt()
+                        calcParams.x = initialX + dx
+                        calcParams.y = initialY - dy
+                        try {
+                            wm.updateViewLayout(calcView, calcParams)
+                        } catch (_: Exception) {}
+                        return true
+                    }
+                }
+                return false
+            }
+        }
+        view.findViewById<View>(R.id.calc_drag_handle)?.setOnTouchListener(dragTouchListener)
+        view.findViewById<View>(R.id.calc_header)?.setOnTouchListener(dragTouchListener)
 
         // Close / Collapse Button
         view.findViewById<View>(R.id.btn_calc_close)?.setOnClickListener {
@@ -302,28 +344,6 @@ class FloatingBubbleService : Service() {
                 }
                 updateCalculatorDisplay()
             }
-        }
-
-        // Preset Chips (+5rb, +10rb, +20rb, +50rb, +100rb)
-        view.findViewById<View>(R.id.chip_5k)?.setOnClickListener {
-            triggerHaptic(it)
-            onAddPreset(5000L)
-        }
-        view.findViewById<View>(R.id.chip_10k)?.setOnClickListener {
-            triggerHaptic(it)
-            onAddPreset(10000L)
-        }
-        view.findViewById<View>(R.id.chip_20k)?.setOnClickListener {
-            triggerHaptic(it)
-            onAddPreset(20000L)
-        }
-        view.findViewById<View>(R.id.chip_50k)?.setOnClickListener {
-            triggerHaptic(it)
-            onAddPreset(50000L)
-        }
-        view.findViewById<View>(R.id.chip_100k)?.setOnClickListener {
-            triggerHaptic(it)
-            onAddPreset(100000L)
         }
 
         // Save / Equal Button
@@ -439,57 +459,108 @@ class FloatingBubbleService : Service() {
         }
     }
 
-    private fun onAddPreset(nominal: Long) {
-        if (expression.isEmpty() || expression == "0") {
-            expression = nominal.toString()
-        } else if (expression.endsWith(" + ") ||
-            expression.endsWith(" - ") ||
-            expression.endsWith(" × ") ||
-            expression.endsWith(" ÷ ")) {
-            expression += nominal.toString()
-        } else {
-            expression += " + $nominal"
+    private fun loadDailyAllowance(): Long {
+        val prefs = getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
+        val allEntries = prefs.all
+        val rawDaily = allEntries["flutter.daily_safe"] ?: allEntries["daily_safe"]
+        if (rawDaily is Number) {
+            return rawDaily.toLong()
         }
-        updateCalculatorDisplay()
+        return 50000L
+    }
+
+    private fun formatCompactDaily(amount: Long): String {
+        return if (amount >= 1000000) {
+            val jt = amount.toDouble() / 1000000.0
+            val s = String.format(Locale.US, "%.1f", jt).replace(".0", "")
+            "Rp ${s}jt"
+        } else if (amount >= 1000) {
+            val rb = amount / 1000
+            "Rp ${rb}rb"
+        } else {
+            "Rp $amount"
+        }
     }
 
     private fun updateCalculatorDisplay() {
         val view = calcView ?: return
         val display = view.findViewById<TextView>(R.id.tv_calc_display)
         val formula = view.findViewById<TextView>(R.id.tv_calc_formula)
+        val remainingBadge = view.findViewById<TextView>(R.id.tv_calc_remaining)
 
-        val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID")).apply {
-            maximumFractionDigits = 0
+        val total = getCurrentTotal()
+        val isOverBudget = (total > 0 && total > dailyAllowance) || (dailyAllowance <= 0)
+
+        // Dynamic warning color for header badge
+        if (isOverBudget) {
+            remainingBadge?.setBackgroundResource(R.drawable.bg_calc_badge_warning)
+            remainingBadge?.setTextColor(Color.parseColor("#E87B7B"))
+            remainingBadge?.text = "⚠ Batas: ${formatCompactDaily(dailyAllowance)}"
+        } else {
+            remainingBadge?.setBackgroundResource(R.drawable.bg_calc_badge_normal)
+            remainingBadge?.setTextColor(Color.parseColor("#6ECE9D"))
+            remainingBadge?.text = "Batas Hari Ini: ${formatCompactDaily(dailyAllowance)}"
         }
 
-        val hasOp = expression.contains(" + ") ||
-            expression.contains(" - ") ||
-            expression.contains(" × ") ||
-            expression.contains(" ÷ ") ||
-            expression.contains("%")
-
+        // Format expression with cyan operators and cyan cursor matching Gambar 2
+        val ssb = SpannableStringBuilder()
         if (expression.isEmpty()) {
-            display?.text = "0"
+            ssb.append("0")
+            val cursorStart = ssb.length
+            ssb.append(" |")
+            ssb.setSpan(
+                ForegroundColorSpan(Color.parseColor("#00E5FF")),
+                cursorStart,
+                ssb.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            display?.text = ssb
             formula?.visibility = View.GONE
-        } else if (hasOp) {
-            // Format numbers inside expression for display
-            val formatted = Regex("\\d+").replace(expression) { matchResult ->
-                val num = matchResult.value.toLongOrNull()
-                if (num != null) formatter.format(num).replace("Rp", "").trim()
-                else matchResult.value
-            }
-            display?.text = formatted
-            val total = getCurrentTotal()
-            formula?.text = "= ${formatter.format(total)}"
-            formula?.visibility = View.VISIBLE
         } else {
-            val num = expression.toLongOrNull()
-            if (num != null) {
-                display?.text = formatter.format(num).replace("Rp", "").trim()
-            } else {
-                display?.text = expression
+            val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
+            val tokens = Regex("(\\d+|[+\\-×÷%])").findAll(expression)
+            for (match in tokens) {
+                val token = match.value
+                if (token in listOf("+", "-", "×", "÷", "%")) {
+                    val start = ssb.length
+                    ssb.append(token)
+                    ssb.setSpan(
+                        ForegroundColorSpan(Color.parseColor("#00E5FF")),
+                        start,
+                        ssb.length,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                } else {
+                    val num = token.toLongOrNull()
+                    val formatted = if (num != null) formatter.format(num) else token
+                    ssb.append(formatted)
+                }
             }
-            formula?.visibility = View.GONE
+
+            // Append cyan cursor
+            val cursorStart = ssb.length
+            ssb.append(" |")
+            ssb.setSpan(
+                ForegroundColorSpan(Color.parseColor("#00E5FF")),
+                cursorStart,
+                ssb.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            display?.text = ssb
+
+            val hasOp = expression.contains("+") ||
+                expression.contains("-") ||
+                expression.contains("×") ||
+                expression.contains("÷") ||
+                expression.contains("%")
+
+            if (hasOp && total > 0) {
+                formula?.text = formatter.format(total)
+                formula?.setTextColor(if (isOverBudget) Color.parseColor("#E87B7B") else Color.parseColor("#8E8E93"))
+                formula?.visibility = View.VISIBLE
+            } else {
+                formula?.visibility = View.GONE
+            }
         }
     }
 
@@ -501,20 +572,7 @@ class FloatingBubbleService : Service() {
             bubbleView?.visibility = View.GONE
         } catch (_: Exception) {}
 
-        // Read remaining balance for header
-        val prefs = getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
-        val allEntries = prefs.all
-        var remaining = 1500000L
-        val rawRemaining = allEntries["flutter.remaining_balance"] ?: allEntries["remaining_balance"]
-        if (rawRemaining is Number) {
-            remaining = rawRemaining.toLong()
-        }
-
-        val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID")).apply {
-            maximumFractionDigits = 0
-        }
-        calcView?.findViewById<TextView>(R.id.tv_calc_remaining)?.text = "Sisa: ${formatter.format(remaining)}"
-
+        dailyAllowance = loadDailyAllowance()
         expression = ""
         currentAmount = 0L
         updateCalculatorDisplay()
