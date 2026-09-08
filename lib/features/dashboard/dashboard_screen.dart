@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../budget/dialogs/edit_budget_dialog.dart';
-import '../budget/models/budget_model.dart';
 import '../budget/models/expense_model.dart';
 import '../budget/repository/budget_repository.dart';
 import '../quick_log/quick_log_dialog.dart';
@@ -64,19 +63,13 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
         final budget = widget.repository.budget;
         final remaining = widget.repository.remainingBalance;
-        final spendableBudget = widget.repository.spendableBudget;
         final spent = widget.repository.totalSpent;
         final dailyAllowance = widget.repository.dailyAllowance;
-        final spentToday = widget.repository.spentToday;
         final remainingToday = widget.repository.remainingToday;
-        final isOverBudgetToday = widget.repository.isOverBudgetToday;
-        final isSavingsAtRisk = widget.repository.isSavingsAtRisk;
-        final dayOfWeek = budget?.dayOfWeek ?? 1;
         final daysRemainingInWeek = budget?.daysRemainingInWeek ?? 7;
-        final weeklyIncome = widget.repository.weeklyIncome;
-        final weeklySavingsTarget = widget.repository.weeklySavingsTarget;
         final expenses = widget.repository.expenses;
         final displayedExpenses = _showAllTransactions ? expenses : expenses.take(5).toList();
+        final isOverBudget = remaining < 0 || remainingToday < 0;
 
         return Scaffold(
           backgroundColor: bgColor,
@@ -100,7 +93,6 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                           padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
                           child: _buildHeader(
                             context: context,
-                            dayOfWeek: dayOfWeek,
                             daysLeft: daysRemainingInWeek,
                             textPrimary: textPrimary,
                             textSecondary: textSecondary,
@@ -118,35 +110,14 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                         delegate: SliverChildListDelegate([
                           const SizedBox(height: 8),
 
-                          // Hero Balance Card (Refined Reference Layout)
+                          // Hero Balance Card (Clean Original Layout with Sisa Jajan Hari Ini)
                           _buildHeroBalanceCard(
                             context: context,
+                            remaining: remaining,
+                            spent: spent,
                             remainingToday: remainingToday,
-                            spentToday: spentToday,
-                            dailyAllowance: dailyAllowance,
-                            spendableBudget: spendableBudget,
-                            weeklySpent: spent,
-                            weeklyRemaining: remaining,
                             formattedPeriod: budget?.formattedPeriod ?? '',
-                            isOverBudgetToday: isOverBudgetToday,
-                            isSavingsAtRisk: isSavingsAtRisk,
-                            cardColor: cardColor,
-                            elevatedColor: elevatedColor,
-                            borderColor: borderColor,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                          ),
-                          const SizedBox(height: 12),
-
-                          // Weekly Cycle & Savings Tracker Card
-                          _buildWeeklyTrackerCard(
-                            context: context,
-                            budget: budget,
-                            weeklyIncome: weeklyIncome,
-                            weeklySavingsTarget: weeklySavingsTarget,
-                            spendableBudget: spendableBudget,
-                            totalSpent: spent,
-                            isSavingsAtRisk: isSavingsAtRisk,
+                            isOverBudget: isOverBudget,
                             cardColor: cardColor,
                             elevatedColor: elevatedColor,
                             borderColor: borderColor,
@@ -158,10 +129,9 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                           // Secondary Nudge & Action Card (Reference Pill Button Layout)
                           _buildNudgeBanner(
                             context: context,
-                            remainingToday: remainingToday,
                             dailyAllowance: dailyAllowance,
-                            isOverBudgetToday: isOverBudgetToday,
-                            isSavingsAtRisk: isSavingsAtRisk,
+                            remaining: remaining,
+                            isOverBudget: isOverBudget,
                             cardColor: cardColor,
                             elevatedColor: elevatedColor,
                             borderColor: borderColor,
@@ -318,7 +288,6 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
   Widget _buildHeader({
     required BuildContext context,
-    required int dayOfWeek,
     required int daysLeft,
     required Color textPrimary,
     required Color textSecondary,
@@ -403,7 +372,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                   ),
                   const SizedBox(width: 5),
                   Text(
-                    'Hari $dayOfWeek/7 • Sisa $daysLeft hr',
+                    'Sisa $daysLeft hari',
                     style: const TextStyle(
                       color: PirschColors.mintGreen,
                       fontSize: 11,
@@ -448,21 +417,22 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
   Widget _buildHeroBalanceCard({
     required BuildContext context,
+    required int remaining,
+    required int spent,
     required int remainingToday,
-    required int spentToday,
-    required int dailyAllowance,
-    required int spendableBudget,
-    required int weeklySpent,
-    required int weeklyRemaining,
     required String formattedPeriod,
-    required bool isOverBudgetToday,
-    required bool isSavingsAtRisk,
+    required bool isOverBudget,
     required Color cardColor,
     required Color elevatedColor,
     required Color borderColor,
     required Color textPrimary,
     required Color textSecondary,
   }) {
+    final isNegative = remainingToday < 0;
+    final displayAmount = isNegative
+        ? '-${CurrencyFormatter.format(remainingToday.abs())}'
+        : CurrencyFormatter.format(remainingToday);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
       child: Column(
@@ -548,7 +518,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
           ),
           const SizedBox(height: 20),
 
-          // Main Hero Nominal: Left-aligned
+          // Main Hero Nominal: Left-aligned (Sisa Jajan Hari Ini)
           FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
@@ -557,9 +527,9 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               textBaseline: TextBaseline.alphabetic,
               children: [
                 Text(
-                  isSavingsAtRisk ? 'Rp 0' : CurrencyFormatter.format(dailyAllowance),
+                  displayAmount,
                   style: TextStyle(
-                    color: isSavingsAtRisk ? PirschColors.roseRed : textPrimary,
+                    color: isNegative || isOverBudget ? PirschColors.roseRed : textPrimary,
                     fontSize: 42,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -1.0,
@@ -569,7 +539,9 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 Text(
                   '/ hari',
                   style: TextStyle(
-                    color: isSavingsAtRisk ? PirschColors.roseRed.withValues(alpha: 0.7) : textSecondary,
+                    color: isNegative || isOverBudget
+                        ? PirschColors.roseRed.withValues(alpha: 0.7)
+                        : textSecondary,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -577,306 +549,54 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               ],
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
 
-          // Sub-metrics Row 1: Today's Status (Sisa Hari Ini & Jajan Hari Ini)
-          Wrap(
-            spacing: 14,
-            runSpacing: 6,
+          // Sub-metrics Row below Hero: ↙ Sisa Saldo & ↗ Terpakai (Side-by-Side)
+          Row(
             children: [
-              // Left: Sisa Hari Ini
+              // Left: ↙ Sisa Saldo (Green)
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    isOverBudgetToday ? Icons.warning_amber_rounded : Icons.check_circle_outline_rounded,
+                  const Icon(
+                    Icons.south_west_rounded,
                     size: 15,
-                    color: isOverBudgetToday ? PirschColors.roseRed : PirschColors.mintGreen,
+                    color: PirschColors.mintGreen,
                   ),
-                  const SizedBox(width: 5),
+                  const SizedBox(width: 4),
                   Text(
-                    isOverBudgetToday
-                        ? 'Sisa Hari Ini: -${CurrencyFormatter.format(remainingToday.abs())}'
-                        : 'Sisa Hari Ini: ${CurrencyFormatter.format(remainingToday)}',
+                    CurrencyFormatter.format(remaining),
                     style: TextStyle(
-                      color: isOverBudgetToday ? PirschColors.roseRed : PirschColors.mintGreen,
-                      fontSize: 13,
+                      color: remaining < 0 ? PirschColors.roseRed : PirschColors.mintGreen,
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.2,
                     ),
                   ),
                 ],
               ),
+              const SizedBox(width: 20),
 
-              // Right: Jajan Hari Ini
+              // Right: ↗ Terpakai (Red)
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.receipt_outlined,
-                    size: 14,
-                    color: textSecondary,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Jajan: ${CurrencyFormatter.format(spentToday)}',
-                    style: TextStyle(
-                      color: textSecondary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // Sub-metrics Row 2: Weekly Overview (Sisa Minggu & Terpakai Minggu)
-          Wrap(
-            spacing: 16,
-            runSpacing: 6,
-            children: [
-              // Left: ↙ Sisa Saldo Minggu
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.south_west_rounded,
-                    size: 14,
-                    color: isSavingsAtRisk ? PirschColors.roseRed : textSecondary,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Sisa Minggu: ${CurrencyFormatter.format(weeklyRemaining)}',
-                    style: TextStyle(
-                      color: isSavingsAtRisk ? PirschColors.roseRed : textSecondary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-
-              // Right: ↗ Terpakai Minggu
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
+                  const Icon(
                     Icons.north_east_rounded,
-                    size: 14,
-                    color: textSecondary,
+                    size: 15,
+                    color: PirschColors.roseRed,
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'Total Jajan: ${CurrencyFormatter.format(weeklySpent)}',
-                    style: TextStyle(
-                      color: textSecondary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                    CurrencyFormatter.format(spent),
+                    style: const TextStyle(
+                      color: PirschColors.roseRed,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.2,
                     ),
                   ),
                 ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWeeklyTrackerCard({
-    required BuildContext context,
-    required BudgetModel? budget,
-    required int weeklyIncome,
-    required int weeklySavingsTarget,
-    required int spendableBudget,
-    required int totalSpent,
-    required bool isSavingsAtRisk,
-    required Color cardColor,
-    required Color elevatedColor,
-    required Color borderColor,
-    required Color textPrimary,
-    required Color textSecondary,
-  }) {
-    final dayNames = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-    final currentDay = budget?.dayOfWeek ?? 1;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: borderColor),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Day Tracker Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Siklus Mingguan (Sen - Min)',
-                style: TextStyle(
-                  color: textSecondary,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                'Hari ke-$currentDay dari 7',
-                style: const TextStyle(
-                  color: PirschColors.mintGreen,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // 7 Days Pills Row
-          Row(
-            children: List.generate(7, (index) {
-              final dayIndex = index + 1;
-              final isCurrent = dayIndex == currentDay;
-              final isPast = dayIndex < currentDay;
-
-              return Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(right: index < 6 ? 6 : 0),
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                    color: isCurrent
-                        ? PirschColors.mintGreen
-                        : (isPast ? elevatedColor : elevatedColor.withValues(alpha: 0.35)),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isCurrent
-                          ? PirschColors.mintGreen
-                          : (isPast ? borderColor : borderColor.withValues(alpha: 0.4)),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        dayNames[index],
-                        style: TextStyle(
-                          color: isCurrent
-                              ? Colors.black
-                              : (isPast ? textPrimary : textSecondary.withValues(alpha: 0.5)),
-                          fontSize: 11,
-                          fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      if (isCurrent)
-                        Container(
-                          width: 4,
-                          height: 4,
-                          decoration: const BoxDecoration(
-                            color: Colors.black,
-                            shape: BoxShape.circle,
-                          ),
-                        )
-                      else if (isPast)
-                        Icon(
-                          Icons.check_rounded,
-                          size: 10,
-                          color: textSecondary,
-                        )
-                      else
-                        Container(
-                          width: 4,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: textSecondary.withValues(alpha: 0.3),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              );
-            }),
-          ),
-          const SizedBox(height: 16),
-          Divider(height: 1, color: borderColor.withValues(alpha: 0.6)),
-          const SizedBox(height: 14),
-
-          // Savings Target & Status Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    isSavingsAtRisk ? Icons.warning_amber_rounded : Icons.savings_rounded,
-                    size: 20,
-                    color: isSavingsAtRisk ? PirschColors.roseRed : PirschColors.mintGreen,
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Target Tabungan',
-                        style: TextStyle(
-                          color: textSecondary,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Text(
-                        CurrencyFormatter.format(weeklySavingsTarget),
-                        style: TextStyle(
-                          color: textPrimary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              // Status Pill
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: isSavingsAtRisk
-                      ? PirschColors.roseRed.withValues(alpha: 0.15)
-                      : PirschColors.mintGreen.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isSavingsAtRisk
-                        ? PirschColors.roseRed.withValues(alpha: 0.4)
-                        : PirschColors.mintGreen.withValues(alpha: 0.4),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: isSavingsAtRisk ? PirschColors.roseRed : PirschColors.mintGreen,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      isSavingsAtRisk ? 'Terancam' : 'Terkunci Aman',
-                      style: TextStyle(
-                        color: isSavingsAtRisk ? PirschColors.roseRed : PirschColors.mintGreen,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
               ),
             ],
           ),
@@ -887,10 +607,9 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
   Widget _buildNudgeBanner({
     required BuildContext context,
-    required int remainingToday,
     required int dailyAllowance,
-    required bool isOverBudgetToday,
-    required bool isSavingsAtRisk,
+    required int remaining,
+    required bool isOverBudget,
     required Color cardColor,
     required Color elevatedColor,
     required Color borderColor,
@@ -899,14 +618,12 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
     required bool isDark,
   }) {
     final String message;
-    if (isSavingsAtRisk) {
-      message = 'Tabungan terancam! Kurangi jajan.';
-    } else if (isOverBudgetToday) {
-      message = 'Batas hari ini minus, otomatis disebar ke sisa hari.';
-    } else if (remainingToday < 10000) {
-      message = 'Jatah hari ini menipis, catat jajanmu!';
+    if (isOverBudget) {
+      message = 'Batas jajan habis, tahan jajan dulu!';
+    } else if (dailyAllowance < 20000) {
+      message = 'Jatah menipis, catat pengeluaran!';
     } else {
-      message = 'Ada jajan hari ini yang belum dicatat?';
+      message = 'Ada jajan yang belum dicatat?';
     }
 
     return Container(
