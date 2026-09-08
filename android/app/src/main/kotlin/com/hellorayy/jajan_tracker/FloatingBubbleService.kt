@@ -200,8 +200,13 @@ class FloatingBubbleService : Service() {
             WindowManager.LayoutParams.TYPE_PHONE
         }
 
+        val dm = resources.displayMetrics
+        val screenWidth = dm.widthPixels
+        val maxCalcWidth = (350 * dm.density).toInt()
+        val calcWidth = minOf(maxCalcWidth, screenWidth - (24 * dm.density).toInt())
+
         calcParams = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
+            calcWidth,
             WindowManager.LayoutParams.WRAP_CONTENT,
             layoutFlag,
             WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
@@ -210,7 +215,7 @@ class FloatingBubbleService : Service() {
         ).apply {
             gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
             x = 0
-            y = (28 * resources.displayMetrics.density).toInt()
+            y = (24 * dm.density).toInt()
         }
 
         val inflater = LayoutInflater.from(this)
@@ -620,6 +625,11 @@ class FloatingBubbleService : Service() {
         expression = ""
         currentAmount = 0L
         updateCalculatorDisplay()
+
+        val dm = resources.displayMetrics
+        val screenWidth = dm.widthPixels
+        val maxCalcWidth = (350 * dm.density).toInt()
+        calcParams.width = minOf(maxCalcWidth, screenWidth - (24 * dm.density).toInt())
 
         try {
             if (calcView?.isAttachedToWindow == true) {

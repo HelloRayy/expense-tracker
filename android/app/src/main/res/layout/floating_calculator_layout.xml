@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/calc_root"
-    android:layout_width="340dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_calc_card"
     android:elevation="24dp"
@@ -26,13 +26,17 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="⚡ Catat Jajan"
             android:textColor="#F8FAFC"
             android:textSize="15sp"
             android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/tv_calc_remaining"
@@ -41,6 +45,7 @@
             android:text="Batas Hari Ini: Rp 58rb"
             android:textColor="#8E8E93"
             android:textSize="12sp"
+            android:maxLines="1"
             android:textStyle="normal" />
 
         <TextView
@@ -89,7 +94,7 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <!-- 4-Column Thumb-Friendly Keypad (True Circles) -->
+    <!-- 4-Column Thumb-Friendly Keypad -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -98,400 +103,305 @@
         <!-- Row 1: C, ⌫, %, ÷ -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:layout_marginBottom="8dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="4">
 
-            <FrameLayout
+            <TextView
+                android:id="@+id/btn_calc_clear"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="C"
+                android:textColor="#E87B7B"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/btn_calc_clear"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="C"
-                    android:textColor="#E87B7B"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/num_backspace"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="⌫"
+                android:textColor="#E87B7B"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/num_backspace"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="⌫"
-                    android:textColor="#E87B7B"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/btn_calc_percent"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="%"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/btn_calc_percent"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="%"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/btn_calc_div"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <TextView
-                    android:id="@+id/btn_calc_div"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="÷"
-                    android:textColor="#00E5FF"
-                    android:textSize="26sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="÷"
+                android:textColor="#00E5FF"
+                android:textSize="26sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <!-- Row 2: 7, 8, 9, × -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:layout_marginBottom="8dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="4">
 
-            <FrameLayout
+            <TextView
+                android:id="@+id/num_7"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="7"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/num_7"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="7"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/num_8"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="8"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/num_8"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="8"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/num_9"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="9"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/num_9"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="9"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/btn_calc_mul"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <TextView
-                    android:id="@+id/btn_calc_mul"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="×"
-                    android:textColor="#00E5FF"
-                    android:textSize="26sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="×"
+                android:textColor="#00E5FF"
+                android:textSize="26sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <!-- Row 3: 4, 5, 6, - -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:layout_marginBottom="8dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="4">
 
-            <FrameLayout
+            <TextView
+                android:id="@+id/num_4"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="4"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/num_4"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="4"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/num_5"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="5"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/num_5"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="5"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/num_6"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="6"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/num_6"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="6"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/btn_calc_minus"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <TextView
-                    android:id="@+id/btn_calc_minus"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="-"
-                    android:textColor="#00E5FF"
-                    android:textSize="26sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="-"
+                android:textColor="#00E5FF"
+                android:textSize="26sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <!-- Row 4: 1, 2, 3, + -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:layout_marginBottom="8dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="4">
 
-            <FrameLayout
+            <TextView
+                android:id="@+id/num_1"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="1"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/num_1"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="1"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/num_2"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="2"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/num_2"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="2"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/num_3"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="3"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/num_3"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="3"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/btn_calc_plus"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <TextView
-                    android:id="@+id/btn_calc_plus"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="+"
-                    android:textColor="#00E5FF"
-                    android:textSize="26sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="+"
+                android:textColor="#00E5FF"
+                android:textSize="26sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <!-- Row 5: 00, 0, 000, = -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:weightSum="4">
 
-            <FrameLayout
+            <TextView
+                android:id="@+id/num_00"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="00"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/num_00"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="00"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/num_0"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/num_0"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="0"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/num_000"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_btn"
+                android:gravity="center"
+                android:text="000"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/num_000"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_btn"
-                    android:gravity="center"
-                    android:text="000"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/btn_calc_save"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <TextView
-                    android:id="@+id/btn_calc_save"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_calc_circle_equal"
-                    android:gravity="center"
-                    android:text="="
-                    android:textColor="#FFFFFF"
-                    android:textSize="32sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
+                android:layout_height="match_parent"
+                android:layout_margin="3.5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_calc_circle_equal"
+                android:gravity="center"
+                android:text="="
+                android:textColor="#FFFFFF"
+                android:textSize="32sp"
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 
