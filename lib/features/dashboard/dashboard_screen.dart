@@ -66,7 +66,6 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         final spent = widget.repository.totalSpent;
         final dailyAllowance = widget.repository.dailyAllowance;
         final remainingToday = widget.repository.remainingToday;
-        final daysRemainingInWeek = budget?.daysRemainingInWeek ?? 7;
         final expenses = widget.repository.expenses;
         final displayedExpenses = _showAllTransactions ? expenses : expenses.take(5).toList();
         final isOverBudget = remaining < 0 || remainingToday < 0;
@@ -93,7 +92,6 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                           padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
                           child: _buildHeader(
                             context: context,
-                            daysLeft: daysRemainingInWeek,
                             textPrimary: textPrimary,
                             textSecondary: textSecondary,
                             elevatedColor: elevatedColor,
@@ -288,7 +286,6 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
   Widget _buildHeader({
     required BuildContext context,
-    required int daysLeft,
     required Color textPrimary,
     required Color textSecondary,
     required Color elevatedColor,
@@ -347,69 +344,30 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         ),
         const SizedBox(width: 8),
 
-        // Live Status Pill & Quick Action Icons
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Glowing Mint Dot Status Pill (Pirsch Live Indicator)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-              decoration: BoxDecoration(
-                color: PirschColors.mintGreen.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: PirschColors.mintGreen.withValues(alpha: 0.3)),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 6,
-                    height: 6,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: PirschColors.mintGreen,
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    'Sisa $daysLeft hari',
-                    style: const TextStyle(
-                      color: PirschColors.mintGreen,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 6),
-
-            // Shopee Watcher Button
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => ShopeeSettingsScreen(repository: widget.repository),
-                    ),
-                  );
-                },
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: elevatedColor,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: borderColor),
-                  ),
-                  alignment: Alignment.center,
-                  child: Icon(Icons.storefront_rounded, color: textPrimary, size: 18),
+        // Shopee Watcher Button
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => ShopeeSettingsScreen(repository: widget.repository),
                 ),
+              );
+            },
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: elevatedColor,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: borderColor),
               ),
+              alignment: Alignment.center,
+              child: Icon(Icons.storefront_rounded, color: textPrimary, size: 18),
             ),
-          ],
+          ),
         ),
       ],
     );
