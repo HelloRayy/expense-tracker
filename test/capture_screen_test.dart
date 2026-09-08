@@ -133,6 +133,27 @@ void main() {
       File(outPath).writeAsBytesSync(bytes);
       print('PIRSCH QUICK LOG CAPTURE SAVED: $outPath');
     });
+
+    // Clear and enter overbudget amount (70.000 > 57.500)
+    await tester.tap(find.text('C'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('7'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('0'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('000'));
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final ui.Image image = await boundary.toImage(pixelRatio: 2.5);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final bytes = byteData!.buffer.asUint8List();
+
+      final outPath = '/home/rayhan/.gemini/antigravity/brain/c3cf172f-5299-4a70-bc5d-1e40b03dd06d/actual_pirsch_quick_log_warning.png';
+      File(outPath).writeAsBytesSync(bytes);
+      print('PIRSCH QUICK LOG WARNING CAPTURE SAVED: $outPath');
+    });
   });
 
   testWidgets('Capture DashboardScreen real screenshot in Pirsch Dark Mode', (WidgetTester tester) async {

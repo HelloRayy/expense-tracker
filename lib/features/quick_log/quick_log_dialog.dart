@@ -303,12 +303,21 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    final remaining = widget.repository.remainingBalance;
+    final dailyAllowance = widget.repository.dailyAllowance;
+    final isOverBudget = (_currentTotal > 0 && _currentTotal > dailyAllowance) || (dailyAllowance <= 0);
 
     final sheetBg = isDark ? const Color(0xFF000000) : PirschColors.lightBg;
     final btnBg = isDark ? const Color(0xFF18181A) : const Color(0xFFEBE6DA);
     final textPrimary = isDark ? Colors.white : Colors.black;
     final textSecondary = isDark ? const Color(0xFF8E8E93) : const Color(0xFF707070);
+
+    final badgeColor = isOverBudget ? PirschColors.roseRed : PirschColors.mintGreen;
+    final badgeBg = isOverBudget
+        ? PirschColors.roseRed.withValues(alpha: 0.15)
+        : PirschColors.mintGreen.withValues(alpha: 0.12);
+    final badgeBorder = isOverBudget
+        ? PirschColors.roseRed.withValues(alpha: 0.4)
+        : PirschColors.mintGreen.withValues(alpha: 0.3);
 
     return Container(
       decoration: BoxDecoration(
@@ -370,17 +379,26 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: PirschColors.mintGreen.withValues(alpha: 0.12),
+                      color: badgeBg,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: PirschColors.mintGreen.withValues(alpha: 0.3)),
+                      border: Border.all(color: badgeBorder),
                     ),
-                    child: Text(
-                      'Sisa: ${CurrencyFormatter.formatCompact(remaining)}',
-                      style: const TextStyle(
-                        color: PirschColors.mintGreen,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (isOverBudget) ...[
+                          Icon(Icons.warning_amber_rounded, color: badgeColor, size: 14),
+                          const SizedBox(width: 4),
+                        ],
+                        Text(
+                          'Batas Hari Ini: ${CurrencyFormatter.formatCompact(dailyAllowance)}',
+                          style: TextStyle(
+                            color: badgeColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -401,16 +419,16 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                       child: _buildExpressionWidget(textPrimary),
                     ),
                     const SizedBox(height: 10),
-                    // Bottom line: Evaluated sub-result in subtle gray matching Gambar 2
+                    // Bottom line: Evaluated sub-result in subtle gray or red warning when over budget
                     SizedBox(
                       height: 30,
                       child: _hasOperator && _currentTotal > 0
                           ? Text(
                               CurrencyFormatter.format(_currentTotal).replaceAll('Rp ', ''),
                               style: TextStyle(
-                                color: textSecondary,
+                                color: isOverBudget ? PirschColors.roseRed : textSecondary,
                                 fontSize: 24,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: isOverBudget ? FontWeight.w600 : FontWeight.w400,
                                 letterSpacing: -0.5,
                               ),
                             )
