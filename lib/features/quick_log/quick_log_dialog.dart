@@ -485,90 +485,93 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    final dailyAllowance = widget.repository.dailyAllowance;
-    final isOverBudget = (_currentTotal > 0 && _currentTotal > dailyAllowance) || (dailyAllowance <= 0);
+    return ListenableBuilder(
+      listenable: widget.repository,
+      builder: (context, _) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+        final todayLimit = widget.repository.remainingToday;
+        final isOverBudget = (_currentTotal > 0 && _currentTotal > todayLimit) || (todayLimit <= 0);
 
-    final sheetBg = isDark ? const Color(0xFF000000) : PirschColors.lightBg;
-    final btnBg = isDark ? const Color(0xFF18181A) : const Color(0xFFEBE6DA);
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final textSecondary = isDark ? const Color(0xFF8E8E93) : const Color(0xFF707070);
+        final sheetBg = isDark ? const Color(0xFF000000) : PirschColors.lightBg;
+        final btnBg = isDark ? const Color(0xFF18181A) : const Color(0xFFEBE6DA);
+        final textPrimary = isDark ? Colors.white : Colors.black;
+        final textSecondary = isDark ? const Color(0xFF8E8E93) : const Color(0xFF707070);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: sheetBg,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
-            blurRadius: 30,
-            offset: const Offset(0, -8),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 14,
-            bottom: 24 + bottomInset,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Drag handle
-              Center(
-                child: Container(
-                  width: 44,
-                  height: 4.5,
-                  decoration: BoxDecoration(
-                    color: textSecondary.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
+        return Container(
+          decoration: BoxDecoration(
+            color: sheetBg,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.5),
+                blurRadius: 30,
+                offset: const Offset(0, -8),
               ),
-              const SizedBox(height: 12),
-
-              // Header Info Strip
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            ],
+          ),
+          child: SafeArea(
+            top: false,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 14,
+                bottom: 24 + bottomInset,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Flexible(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.calculate_rounded, color: PirschColors.mintGreen, size: 20),
-                        const SizedBox(width: 8),
-                        Flexible(
-                          child: Text(
-                            'Kalkulator Jajan',
-                            style: TextStyle(
-                              color: textPrimary,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
+                  // Drag handle
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 4.5,
+                      decoration: BoxDecoration(
+                        color: textSecondary.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Header Info Strip
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.calculate_rounded, color: PirschColors.mintGreen, size: 20),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                'Kalkulator Jajan',
+                                style: TextStyle(
+                                  color: textPrimary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Clean UI Text (No Badge Container)
+                      Text(
+                        'Batas Hari Ini: ${CurrencyFormatter.formatCompact(todayLimit)}',
+                        style: TextStyle(
+                          color: todayLimit < 0 ? PirschColors.roseRed : textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  // Clean UI Text (No Badge Container)
-                  Text(
-                    'Batas Hari Ini: ${CurrencyFormatter.formatCompact(dailyAllowance)}',
-                    style: TextStyle(
-                      color: textSecondary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
               const SizedBox(height: 16),
 
               // Clean Calculator Display Matching Gambar 2
@@ -615,6 +618,8 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
           ),
         ),
       ),
+    );
+      },
     );
   }
 

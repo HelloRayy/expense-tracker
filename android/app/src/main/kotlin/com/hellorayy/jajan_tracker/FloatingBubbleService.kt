@@ -629,16 +629,19 @@ class FloatingBubbleService : Service() {
     }
 
     private fun formatCompactDaily(amount: Long): String {
-        return if (amount >= 1000000) {
-            val jt = amount.toDouble() / 1000000.0
+        val isNegative = amount < 0
+        val absAmount = Math.abs(amount)
+        val formatted = if (absAmount >= 1000000) {
+            val jt = absAmount.toDouble() / 1000000.0
             val s = String.format(Locale.US, "%.1f", jt).replace(".0", "")
             "Rp ${s}jt"
-        } else if (amount >= 1000) {
-            val rb = amount / 1000
+        } else if (absAmount >= 1000) {
+            val rb = absAmount / 1000
             "Rp ${rb}rb"
         } else {
-            "Rp $amount"
+            "Rp $absAmount"
         }
+        return if (isNegative) "-$formatted" else formatted
     }
 
     private fun updateCalculatorDisplay() {
@@ -652,7 +655,7 @@ class FloatingBubbleService : Service() {
 
         // Clean UI text in header (no badge styling)
         remainingText?.background = null
-        remainingText?.setTextColor(Color.parseColor("#8E8E93"))
+        remainingText?.setTextColor(if (dailyAllowance < 0) Color.parseColor("#E87B7B") else Color.parseColor("#8E8E93"))
         remainingText?.text = "Batas Hari Ini: ${formatCompactDaily(dailyAllowance)}"
 
         val digitColor = if (isOverBudget) Color.parseColor("#E87B7B") else Color.WHITE

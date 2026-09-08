@@ -142,11 +142,10 @@ class BudgetRepository extends ChangeNotifier {
     if (_budget == null) return;
     // In native floating widget/overlay:
     // daily_safe represents today's remaining jajan allowance
-    final safeDaily = remainingToday < 0 ? 0 : remainingToday;
     await _nativeBridge.syncBalanceToNative(
       remainingBalance: remainingBalance,
       totalBudget: _budget!.weeklyIncome,
-      dailySafe: safeDaily,
+      dailySafe: remainingToday,
     );
   }
 }

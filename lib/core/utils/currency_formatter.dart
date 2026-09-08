@@ -12,14 +12,19 @@ class CurrencyFormatter {
   }
 
   static String formatCompact(num amount) {
-    if (amount >= 1000000) {
-      final juta = (amount / 1000000).toStringAsFixed(1).replaceAll('.0', '');
-      return 'Rp ${juta}jt';
-    } else if (amount >= 1000) {
-      final ribu = (amount / 1000).toStringAsFixed(0);
-      return 'Rp ${ribu}rb';
+    final isNegative = amount < 0;
+    final absAmount = amount.abs();
+    final String formatted;
+    if (absAmount >= 1000000) {
+      final juta = (absAmount / 1000000).toStringAsFixed(1).replaceAll('.0', '');
+      formatted = 'Rp ${juta}jt';
+    } else if (absAmount >= 1000) {
+      final ribu = (absAmount / 1000).toStringAsFixed(0);
+      formatted = 'Rp ${ribu}rb';
+    } else {
+      formatted = 'Rp $absAmount';
     }
-    return 'Rp $amount';
+    return isNegative ? '-$formatted' : formatted;
   }
 
   static int parse(String text) {
