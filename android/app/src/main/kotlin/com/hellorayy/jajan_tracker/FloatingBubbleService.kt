@@ -12,7 +12,9 @@ import android.graphics.Color
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.provider.Settings
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -45,6 +47,54 @@ class FloatingBubbleService : Service() {
     private var expression: String = ""
     private var dailyAllowance: Long = 50000L
     private var isStandalone: Boolean = false
+
+    private var cursorPosition: Int = 0
+    private var cursorVisible: Boolean = true
+    private var cursorBlinkHandler: Handler? = null
+    private var cursorBlinkRunnable: Runnable? = null
+
+    private fun startCursorBlink() {
+        stopCursorBlink()
+        cursorVisible = true
+        val handler = Handler(Looper.getMainLooper())
+        cursorBlinkHandler = handler
+        val runnable = object : Runnable {
+            override fun run() {
+                cursorVisible = !cursorVisible
+                updateCalculatorDisplay()
+                cursorBlinkHandler?.postDelayed(this, 500)
+            }
+        }
+        cursorBlinkRunnable = runnable
+        handler.postDelayed(runnable, 500)
+    }
+
+    private fun stopCursorBlink() {
+        cursorBlinkRunnable?.let { cursorBlinkHandler?.removeCallbacks(it) }
+        cursorBlinkHandler = null
+        cursorBlinkRunnable = null
+    }
+
+    private fun resetCursorBlink() {
+        cursorVisible = true
+        updateCalculatorDisplay()
+        cursorBlinkRunnable?.let { r ->
+            cursorBlinkHandler?.removeCallbacks(r)
+            cursorBlinkHandler?.postDelayed(r, 500)
+        }
+    }
+
+    private fun mapRenderedOffsetToRawCursor(offset: Int, rendered: String): Int {
+        var rawCount = 0
+        val safeOffset = offset.coerceIn(0, rendered.length)
+        for (i in 0 until safeOffset) {
+            val c = rendered[i]
+            if (c != '.' && c != '|') {
+                rawCount++
+            }
+        }
+        return rawCount.coerceIn(0, expression.length)
+    }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -273,6 +323,45 @@ class FloatingBubbleService : Service() {
         view.findViewById<View>(R.id.calc_drag_handle)?.setOnTouchListener(dragTouchListener)
         view.findViewById<View>(R.id.calc_header)?.setOnTouchListener(dragTouchListener)
 
+        // Interactive cursor touch listener on display
+        val displayContainer = view.findViewById<View>(R.id.calc_display_container)
+        val tvDisplay = view.findViewById<TextView>(R.id.tv_calc_display)
+
+        val displayTouchListener = View.OnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                triggerHaptic(v)
+                if (expression.isEmpty()) {
+                    cursorPosition = 0
+                    resetCursorBlink()
+                    return@OnTouchListener true
+                }
+
+                val layout = tvDisplay?.layout
+                if (layout != null && tvDisplay != null) {
+                    val location = IntArray(2)
+                    tvDisplay.getLocationOnScreen(location)
+                    val localX = event.rawX - location[0] - tvDisplay.totalPaddingLeft + tvDisplay.scrollX
+
+                    if (localX <= 0) {
+                        cursorPosition = 0
+                    } else if (localX >= layout.getLineWidth(0)) {
+                        cursorPosition = expression.length
+                    } else {
+                        val offset = layout.getOffsetForHorizontal(0, localX)
+                        val rendered = tvDisplay.text.toString()
+                        cursorPosition = mapRenderedOffsetToRawCursor(offset, rendered)
+                    }
+                    resetCursorBlink()
+                }
+                true
+            } else {
+                event.action == MotionEvent.ACTION_DOWN
+            }
+        }
+
+        displayContainer?.setOnTouchListener(displayTouchListener)
+        tvDisplay?.setOnTouchListener(displayTouchListener)
+
         // Close / Collapse Button
         view.findViewById<View>(R.id.btn_calc_close)?.setOnClickListener {
             triggerHaptic(it)
@@ -283,8 +372,9 @@ class FloatingBubbleService : Service() {
         view.findViewById<View>(R.id.btn_calc_clear)?.setOnClickListener {
             triggerHaptic(it)
             expression = ""
+            cursorPosition = 0
             currentAmount = 0L
-            updateCalculatorDisplay()
+            resetCursorBlink()
         }
 
         // Numpad Buttons (0-9, 00, 000)
@@ -329,25 +419,35 @@ class FloatingBubbleService : Service() {
         }
         view.findViewById<View>(R.id.btn_calc_percent)?.setOnClickListener {
             triggerHaptic(it)
-            if (expression.isNotEmpty() && !expression.endsWith(" ") && !expression.endsWith("%")) {
-                expression += "%"
-                updateCalculatorDisplay()
+            val left = expression.substring(0, cursorPosition)
+            val right = expression.substring(cursorPosition)
+            if (left.isNotEmpty() && !left.endsWith(" ") && !left.endsWith("%")) {
+                expression = left + "%" + right
+                cursorPosition += 1
+                resetCursorBlink()
             }
         }
 
         // Backspace Button
         view.findViewById<View>(R.id.num_backspace)?.setOnClickListener {
             triggerHaptic(it)
-            if (expression.isNotEmpty()) {
-                expression = if (expression.endsWith(" + ") ||
-                    expression.endsWith(" - ") ||
-                    expression.endsWith(" × ") ||
-                    expression.endsWith(" ÷ ")) {
-                    expression.substring(0, expression.length - 3)
+            if (expression.isNotEmpty() && cursorPosition > 0) {
+                val left = expression.substring(0, cursorPosition)
+                val right = expression.substring(cursorPosition)
+                if (left.endsWith(" + ") ||
+                    left.endsWith(" - ") ||
+                    left.endsWith(" × ") ||
+                    left.endsWith(" ÷ ")) {
+                    expression = left.substring(0, left.length - 3) + right
+                    cursorPosition -= 3
+                } else if (left.endsWith(" ")) {
+                    expression = left.substring(0, left.length - 1) + right
+                    cursorPosition -= 1
                 } else {
-                    expression.substring(0, expression.length - 1)
+                    expression = left.substring(0, left.length - 1) + right
+                    cursorPosition -= 1
                 }
-                updateCalculatorDisplay()
+                resetCursorBlink()
             }
         }
 
@@ -369,17 +469,27 @@ class FloatingBubbleService : Service() {
     }
 
     private fun onOperator(op: String) {
-        if (expression.isNotEmpty()) {
-            expression = if (expression.endsWith(" + ") ||
-                expression.endsWith(" - ") ||
-                expression.endsWith(" × ") ||
-                expression.endsWith(" ÷ ")) {
-                expression.substring(0, expression.length - 3) + " $op "
-            } else {
-                expression + " $op "
-            }
-            updateCalculatorDisplay()
+        if (expression.isEmpty()) {
+            expression = "0 $op "
+            cursorPosition = expression.length
+            resetCursorBlink()
+            return
         }
+
+        val left = expression.substring(0, cursorPosition)
+        val right = expression.substring(cursorPosition)
+
+        if (left.endsWith(" + ") ||
+            left.endsWith(" - ") ||
+            left.endsWith(" × ") ||
+            left.endsWith(" ÷ ")) {
+            expression = left.substring(0, left.length - 3) + " $op " + right
+            cursorPosition = left.length - 3 + " $op ".length
+        } else {
+            expression = left + " $op " + right
+            cursorPosition += " $op ".length
+        }
+        resetCursorBlink()
     }
 
     private fun evaluateExpression(expr: String): Long {
@@ -456,24 +566,29 @@ class FloatingBubbleService : Service() {
     }
 
     private fun onNumpadDigit(digit: String) {
-        if (expression.endsWith("%")) {
-            expression += " × "
-        }
+        val left = expression.substring(0, cursorPosition)
+        val right = expression.substring(cursorPosition)
 
-        val curr = getCurrentOperand()
+        val lastSpace = left.lastIndexOf(' ')
+        val opStart = if (lastSpace == -1) 0 else lastSpace + 1
+        val nextSpace = right.indexOf(' ')
+        val opEnd = if (nextSpace == -1) expression.length else cursorPosition + nextSpace
+        val curr = expression.substring(opStart, opEnd)
 
         if (digit == "00") {
             if (curr.isNotEmpty() && curr != "0" && curr.length + 2 <= 12) {
-                expression += "00"
-                updateCalculatorDisplay()
+                expression = left + "00" + right
+                cursorPosition += 2
+                resetCursorBlink()
             }
             return
         }
 
         if (digit == "000") {
             if (curr.isNotEmpty() && curr != "0" && curr.length + 3 <= 12) {
-                expression += "000"
-                updateCalculatorDisplay()
+                expression = left + "000" + right
+                cursorPosition += 3
+                resetCursorBlink()
             }
             return
         }
@@ -481,25 +596,25 @@ class FloatingBubbleService : Service() {
         if (digit == "0") {
             if (curr == "0") return
             if (curr.length < 12) {
-                expression += "0"
-                updateCalculatorDisplay()
+                expression = left + "0" + right
+                cursorPosition += 1
+                resetCursorBlink()
             }
             return
         }
 
         // Digits 1-9
         if (curr == "0") {
-            val lastZero = expression.lastIndexOf('0')
-            if (lastZero != -1 && lastZero == expression.length - 1) {
-                expression = expression.substring(0, lastZero) + digit
-                updateCalculatorDisplay()
-                return
-            }
+            expression = expression.substring(0, opStart) + digit + right
+            cursorPosition = opStart + 1
+            resetCursorBlink()
+            return
         }
 
         if (curr.length < 12 && expression.length < 100) {
-            expression += digit
-            updateCalculatorDisplay()
+            expression = left + digit + right
+            cursorPosition += 1
+            resetCursorBlink()
         }
     }
 
@@ -541,15 +656,18 @@ class FloatingBubbleService : Service() {
         remainingText?.text = "Batas Hari Ini: ${formatCompactDaily(dailyAllowance)}"
 
         val digitColor = if (isOverBudget) Color.parseColor("#E87B7B") else Color.WHITE
+        val cursorColor = if (cursorVisible) Color.parseColor("#00E5FF") else Color.TRANSPARENT
 
-        // Format expression with cyan operators and cyan cursor matching Gambar 2
+        cursorPosition = cursorPosition.coerceIn(0, expression.length)
+
+        // Format expression with cyan operators and blinking interactive cyan cursor
         val ssb = SpannableStringBuilder()
         if (expression.isEmpty()) {
             ssb.append("0")
             val cursorStart = ssb.length
             ssb.append(" |")
             ssb.setSpan(
-                ForegroundColorSpan(Color.parseColor("#00E5FF")),
+                ForegroundColorSpan(cursorColor),
                 cursorStart,
                 ssb.length,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -559,9 +677,28 @@ class FloatingBubbleService : Service() {
             formula?.visibility = View.INVISIBLE
         } else {
             val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
-            val tokens = Regex("(\\d+|[+\\-×÷%])").findAll(expression)
+            val tokens = Regex("(\\d+|[+\\-×÷%]|\\s+)").findAll(expression)
+            var currentRawIndex = 0
+
+            fun maybeInsertCursor() {
+                if (currentRawIndex == cursorPosition) {
+                    val cursorStart = ssb.length
+                    ssb.append(" |")
+                    ssb.setSpan(
+                        ForegroundColorSpan(cursorColor),
+                        cursorStart,
+                        ssb.length,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+            }
+
+            maybeInsertCursor()
+
             for (match in tokens) {
                 val token = match.value
+                val tokenStartRaw = currentRawIndex
+
                 if (token in listOf("+", "-", "×", "÷", "%")) {
                     val start = ssb.length
                     ssb.append(token)
@@ -571,31 +708,72 @@ class FloatingBubbleService : Service() {
                         ssb.length,
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
+                    currentRawIndex += token.length
+                    maybeInsertCursor()
+                } else if (token.all { it.isWhitespace() }) {
+                    ssb.append(token)
+                    currentRawIndex += token.length
+                    maybeInsertCursor()
                 } else {
                     val num = token.toLongOrNull()
-                    val formatted = if (num != null) formatter.format(num) else token
-                    val start = ssb.length
-                    ssb.append(formatted)
-                    if (isOverBudget) {
-                        ssb.setSpan(
-                            ForegroundColorSpan(digitColor),
-                            start,
-                            ssb.length,
-                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
+                    if (num != null) {
+                        val formatted = formatter.format(num)
+                        var numRawOffset = 0
+                        for (ch in formatted) {
+                            if (tokenStartRaw + numRawOffset == cursorPosition && ssb.isNotEmpty() && !ssb.endsWith('|')) {
+                                val cursorStart = ssb.length
+                                ssb.append("|")
+                                ssb.setSpan(
+                                    ForegroundColorSpan(cursorColor),
+                                    cursorStart,
+                                    ssb.length,
+                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                                )
+                            }
+                            val start = ssb.length
+                            ssb.append(ch)
+                            if (isOverBudget) {
+                                ssb.setSpan(
+                                    ForegroundColorSpan(digitColor),
+                                    start,
+                                    ssb.length,
+                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                                )
+                            }
+                            if (ch != '.') {
+                                numRawOffset++
+                            }
+                        }
+                        currentRawIndex += token.length
+                        maybeInsertCursor()
+                    } else {
+                        val start = ssb.length
+                        ssb.append(token)
+                        if (isOverBudget) {
+                            ssb.setSpan(
+                                ForegroundColorSpan(digitColor),
+                                start,
+                                ssb.length,
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
+                        }
+                        currentRawIndex += token.length
+                        maybeInsertCursor()
                     }
                 }
             }
 
-            // Append cyan cursor
-            val cursorStart = ssb.length
-            ssb.append(" |")
-            ssb.setSpan(
-                ForegroundColorSpan(Color.parseColor("#00E5FF")),
-                cursorStart,
-                ssb.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+            if (cursorPosition >= expression.length && ssb.indexOf('|') == -1) {
+                val cursorStart = ssb.length
+                ssb.append(" |")
+                ssb.setSpan(
+                    ForegroundColorSpan(cursorColor),
+                    cursorStart,
+                    ssb.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+
             display?.text = ssb
 
             val hasOp = expression.contains("+") ||
@@ -625,8 +803,9 @@ class FloatingBubbleService : Service() {
 
         dailyAllowance = loadDailyAllowance()
         expression = ""
+        cursorPosition = 0
         currentAmount = 0L
-        updateCalculatorDisplay()
+        startCursorBlink()
 
         val dm = resources.displayMetrics
         val screenWidth = dm.widthPixels
@@ -643,6 +822,7 @@ class FloatingBubbleService : Service() {
     }
 
     private fun collapseToBubble() {
+        stopCursorBlink()
         val wm = windowManager ?: return
 
         try {
@@ -778,6 +958,7 @@ class FloatingBubbleService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        stopCursorBlink()
         isRunning = false
         val wm = windowManager ?: return
 

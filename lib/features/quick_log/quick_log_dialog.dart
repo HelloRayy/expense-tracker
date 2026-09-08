@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/constants/app_colors.dart';
@@ -36,7 +37,46 @@ class QuickLogDialog extends StatefulWidget {
 
 class _QuickLogDialogState extends State<QuickLogDialog> {
   String _expression = '';
+  int _rawCursorPos = 0;
   bool _isSaving = false;
+  bool _cursorVisible = true;
+  Timer? _cursorBlinkTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startCursorBlink();
+  }
+
+  void _startCursorBlink() {
+    _cursorVisible = true;
+    _cursorBlinkTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
+      if (mounted) {
+        setState(() => _cursorVisible = !_cursorVisible);
+      }
+    });
+  }
+
+  void _resetCursorBlink() {
+    _cursorBlinkTimer?.cancel();
+    _cursorVisible = true;
+    _startCursorBlink();
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _cursorBlinkTimer?.cancel();
+    super.dispose();
+  }
+
+  void _setCursorPos(int pos) {
+    HapticFeedback.selectionClick();
+    setState(() {
+      _rawCursorPos = pos.clamp(0, _expression.length);
+    });
+    _resetCursorBlink();
+  }
 
   int _evaluate(String expr) {
     if (expr.trim().isEmpty) return 0;
@@ -122,54 +162,71 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
       _expression.contains('÷') ||
       _expression.contains('%');
 
-  String get _currentOperand {
-    final lastSpace = _expression.lastIndexOf(' ');
-    if (lastSpace == -1) return _expression;
-    return _expression.substring(lastSpace + 1);
-  }
-
   void _onKeyPress(String key) {
     HapticFeedback.selectionClick();
     setState(() {
+      _rawCursorPos = _rawCursorPos.clamp(0, _expression.length);
+
       if (key == 'C') {
         _expression = '';
+        _rawCursorPos = 0;
+        _resetCursorBlink();
         return;
       }
 
       if (key == '⌫') {
-        if (_expression.isNotEmpty) {
-          if (_expression.endsWith(' + ') ||
-              _expression.endsWith(' - ') ||
-              _expression.endsWith(' × ') ||
-              _expression.endsWith(' ÷ ')) {
-            _expression = _expression.substring(0, _expression.length - 3);
+        if (_expression.isNotEmpty && _rawCursorPos > 0) {
+          final left = _expression.substring(0, _rawCursorPos);
+          final right = _expression.substring(_rawCursorPos);
+          if (left.endsWith(' + ') ||
+              left.endsWith(' - ') ||
+              left.endsWith(' × ') ||
+              left.endsWith(' ÷ ')) {
+            _expression = '${left.substring(0, left.length - 3)}$right';
+            _rawCursorPos -= 3;
+          } else if (left.endsWith(' ')) {
+            _expression = '${left.substring(0, left.length - 1)}$right';
+            _rawCursorPos -= 1;
           } else {
-            _expression = _expression.substring(0, _expression.length - 1);
+            _expression = '${left.substring(0, left.length - 1)}$right';
+            _rawCursorPos -= 1;
           }
         }
+        _resetCursorBlink();
         return;
       }
 
       if (key == '+' || key == '-' || key == '×' || key == '÷') {
         if (_expression.isEmpty) {
           _expression = '0 $key ';
+          _rawCursorPos = _expression.length;
+          _resetCursorBlink();
           return;
         }
-        if (_expression.endsWith(' + ') ||
-            _expression.endsWith(' - ') ||
-            _expression.endsWith(' × ') ||
-            _expression.endsWith(' ÷ ')) {
-          _expression = '${_expression.substring(0, _expression.length - 3)} $key ';
+        final left = _expression.substring(0, _rawCursorPos);
+        final right = _expression.substring(_rawCursorPos);
+        if (left.endsWith(' + ') ||
+            left.endsWith(' - ') ||
+            left.endsWith(' × ') ||
+            left.endsWith(' ÷ ')) {
+          _expression = '${left.substring(0, left.length - 3)} $key $right';
+          _rawCursorPos = left.length - 3 + ' $key '.length;
         } else {
-          _expression += ' $key ';
+          _expression = '$left $key $right';
+          _rawCursorPos += ' $key '.length;
         }
+        _resetCursorBlink();
         return;
       }
 
       if (key == '%') {
-        if (_expression.isNotEmpty && !_expression.endsWith(' ') && !_expression.endsWith('%')) {
-          _expression += '%';
+        final left = _expression.substring(0, _rawCursorPos);
+        final right = _expression.substring(_rawCursorPos);
+        if (left.isNotEmpty && !left.endsWith(' ') && !left.endsWith('%')) {
+          _expression = '$left%$right';
+          _rawCursorPos += 1;
         }
+        _resetCursorBlink();
         return;
       }
 
@@ -178,22 +235,29 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
         return;
       }
 
-      if (_expression.endsWith('%')) {
-        _expression += ' × ';
-      }
+      final left = _expression.substring(0, _rawCursorPos);
+      final right = _expression.substring(_rawCursorPos);
 
-      final curr = _currentOperand;
+      final lastSpace = left.lastIndexOf(' ');
+      final opStart = lastSpace == -1 ? 0 : lastSpace + 1;
+      final nextSpace = right.indexOf(' ');
+      final opEnd = nextSpace == -1 ? _expression.length : _rawCursorPos + nextSpace;
+      final curr = _expression.substring(opStart, opEnd);
 
       if (key == '00') {
         if (curr.isNotEmpty && curr != '0' && curr.length + 2 <= 12) {
-          _expression += '00';
+          _expression = '$left' '00' '$right';
+          _rawCursorPos += 2;
+          _resetCursorBlink();
         }
         return;
       }
 
       if (key == '000') {
         if (curr.isNotEmpty && curr != '0' && curr.length + 3 <= 12) {
-          _expression += '000';
+          _expression = '$left' '000' '$right';
+          _rawCursorPos += 3;
+          _resetCursorBlink();
         }
         return;
       }
@@ -201,22 +265,25 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
       if (key == '0') {
         if (curr == '0') return;
         if (curr.length < 12) {
-          _expression += '0';
+          _expression = '${left}0$right';
+          _rawCursorPos += 1;
+          _resetCursorBlink();
         }
         return;
       }
 
       // Digits 1-9
       if (curr == '0') {
-        final lastZeroIndex = _expression.lastIndexOf('0');
-        if (lastZeroIndex != -1 && lastZeroIndex == _expression.length - 1) {
-          _expression = '${_expression.substring(0, lastZeroIndex)}$key';
-          return;
-        }
+        _expression = '${_expression.substring(0, opStart)}$key$right';
+        _rawCursorPos = opStart + 1;
+        _resetCursorBlink();
+        return;
       }
 
       if (curr.length < 12 && _expression.length < 100) {
-        _expression += key;
+        _expression = '$left$key$right';
+        _rawCursorPos += 1;
+        _resetCursorBlink();
       }
     });
   }
@@ -244,114 +311,175 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     }
   }
 
+  Widget _buildCursorBar() {
+    const accentCyan = Color(0xFF00E5FF);
+    return AnimatedOpacity(
+      opacity: _cursorVisible ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 80),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 2),
+        width: 2.5,
+        height: 38,
+        decoration: BoxDecoration(
+          color: accentCyan,
+          borderRadius: BorderRadius.circular(1.5),
+          boxShadow: [
+            BoxShadow(
+              color: accentCyan.withValues(alpha: 0.6),
+              blurRadius: 5,
+              spreadRadius: 0.5,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildExpressionWidget(Color textPrimary, {required bool isOverBudget}) {
     const accentCyan = Color(0xFF00E5FF);
     final numberColor = isOverBudget ? PirschColors.roseRed : textPrimary;
 
     if (_expression.trim().isEmpty) {
-      return RichText(
-        textAlign: TextAlign.right,
-        text: TextSpan(
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 48,
-            fontWeight: FontWeight.w400,
-            color: textPrimary,
-            letterSpacing: -0.5,
-          ),
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          HapticFeedback.selectionClick();
+          _resetCursorBlink();
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const TextSpan(text: '0'),
-            WidgetSpan(
-              alignment: PlaceholderAlignment.middle,
-              child: Container(
-                margin: const EdgeInsets.only(left: 3),
-                width: 2.5,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: accentCyan,
-                  borderRadius: BorderRadius.circular(1.5),
-                  boxShadow: [
-                    BoxShadow(
-                      color: accentCyan.withValues(alpha: 0.5),
-                      blurRadius: 4,
-                      spreadRadius: 0.5,
-                    ),
-                  ],
-                ),
+            Text(
+              '0',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 48,
+                fontWeight: FontWeight.w400,
+                color: numberColor,
+                letterSpacing: -0.5,
               ),
             ),
+            const SizedBox(width: 4),
+            _buildCursorBar(),
           ],
         ),
       );
     }
 
-    final spans = <InlineSpan>[];
-    final regex = RegExp(r'(\d+|[+\-×÷%])');
+    final children = <Widget>[];
+    final regex = RegExp(r'(\d+|[+\-×÷%]| +)');
     final matches = regex.allMatches(_expression);
+    int rawIndex = 0;
+
+    void maybeInsertCursor() {
+      if (rawIndex == _rawCursorPos) {
+        children.add(_buildCursorBar());
+      }
+    }
+
+    maybeInsertCursor();
 
     for (final m in matches) {
       final token = m.group(0)!;
+      final tokenStart = rawIndex;
+
       if (token == '+' || token == '-' || token == '×' || token == '÷' || token == '%') {
-        spans.add(
-          TextSpan(
-            text: token,
-            style: const TextStyle(
-              fontFamily: 'Inter',
-              color: accentCyan,
-              fontWeight: FontWeight.w400,
+        children.add(
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapUp: (details) {
+              final isRight = details.localPosition.dx > 12;
+              _setCursorPos(isRight ? tokenStart + token.length : tokenStart);
+            },
+            child: Text(
+              token,
+              style: const TextStyle(
+                fontFamily: 'Inter',
+                color: accentCyan,
+                fontSize: 48,
+                fontWeight: FontWeight.w400,
+                letterSpacing: -0.5,
+              ),
             ),
           ),
         );
+        rawIndex += token.length;
+        maybeInsertCursor();
+      } else if (token.trim().isEmpty) {
+        children.add(
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => _setCursorPos(tokenStart),
+            child: Text(
+              token,
+              style: const TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 48,
+                letterSpacing: -0.5,
+              ),
+            ),
+          ),
+        );
+        rawIndex += token.length;
+        maybeInsertCursor();
       } else {
         final val = int.tryParse(token);
         final formattedNum = val != null
             ? CurrencyFormatter.format(val).replaceAll('Rp ', '')
             : token;
-        spans.add(
-          TextSpan(
-            text: formattedNum,
-            style: TextStyle(
-              fontFamily: 'Inter',
-              color: numberColor,
-              fontWeight: FontWeight.w400,
+
+        var numOffset = 0;
+        for (int i = 0; i < formattedNum.length; i++) {
+          final ch = formattedNum[i];
+          final isDot = ch == '.';
+          final currentRawPos = tokenStart + numOffset;
+
+          if (!isDot && currentRawPos == _rawCursorPos && children.isNotEmpty) {
+            children.add(_buildCursorBar());
+          }
+
+          children.add(
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapUp: (details) {
+                if (isDot) {
+                  _setCursorPos(currentRawPos);
+                } else {
+                  final isRight = details.localPosition.dx > 14;
+                  _setCursorPos(isRight ? currentRawPos + 1 : currentRawPos);
+                }
+              },
+              child: Text(
+                ch,
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  color: numberColor,
+                  fontSize: 48,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: -0.5,
+                ),
+              ),
             ),
-          ),
-        );
+          );
+
+          if (!isDot) {
+            numOffset++;
+          }
+        }
+        rawIndex += token.length;
+        maybeInsertCursor();
       }
     }
 
-    // Trailing active cursor matching Gambar 2
-    spans.add(
-      WidgetSpan(
-        alignment: PlaceholderAlignment.middle,
-        child: Container(
-          margin: const EdgeInsets.only(left: 3),
-          width: 2.5,
-          height: 40,
-          decoration: BoxDecoration(
-            color: accentCyan,
-            borderRadius: BorderRadius.circular(1.5),
-            boxShadow: [
-              BoxShadow(
-                color: accentCyan.withValues(alpha: 0.5),
-                blurRadius: 4,
-                spreadRadius: 0.5,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    if (_rawCursorPos >= _expression.length && !children.any((w) => w is AnimatedOpacity)) {
+      children.add(_buildCursorBar());
+    }
 
-    return RichText(
-      textAlign: TextAlign.right,
-      text: TextSpan(
-        style: const TextStyle(
-          fontSize: 48,
-          letterSpacing: -0.5,
-        ),
-        children: spans,
-      ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: children,
     );
   }
 
@@ -438,35 +566,39 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
               const SizedBox(height: 16),
 
               // Clean Calculator Display Matching Gambar 2
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                alignment: Alignment.centerRight,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // Top line: Formatted expression with warning color on nominal digits
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerRight,
-                      child: _buildExpressionWidget(textPrimary, isOverBudget: isOverBudget),
-                    ),
-                    const SizedBox(height: 10),
-                    // Bottom line: Evaluated sub-result in subtle gray or red warning when over budget
-                    SizedBox(
-                      height: 30,
-                      child: _hasOperator && _currentTotal > 0
-                          ? Text(
-                              CurrencyFormatter.format(_currentTotal).replaceAll('Rp ', ''),
-                              style: TextStyle(
-                                color: isOverBudget ? PirschColors.roseRed : textSecondary,
-                                fontSize: 24,
-                                fontWeight: isOverBudget ? FontWeight.w600 : FontWeight.w400,
-                                letterSpacing: -0.5,
-                              ),
-                            )
-                          : const SizedBox.shrink(),
-                    ),
-                  ],
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => _setCursorPos(_expression.length),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                  alignment: Alignment.centerRight,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      // Top line: Formatted expression with warning color on nominal digits
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerRight,
+                        child: _buildExpressionWidget(textPrimary, isOverBudget: isOverBudget),
+                      ),
+                      const SizedBox(height: 10),
+                      // Bottom line: Evaluated sub-result in subtle gray or red warning when over budget
+                      SizedBox(
+                        height: 30,
+                        child: _hasOperator && _currentTotal > 0
+                            ? Text(
+                                CurrencyFormatter.format(_currentTotal).replaceAll('Rp ', ''),
+                                style: TextStyle(
+                                  color: isOverBudget ? PirschColors.roseRed : textSecondary,
+                                  fontSize: 24,
+                                  fontWeight: isOverBudget ? FontWeight.w600 : FontWeight.w400,
+                                  letterSpacing: -0.5,
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
