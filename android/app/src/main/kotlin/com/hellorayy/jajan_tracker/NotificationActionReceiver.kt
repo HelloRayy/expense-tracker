@@ -87,19 +87,41 @@ class NotificationActionReceiver : BroadcastReceiver() {
                     }
 
                     // Query exact active budget & total expenses to prevent cache drift
-                    var totalBudget = 0L
+                    var weeklyIncome = 0L
+                    var weeklySavingsTarget = 0L
+                    var totalBudgetFallback = 0L
                     var startDate = ""
                     var endDate = ""
-                    val budgetCursor = db.rawQuery(
-                        "SELECT total_budget, start_date, end_date FROM budget WHERE id = 1 LIMIT 1",
-                        null
-                    )
-                    if (budgetCursor.moveToFirst()) {
-                        totalBudget = budgetCursor.getLong(0)
-                        startDate = budgetCursor.getString(1)
-                        endDate = budgetCursor.getString(2)
+
+                    try {
+                        val budgetCursor = db.rawQuery(
+                            "SELECT weekly_income, weekly_savings_target, start_date, end_date, total_budget FROM budget WHERE id = 1 LIMIT 1",
+                            null
+                        )
+                        if (budgetCursor.moveToFirst()) {
+                            weeklyIncome = budgetCursor.getLong(0)
+                            weeklySavingsTarget = budgetCursor.getLong(1)
+                            startDate = budgetCursor.getString(2) ?: ""
+                            endDate = budgetCursor.getString(3) ?: ""
+                            totalBudgetFallback = budgetCursor.getLong(4)
+                        }
+                        budgetCursor.close()
+                    } catch (_: Exception) {
+                        try {
+                            val budgetCursor = db.rawQuery(
+                                "SELECT total_budget, start_date, end_date FROM budget WHERE id = 1 LIMIT 1",
+                                null
+                            )
+                            if (budgetCursor.moveToFirst()) {
+                                totalBudgetFallback = budgetCursor.getLong(0)
+                                startDate = budgetCursor.getString(1) ?: ""
+                                endDate = budgetCursor.getString(2) ?: ""
+                            }
+                            budgetCursor.close()
+                        } catch (_: Exception) {}
                     }
-                    budgetCursor.close()
+
+                    val activeBudget = if (weeklyIncome > 0) Math.max(0L, weeklyIncome - weeklySavingsTarget) else totalBudgetFallback
 
                     var totalSpent = 0L
                     if (startDate.isNotEmpty() && endDate.isNotEmpty()) {
@@ -119,7 +141,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
                         sumCursor.close()
                     }
 
-                    val computed = totalBudget - totalSpent
+                    val computed = activeBudget - totalSpent
                     exactRemaining = computed
 
                     if (endDate.isNotEmpty()) {

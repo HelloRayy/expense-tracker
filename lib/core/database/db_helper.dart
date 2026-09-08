@@ -22,20 +22,36 @@ class DbHelper {
 
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: (db, version) async {
         await db.execute('''
-          CREATE TABLE budget (
+          CREATE TABLE IF NOT EXISTS budget (
             id INTEGER PRIMARY KEY,
-            weekly_income INTEGER NOT NULL,
-            weekly_savings_target INTEGER NOT NULL,
+            weekly_income INTEGER NOT NULL DEFAULT 0,
+            weekly_savings_target INTEGER NOT NULL DEFAULT 0,
+            total_budget INTEGER NOT NULL DEFAULT 0,
+            payday_day INTEGER NOT NULL DEFAULT 25,
             start_date TEXT NOT NULL,
             end_date TEXT NOT NULL
           )
         ''');
 
+        // Defensive column check in case table was partially created in a previous run
+        try {
+          await db.execute('ALTER TABLE budget ADD COLUMN total_budget INTEGER NOT NULL DEFAULT 0');
+        } catch (_) {}
+        try {
+          await db.execute('ALTER TABLE budget ADD COLUMN payday_day INTEGER NOT NULL DEFAULT 25');
+        } catch (_) {}
+        try {
+          await db.execute('ALTER TABLE budget ADD COLUMN weekly_income INTEGER NOT NULL DEFAULT 0');
+        } catch (_) {}
+        try {
+          await db.execute('ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
+        } catch (_) {}
+
         await db.execute('''
-          CREATE TABLE expenses (
+          CREATE TABLE IF NOT EXISTS expenses (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             amount INTEGER NOT NULL,
             note TEXT NOT NULL,
@@ -49,7 +65,7 @@ class DbHelper {
 
         // Insert default initial weekly budget (Rp 0 income, Rp 0 savings target)
         final defaultBudget = BudgetModel.createDefault();
-        await db.insert('budget', defaultBudget.toMap());
+        await db.insert('budget', defaultBudget.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
@@ -73,6 +89,34 @@ class DbHelper {
             [start, end],
           );
         }
+        if (oldVersion < 4) {
+          try {
+            await db.execute('ALTER TABLE budget ADD COLUMN total_budget INTEGER NOT NULL DEFAULT 0');
+          } catch (_) {}
+          try {
+            await db.execute('ALTER TABLE budget ADD COLUMN payday_day INTEGER NOT NULL DEFAULT 25');
+          } catch (_) {}
+          try {
+            await db.execute('ALTER TABLE budget ADD COLUMN weekly_income INTEGER NOT NULL DEFAULT 0');
+          } catch (_) {}
+          try {
+            await db.execute('ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
+          } catch (_) {}
+        }
+      },
+      onOpen: (db) async {
+        try {
+          await db.execute('ALTER TABLE budget ADD COLUMN total_budget INTEGER NOT NULL DEFAULT 0');
+        } catch (_) {}
+        try {
+          await db.execute('ALTER TABLE budget ADD COLUMN payday_day INTEGER NOT NULL DEFAULT 25');
+        } catch (_) {}
+        try {
+          await db.execute('ALTER TABLE budget ADD COLUMN weekly_income INTEGER NOT NULL DEFAULT 0');
+        } catch (_) {}
+        try {
+          await db.execute('ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
+        } catch (_) {}
       },
     );
   }
@@ -80,12 +124,16 @@ class DbHelper {
   // Budget operations
   Future<BudgetModel> getBudget() async {
     final db = await database;
-    final res = await db.query('budget', where: 'id = ?', whereArgs: [1], limit: 1);
-    if (res.isNotEmpty) {
-      return BudgetModel.fromMap(res.first);
-    }
+    try {
+      final res = await db.query('budget', where: 'id = ?', whereArgs: [1], limit: 1);
+      if (res.isNotEmpty) {
+        return BudgetModel.fromMap(res.first);
+      }
+    } catch (_) {}
     final defaultBudget = BudgetModel.createDefault();
-    await db.insert('budget', defaultBudget.toMap());
+    try {
+      await db.insert('budget', defaultBudget.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    } catch (_) {}
     return defaultBudget;
   }
 
