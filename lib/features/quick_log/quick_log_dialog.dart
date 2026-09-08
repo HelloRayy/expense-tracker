@@ -537,21 +537,27 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.calculate_rounded, color: PirschColors.mintGreen, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Kalkulator Jajan',
-                        style: TextStyle(
-                          color: textPrimary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
+                  Flexible(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.calculate_rounded, color: PirschColors.mintGreen, size: 20),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            'Kalkulator Jajan',
+                            style: TextStyle(
+                              color: textPrimary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   // Clean UI Text (No Badge Container)
                   Text(
                     'Batas Hari Ini: ${CurrencyFormatter.formatCompact(dailyAllowance)}',

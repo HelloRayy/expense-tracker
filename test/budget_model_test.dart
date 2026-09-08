@@ -25,45 +25,48 @@ void main() {
   });
 
   group('BudgetModel & Calculation Tests', () {
-    test('BudgetModel daysRemaining calculation', () {
-      final now = DateTime.now();
+    test('BudgetModel daysRemainingInWeek calculation', () {
+      final monday = DateTime(2026, 9, 7);
+      final sunday = DateTime(2026, 9, 13, 23, 59, 59, 999);
       final budget = BudgetModel(
-        totalBudget: 1500000,
-        paydayDay: 25,
-        startDate: now.subtract(const Duration(days: 10)),
-        endDate: now.add(const Duration(days: 20)),
+        weeklyIncome: 100000,
+        weeklySavingsTarget: 30000,
+        startDate: monday,
+        endDate: sunday,
       );
 
-      expect(budget.daysRemaining, greaterThanOrEqualTo(19));
-      expect(budget.daysRemaining, lessThanOrEqualTo(21));
+      expect(budget.spendableBudget, 70000);
+      expect(budget.daysRemainingInWeek, inInclusiveRange(1, 7));
     });
 
-    test('Daily allowance calculation', () {
-      final now = DateTime.now();
+    test('Daily allowance calculation with rolling redistribution', () {
+      final monday = DateTime(2026, 9, 7);
+      final sunday = DateTime(2026, 9, 13, 23, 59, 59, 999);
       final budget = BudgetModel(
-        totalBudget: 1000000,
-        paydayDay: 25,
-        startDate: now.subtract(const Duration(days: 5)),
-        endDate: now.add(const Duration(days: 10)),
+        weeklyIncome: 100000,
+        weeklySavingsTarget: 30000,
+        startDate: monday,
+        endDate: sunday,
       );
 
-      // 500.000 remaining with ~10 days left -> ~50.000/day
-      final daily = budget.calculateDailyAllowance(500000);
-      expect(daily, greaterThan(40000));
-      expect(daily, lessThan(60000));
+      // On Monday (7 days left), spent = 0 -> 70.000 / 7 = 10.000
+      final daily = budget.calculateDailyAllowance(0, targetDate: DateTime(2026, 9, 7));
+      expect(daily, 10000);
     });
 
-    test('Daily allowance returns 0 if remaining balance <= 0', () {
-      final now = DateTime.now();
+    test('Daily allowance returns 0 if remaining budget <= 0', () {
+      final monday = DateTime(2026, 9, 7);
+      final sunday = DateTime(2026, 9, 13, 23, 59, 59, 999);
       final budget = BudgetModel(
-        totalBudget: 1000000,
-        paydayDay: 25,
-        startDate: now,
-        endDate: now.add(const Duration(days: 10)),
+        weeklyIncome: 100000,
+        weeklySavingsTarget: 30000,
+        startDate: monday,
+        endDate: sunday,
       );
 
-      expect(budget.calculateDailyAllowance(0), 0);
-      expect(budget.calculateDailyAllowance(-50000), 0);
+      expect(budget.calculateDailyAllowance(70000, targetDate: DateTime(2026, 9, 9)), 0);
+      expect(budget.calculateDailyAllowance(80000, targetDate: DateTime(2026, 9, 9)), 0);
+      expect(budget.isSavingsAtRisk(75000), isTrue);
     });
   });
 
@@ -123,18 +126,20 @@ void main() {
 
   group('BudgetModel Default Creation & Rollover Tests', () {
     test('createDefault produces valid start and end dates', () {
-      final budget = BudgetModel.createDefault(total: 2000000, payday: 25);
-      expect(budget.totalBudget, 2000000);
-      expect(budget.paydayDay, 25);
+      final budget = BudgetModel.createDefault(income: 200000, savings: 50000);
+      expect(budget.weeklyIncome, 200000);
+      expect(budget.weeklySavingsTarget, 50000);
+      expect(budget.spendableBudget, 150000);
+      expect(budget.startDate.weekday, DateTime.monday);
+      expect(budget.endDate.weekday, DateTime.sunday);
       expect(budget.endDate.isAfter(budget.startDate), isTrue);
-      expect(budget.daysRemaining, greaterThan(0));
+      expect(budget.daysRemainingInWeek, inInclusiveRange(1, 7));
     });
 
-    test('Budget period duration is approximately one month', () {
-      final budget = BudgetModel.createDefault(payday: 1);
+    test('Budget period duration is exactly one week (Monday to Sunday)', () {
+      final budget = BudgetModel.createDefault();
       final differenceInDays = budget.endDate.difference(budget.startDate).inDays;
-      expect(differenceInDays, greaterThanOrEqualTo(28));
-      expect(differenceInDays, lessThanOrEqualTo(32));
+      expect(differenceInDays, 6); // Monday to Sunday is 6 days apart
     });
   });
 }

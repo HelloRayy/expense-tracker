@@ -135,37 +135,26 @@ void main() {
         endDate: now.add(const Duration(days: 20)),
       );
 
-      // Deficit of -250.000
+      // Deficit / Overbudget: when spent >= spendable budget (700.000)
       expect(budget.calculateDailyAllowance(-250000), equals(0));
-      expect(budget.calculateDailyAllowance(0), equals(0));
+      expect(budget.calculateDailyAllowance(700000), equals(0));
+      expect(budget.calculateDailyAllowance(1250000), equals(0));
 
       final repo = BudgetRepository();
       // Test spending percentage behavior
       expect(repo.spendingPercentage, equals(0.0));
     });
 
-    test('Payday rollover calculation respects month boundaries', () {
-      // Test payday 1
-      final b1 = BudgetModel.createDefault(total: 1000000, payday: 1);
-      expect(b1.paydayDay, 1);
+    test('Weekly budget rollover calculation respects week boundaries', () {
+      final b1 = BudgetModel.createDefault(income: 1000000, savings: 300000);
+      expect(b1.startDate.weekday, DateTime.monday);
+      expect(b1.endDate.weekday, DateTime.sunday);
       expect(b1.startDate.isBefore(b1.endDate), isTrue);
 
-      // Test payday 25
       final b25 = BudgetModel.createDefault(total: 1500000, payday: 25);
-      expect(b25.paydayDay, 25);
+      expect(b25.startDate.weekday, DateTime.monday);
+      expect(b25.endDate.weekday, DateTime.sunday);
       expect(b25.startDate.isBefore(b25.endDate), isTrue);
-
-      // Test payday 28
-      final b28 = BudgetModel.createDefault(total: 2000000, payday: 28);
-      expect(b28.paydayDay, 28);
-      expect(b28.startDate.isBefore(b28.endDate), isTrue);
-
-      // Test payday 31 (month-end clamp)
-      final b31 = BudgetModel.createDefault(total: 2500000, payday: 31);
-      expect(b31.paydayDay, 31);
-      expect(b31.startDate.isBefore(b31.endDate), isTrue);
-      expect(b31.startDate.day, lessThanOrEqualTo(31));
-      expect(b31.endDate.day, lessThanOrEqualTo(31));
     });
   });
 

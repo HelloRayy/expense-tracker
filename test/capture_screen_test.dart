@@ -44,6 +44,33 @@ class MockBudgetRepo extends ChangeNotifier implements BudgetRepository {
   double get spendingPercentage => 120000 / 1500000;
 
   @override
+  int get weeklyIncome => 1500000;
+
+  @override
+  int get weeklySavingsTarget => 500000;
+
+  @override
+  int get spendableBudget => 1000000;
+
+  @override
+  int get remainingWeeklySpendable => 880000;
+
+  @override
+  int get spentUntilYesterday => 60000;
+
+  @override
+  int get spentToday => 60000;
+
+  @override
+  int get remainingToday => 30000;
+
+  @override
+  bool get isOverBudgetToday => false;
+
+  @override
+  bool get isSavingsAtRisk => false;
+
+  @override
   Future<void> loadData() async {}
 
   @override
@@ -53,7 +80,12 @@ class MockBudgetRepo extends ChangeNotifier implements BudgetRepository {
   Future<void> deleteExpense(int id) async {}
 
   @override
-  Future<void> updateBudget({required int totalBudget, required int paydayDay}) async {}
+  Future<void> updateBudget({
+    int? weeklyIncome,
+    int? weeklySavingsTarget,
+    int? totalBudget,
+    int? paydayDay,
+  }) async {}
 }
 
 Future<void> loadFonts() async {

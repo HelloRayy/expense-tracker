@@ -11,26 +11,55 @@ class BudgetRepository extends ChangeNotifier {
   BudgetModel? _budget;
   List<ExpenseModel> _expenses = [];
   int _totalSpent = 0;
+  int _spentUntilYesterday = 0;
+  int _spentToday = 0;
   bool _isLoading = true;
 
   BudgetModel? get budget => _budget;
   List<ExpenseModel> get expenses => _expenses;
   int get totalSpent => _totalSpent;
+  int get spentUntilYesterday => _spentUntilYesterday;
+  int get spentToday => _spentToday;
   bool get isLoading => _isLoading;
 
+  int get weeklyIncome => _budget?.weeklyIncome ?? 100000;
+  int get weeklySavingsTarget => _budget?.weeklySavingsTarget ?? 30000;
+  int get spendableBudget => _budget?.spendableBudget ?? 70000;
+
+  /// Sisa seluruh uang yang dipegang (termasuk tabungan)
   int get remainingBalance {
-    if (_budget == null) return 0;
-    return _budget!.totalBudget - _totalSpent;
+    return weeklyIncome - _totalSpent;
   }
 
+  /// Sisa budget belanja mingguan yang boleh dipakai jajan
+  int get remainingWeeklySpendable {
+    return spendableBudget - _totalSpent;
+  }
+
+  /// Batas jajan harian hari ini (dihitung dari sisa budget belanja s.d. kemarin dibagi sisa hari)
   int get dailyAllowance {
     if (_budget == null) return 0;
-    return _budget!.calculateDailyAllowance(remainingBalance);
+    return _budget!.calculateDailyAllowance(_spentUntilYesterday);
+  }
+
+  /// Sisa batas kuota jajan hari ini yang boleh dihabiskan
+  int get remainingToday {
+    return dailyAllowance - _spentToday;
+  }
+
+  /// Status apakah jajan hari ini sudah melampaui batas hari ini
+  bool get isOverBudgetToday {
+    return spentToday > dailyAllowance || dailyAllowance <= 0;
+  }
+
+  /// Status apakah total jajan seminggu sudah memakan porsi target tabungan
+  bool get isSavingsAtRisk {
+    return _totalSpent > spendableBudget;
   }
 
   double get spendingPercentage {
-    if (_budget == null || _budget!.totalBudget == 0) return 0.0;
-    final pct = _totalSpent / _budget!.totalBudget;
+    if (spendableBudget == 0) return 0.0;
+    final pct = _totalSpent / spendableBudget;
     return pct > 1.0 ? 1.0 : (pct < 0.0 ? 0.0 : pct);
   }
 
@@ -41,12 +70,15 @@ class BudgetRepository extends ChangeNotifier {
     try {
       _budget = await _db.getBudget();
 
-      // Check if period needs roll-forward (if current date has passed endDate)
+      // Check if weekly period needs roll-forward (if current date has passed Sunday 23:59:59)
       final now = DateTime.now();
       if (now.isAfter(_budget!.endDate)) {
-        _budget = BudgetModel.createDefault(
-          total: _budget!.totalBudget,
-          payday: _budget!.paydayDay,
+        _budget = BudgetModel(
+          id: 1,
+          weeklyIncome: _budget!.weeklyIncome,
+          weeklySavingsTarget: _budget!.weeklySavingsTarget,
+          startDate: BudgetModel.getMondayOfWeek(now),
+          endDate: BudgetModel.getSundayOfWeek(now),
         );
         await _db.updateBudget(_budget!);
       }
@@ -55,6 +87,8 @@ class BudgetRepository extends ChangeNotifier {
         _budget!.startDate,
         _budget!.endDate,
       );
+      _spentUntilYesterday = await _db.getSpentUntilYesterday(_budget!.startDate);
+      _spentToday = await _db.getSpentToday();
       _expenses = await _db.getExpensesForPeriod(
         _budget!.startDate,
         _budget!.endDate,
@@ -84,10 +118,21 @@ class BudgetRepository extends ChangeNotifier {
     await loadData();
   }
 
-  Future<void> updateBudget({required int totalBudget, required int paydayDay}) async {
-    final newBudget = BudgetModel.createDefault(
-      total: totalBudget,
-      payday: paydayDay,
+  Future<void> updateBudget({
+    int? weeklyIncome,
+    int? weeklySavingsTarget,
+    int? totalBudget,
+    int? paydayDay,
+  }) async {
+    final now = DateTime.now();
+    final income = weeklyIncome ?? totalBudget ?? 100000;
+    final savings = weeklySavingsTarget ?? (income * 0.3).round();
+    final newBudget = BudgetModel(
+      id: 1,
+      weeklyIncome: income,
+      weeklySavingsTarget: savings,
+      startDate: BudgetModel.getMondayOfWeek(now),
+      endDate: BudgetModel.getSundayOfWeek(now),
     );
     await _db.updateBudget(newBudget);
     await loadData();
@@ -95,10 +140,13 @@ class BudgetRepository extends ChangeNotifier {
 
   Future<void> _syncNative() async {
     if (_budget == null) return;
+    // In native floating widget/overlay:
+    // daily_safe represents today's remaining jajan allowance
+    final safeDaily = remainingToday < 0 ? 0 : remainingToday;
     await _nativeBridge.syncBalanceToNative(
       remainingBalance: remainingBalance,
-      totalBudget: _budget!.totalBudget,
-      dailySafe: dailyAllowance,
+      totalBudget: _budget!.weeklyIncome,
+      dailySafe: safeDaily,
     );
   }
 }

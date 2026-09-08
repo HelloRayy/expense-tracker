@@ -30,6 +30,33 @@ class TestBudgetRepo extends ChangeNotifier implements BudgetRepository {
   double get spendingPercentage => totalSpent / 1500000;
 
   @override
+  int get weeklyIncome => 1500000;
+
+  @override
+  int get weeklySavingsTarget => 500000;
+
+  @override
+  int get spendableBudget => 1000000;
+
+  @override
+  int get remainingWeeklySpendable => 1000000 - totalSpent;
+
+  @override
+  int get spentUntilYesterday => 0;
+
+  @override
+  int get spentToday => totalSpent;
+
+  @override
+  int get remainingToday => dailyAllowance - spentToday;
+
+  @override
+  bool get isOverBudgetToday => remainingToday < 0;
+
+  @override
+  bool get isSavingsAtRisk => totalSpent > spendableBudget;
+
+  @override
   Future<void> loadData() async {}
 
   @override
@@ -47,7 +74,12 @@ class TestBudgetRepo extends ChangeNotifier implements BudgetRepository {
   Future<void> deleteExpense(int id) async {}
 
   @override
-  Future<void> updateBudget({required int totalBudget, required int paydayDay}) async {}
+  Future<void> updateBudget({
+    int? weeklyIncome,
+    int? weeklySavingsTarget,
+    int? totalBudget,
+    int? paydayDay,
+  }) async {}
 }
 
 void main() {
@@ -69,23 +101,25 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // 25 × 2 = 50000
-    await tester.tap(find.text('2'));
+    Finder keyBtn(String text) => find.widgetWithText(InkWell, text);
+
+    // 25.000 × 2 = 50.000
+    await tester.tap(keyBtn('2'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('5'));
+    await tester.tap(keyBtn('5'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('000'));
+    await tester.tap(keyBtn('000'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('×'));
+    await tester.tap(keyBtn('×'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('2'));
+    await tester.tap(keyBtn('2'));
     await tester.pumpAndSettle();
 
-    // Verify preview shows = Rp 50.000
-    expect(find.text('= Rp 50.000'), findsOneWidget);
+    // Verify preview shows 50.000
+    expect(find.text('50.000'), findsOneWidget);
 
     // Tap submit (=)
-    await tester.tap(find.text('='));
+    await tester.tap(keyBtn('='));
     await tester.pumpAndSettle();
 
     expect(repo.addedExpenses.length, 1);
@@ -93,7 +127,7 @@ void main() {
     expect(repo.addedExpenses.first.note, 'Jajan');
   });
 
-  testWidgets('QuickLogDialog shortcut pill taps and division test', (WidgetTester tester) async {
+  testWidgets('QuickLogDialog keypad typing and division test', (WidgetTester tester) async {
     tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 2.75;
     addTearDown(tester.view.resetPhysicalSize);
@@ -111,28 +145,30 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Tap shortcut +50rb
-    await tester.tap(find.text('+50rb'));
+    Finder keyBtn(String text) => find.widgetWithText(InkWell, text);
+
+    // Type 50.000 ÷ 2
+    await tester.tap(keyBtn('5'));
+    await tester.pumpAndSettle();
+    await tester.tap(keyBtn('0'));
+    await tester.pumpAndSettle();
+    await tester.tap(keyBtn('000'));
     await tester.pumpAndSettle();
 
     // Tap division ÷ 2
-    await tester.tap(find.text('÷'));
+    await tester.tap(keyBtn('÷'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('2'));
+    await tester.tap(keyBtn('2'));
     await tester.pumpAndSettle();
 
-    expect(find.text('= Rp 25.000'), findsOneWidget);
-
-    // Tap category Kopi
-    await tester.tap(find.byIcon(Icons.local_cafe_rounded));
-    await tester.pumpAndSettle();
+    expect(find.text('25.000'), findsOneWidget);
 
     // Submit (=)
-    await tester.tap(find.text('='));
+    await tester.tap(keyBtn('='));
     await tester.pumpAndSettle();
 
     expect(repo.addedExpenses.length, 1);
     expect(repo.addedExpenses.first.amount, 25000);
-    expect(repo.addedExpenses.first.note, 'Kopi');
+    expect(repo.addedExpenses.first.note, 'Jajan');
   });
 }

@@ -22,13 +22,13 @@ class DbHelper {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE budget (
             id INTEGER PRIMARY KEY,
-            total_budget INTEGER NOT NULL,
-            payday_day INTEGER NOT NULL,
+            weekly_income INTEGER NOT NULL,
+            weekly_savings_target INTEGER NOT NULL,
             start_date TEXT NOT NULL,
             end_date TEXT NOT NULL
           )
@@ -47,8 +47,8 @@ class DbHelper {
           CREATE INDEX IF NOT EXISTS idx_expenses_created_at ON expenses (created_at DESC)
         ''');
 
-        // Insert default initial budget (e.g. Rp 1.500.000, payday 25th)
-        final defaultBudget = BudgetModel.createDefault(total: 1500000, payday: 25);
+        // Insert default initial weekly budget (Rp 100.000 income, Rp 30.000 savings target)
+        final defaultBudget = BudgetModel.createDefault();
         await db.insert('budget', defaultBudget.toMap());
       },
       onUpgrade: (db, oldVersion, newVersion) async {
@@ -56,6 +56,22 @@ class DbHelper {
           await db.execute('''
             CREATE INDEX IF NOT EXISTS idx_expenses_created_at ON expenses (created_at DESC)
           ''');
+        }
+        if (oldVersion < 3) {
+          try {
+            await db.execute('ALTER TABLE budget ADD COLUMN weekly_income INTEGER DEFAULT 100000');
+          } catch (_) {}
+          try {
+            await db.execute('ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER DEFAULT 30000');
+          } catch (_) {}
+
+          final now = DateTime.now();
+          final start = BudgetModel.getMondayOfWeek(now).toIso8601String();
+          final end = BudgetModel.getSundayOfWeek(now).toIso8601String();
+          await db.rawUpdate(
+            'UPDATE budget SET start_date = ?, end_date = ? WHERE id = 1',
+            [start, end],
+          );
         }
       },
     );
@@ -134,5 +150,20 @@ class DbHelper {
       limit: limit,
     );
     return res.map((m) => ExpenseModel.fromMap(m)).toList();
+  }
+
+  Future<int> getSpentUntilYesterday(DateTime start) async {
+    final now = DateTime.now();
+    final todayStart = DateTime(now.year, now.month, now.day);
+    final yesterdayEnd = todayStart.subtract(const Duration(milliseconds: 1));
+    if (yesterdayEnd.isBefore(start)) return 0;
+    return await getTotalSpentForPeriod(start, yesterdayEnd);
+  }
+
+  Future<int> getSpentToday() async {
+    final now = DateTime.now();
+    final todayStart = DateTime(now.year, now.month, now.day);
+    final todayEnd = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+    return await getTotalSpentForPeriod(todayStart, todayEnd);
   }
 }

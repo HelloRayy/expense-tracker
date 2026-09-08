@@ -871,52 +871,100 @@ class FloatingBubbleService : Service() {
                         db.endTransaction()
                     }
 
-                    // Query exact active budget & total expenses to prevent any cache drift
-                    var totalBudget = 1500000L
+                    // Query adaptive weekly budget: weekly_income & weekly_savings_target
+                    var weeklyIncome = 0L
+                    var weeklySavingsTarget = 0L
+                    var totalBudgetFallback = 1500000L
                     var startDate = ""
                     var endDate = ""
-                    val budgetCursor = db.rawQuery("SELECT total_budget, start_date, end_date FROM budget WHERE id = 1 LIMIT 1", null)
-                    if (budgetCursor.moveToFirst()) {
-                        totalBudget = budgetCursor.getLong(0)
-                        startDate = budgetCursor.getString(1)
-                        endDate = budgetCursor.getString(2)
-                    }
-                    budgetCursor.close()
 
-                    var totalSpent = 0L
-                    if (startDate.isNotEmpty() && endDate.isNotEmpty()) {
-                        val sumCursor = db.rawQuery(
-                            "SELECT SUM(amount) FROM expenses WHERE created_at >= ? AND created_at <= ?",
-                            arrayOf(startDate, endDate)
+                    try {
+                        val budgetCursor = db.rawQuery(
+                            "SELECT weekly_income, weekly_savings_target, start_date, end_date, total_budget FROM budget WHERE id = 1 LIMIT 1",
+                            null
                         )
-                        if (sumCursor.moveToFirst()) {
-                            totalSpent = sumCursor.getLong(0)
+                        if (budgetCursor.moveToFirst()) {
+                            weeklyIncome = budgetCursor.getLong(0)
+                            weeklySavingsTarget = budgetCursor.getLong(1)
+                            startDate = budgetCursor.getString(2) ?: ""
+                            endDate = budgetCursor.getString(3) ?: ""
+                            totalBudgetFallback = budgetCursor.getLong(4)
                         }
-                        sumCursor.close()
-                    } else {
-                        val sumCursor = db.rawQuery("SELECT SUM(amount) FROM expenses", null)
-                        if (sumCursor.moveToFirst()) {
-                            totalSpent = sumCursor.getLong(0)
+                        budgetCursor.close()
+                    } catch (_: Exception) {
+                        val budgetCursor = db.rawQuery(
+                            "SELECT total_budget, start_date, end_date FROM budget WHERE id = 1 LIMIT 1",
+                            null
+                        )
+                        if (budgetCursor.moveToFirst()) {
+                            totalBudgetFallback = budgetCursor.getLong(0)
+                            startDate = budgetCursor.getString(1) ?: ""
+                            endDate = budgetCursor.getString(2) ?: ""
                         }
-                        sumCursor.close()
+                        budgetCursor.close()
                     }
 
-                    val computed = totalBudget - totalSpent
-                    exactRemaining = computed
+                    val income = if (weeklyIncome > 0) weeklyIncome else totalBudgetFallback
+                    val spendableBudget = (income - weeklySavingsTarget).coerceAtLeast(0L)
 
-                    // Calculate days remaining if endDate available
-                    if (endDate.isNotEmpty()) {
-                        try {
-                            val sdfEnd = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
-                            val endClean = endDate.split(".")[0]
-                            val endD = sdfEnd.parse(endClean)
-                            if (endD != null) {
-                                val diffMs = endD.time - System.currentTimeMillis()
-                                val days = Math.max(1L, Math.ceil(diffMs / (1000.0 * 60 * 60 * 24)).toLong())
-                                exactDailySafe = if (computed > 0) computed / days else 0L
-                            }
-                        } catch (_: Exception) {}
+                    // Calendar day of week (Monday=1..Sunday=7)
+                    val calNow = java.util.Calendar.getInstance()
+                    val calDay = calNow.get(java.util.Calendar.DAY_OF_WEEK)
+                    val dayOfWeek = if (calDay == java.util.Calendar.SUNDAY) 7 else calDay - 1
+                    val daysRemainingInWeek = 7 - (dayOfWeek - 1)
+
+                    // Midnight today ISO8601
+                    val calToday = java.util.Calendar.getInstance().apply {
+                        set(java.util.Calendar.HOUR_OF_DAY, 0)
+                        set(java.util.Calendar.MINUTE, 0)
+                        set(java.util.Calendar.SECOND, 0)
+                        set(java.util.Calendar.MILLISECOND, 0)
                     }
+                    val sdfIso = SimpleDateFormat("yyyy-MM-dd'T'00:00:00.000", Locale.US)
+                    val todayStart = sdfIso.format(calToday.time)
+
+                    // Week start: default to Monday 00:00:00 of this week
+                    val calMon = java.util.Calendar.getInstance().apply {
+                        firstDayOfWeek = java.util.Calendar.MONDAY
+                        set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.MONDAY)
+                        set(java.util.Calendar.HOUR_OF_DAY, 0)
+                        set(java.util.Calendar.MINUTE, 0)
+                        set(java.util.Calendar.SECOND, 0)
+                        set(java.util.Calendar.MILLISECOND, 0)
+                    }
+                    val weekStart = if (startDate.isNotEmpty()) startDate else sdfIso.format(calMon.time)
+
+                    // Sum expenses until yesterday (from weekStart to todayStart)
+                    var spentUntilYesterday = 0L
+                    val cursorBefore = db.rawQuery(
+                        "SELECT SUM(amount) FROM expenses WHERE created_at >= ? AND created_at < ?",
+                        arrayOf(weekStart, todayStart)
+                    )
+                    if (cursorBefore.moveToFirst()) {
+                        spentUntilYesterday = cursorBefore.getLong(0)
+                    }
+                    cursorBefore.close()
+
+                    // Sum expenses today
+                    var spentToday = 0L
+                    val cursorToday = db.rawQuery(
+                        "SELECT SUM(amount) FROM expenses WHERE created_at >= ?",
+                        arrayOf(todayStart)
+                    )
+                    if (cursorToday.moveToFirst()) {
+                        spentToday = cursorToday.getLong(0)
+                    }
+                    cursorToday.close()
+
+                    // Adaptive formula:
+                    // sisaBudgetMingguIni = spendableBudget - spentUntilYesterday
+                    // batasHarian = floor(sisaBudgetMingguIni / daysRemainingInWeek), rounded to 100
+                    val remainingBudget = spendableBudget - spentUntilYesterday
+                    val rawAllowance = if (remainingBudget <= 0L || daysRemainingInWeek <= 0) 0L
+                        else Math.round((remainingBudget.toDouble() / daysRemainingInWeek) / 100.0) * 100L
+
+                    exactDailySafe = rawAllowance - spentToday
+                    exactRemaining = spendableBudget - (spentUntilYesterday + spentToday)
                 } finally {
                     db.close()
                 }
