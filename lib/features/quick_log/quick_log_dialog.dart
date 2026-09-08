@@ -122,12 +122,21 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
       _expression.contains('÷') ||
       _expression.contains('%');
 
+  String get _currentOperand {
+    final lastSpace = _expression.lastIndexOf(' ');
+    if (lastSpace == -1) return _expression;
+    return _expression.substring(lastSpace + 1);
+  }
+
   void _onKeyPress(String key) {
     HapticFeedback.selectionClick();
     setState(() {
       if (key == 'C') {
         _expression = '';
-      } else if (key == '⌫') {
+        return;
+      }
+
+      if (key == '⌫') {
         if (_expression.isNotEmpty) {
           if (_expression.endsWith(' + ') ||
               _expression.endsWith(' - ') ||
@@ -138,36 +147,76 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
             _expression = _expression.substring(0, _expression.length - 1);
           }
         }
-      } else if (key == '+' || key == '-' || key == '×' || key == '÷') {
-        if (_expression.isNotEmpty) {
-          if (_expression.endsWith(' + ') ||
-              _expression.endsWith(' - ') ||
-              _expression.endsWith(' × ') ||
-              _expression.endsWith(' ÷ ')) {
-            _expression = '${_expression.substring(0, _expression.length - 3)} $key ';
-          } else {
-            _expression += ' $key ';
-          }
+        return;
+      }
+
+      if (key == '+' || key == '-' || key == '×' || key == '÷') {
+        if (_expression.isEmpty) {
+          _expression = '0 $key ';
+          return;
         }
-      } else if (key == '%') {
+        if (_expression.endsWith(' + ') ||
+            _expression.endsWith(' - ') ||
+            _expression.endsWith(' × ') ||
+            _expression.endsWith(' ÷ ')) {
+          _expression = '${_expression.substring(0, _expression.length - 3)} $key ';
+        } else {
+          _expression += ' $key ';
+        }
+        return;
+      }
+
+      if (key == '%') {
         if (_expression.isNotEmpty && !_expression.endsWith(' ') && !_expression.endsWith('%')) {
           _expression += '%';
         }
-      } else if (key == '000') {
-        if (_expression.isNotEmpty && !_expression.endsWith(' ') && _expression.length <= 11) {
-          _expression += '000';
-        }
-      } else if (key == '00') {
-        if (_expression.isNotEmpty && !_expression.endsWith(' ') && _expression.length <= 12) {
+        return;
+      }
+
+      if (key == '=') {
+        _submit();
+        return;
+      }
+
+      if (_expression.endsWith('%')) {
+        _expression += ' × ';
+      }
+
+      final curr = _currentOperand;
+
+      if (key == '00') {
+        if (curr.isNotEmpty && curr != '0' && curr.length + 2 <= 12) {
           _expression += '00';
         }
-      } else if (key == '=') {
-        _submit();
-      } else {
-        // Digits 0-9
-        if (_expression.length <= 14) {
-          _expression += key;
+        return;
+      }
+
+      if (key == '000') {
+        if (curr.isNotEmpty && curr != '0' && curr.length + 3 <= 12) {
+          _expression += '000';
         }
+        return;
+      }
+
+      if (key == '0') {
+        if (curr == '0') return;
+        if (curr.length < 12) {
+          _expression += '0';
+        }
+        return;
+      }
+
+      // Digits 1-9
+      if (curr == '0') {
+        final lastZeroIndex = _expression.lastIndexOf('0');
+        if (lastZeroIndex != -1 && lastZeroIndex == _expression.length - 1) {
+          _expression = '${_expression.substring(0, lastZeroIndex)}$key';
+          return;
+        }
+      }
+
+      if (curr.length < 12 && _expression.length < 100) {
+        _expression += key;
       }
     });
   }
@@ -179,12 +228,18 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     setState(() => _isSaving = true);
     HapticFeedback.mediumImpact();
 
-    await widget.repository.addExpense(amount, note: 'Jajan');
+    try {
+      await widget.repository.addExpense(amount, note: 'Jajan');
 
-    if (mounted) {
-      widget.onComplete?.call();
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
+      if (mounted) {
+        widget.onComplete?.call();
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
       }
     }
   }

@@ -445,17 +445,56 @@ class FloatingBubbleService : Service() {
 
     private fun getCurrentTotal(): Long = evaluateExpression(expression)
 
+    private fun getCurrentOperand(): String {
+        val lastSpace = expression.lastIndexOf(' ')
+        return if (lastSpace == -1) expression else expression.substring(lastSpace + 1)
+    }
+
     private fun onNumpadDigit(digit: String) {
-        if (digit == "000" || digit == "00") {
-            if (expression.isNotEmpty() && !expression.endsWith(" ") && expression.length <= 11) {
-                expression += digit
+        if (expression.endsWith("%")) {
+            expression += " × "
+        }
+
+        val curr = getCurrentOperand()
+
+        if (digit == "00") {
+            if (curr.isNotEmpty() && curr != "0" && curr.length + 2 <= 12) {
+                expression += "00"
                 updateCalculatorDisplay()
             }
-        } else {
-            if (expression.length <= 14) {
-                expression += digit
+            return
+        }
+
+        if (digit == "000") {
+            if (curr.isNotEmpty() && curr != "0" && curr.length + 3 <= 12) {
+                expression += "000"
                 updateCalculatorDisplay()
             }
+            return
+        }
+
+        if (digit == "0") {
+            if (curr == "0") return
+            if (curr.length < 12) {
+                expression += "0"
+                updateCalculatorDisplay()
+            }
+            return
+        }
+
+        // Digits 1-9
+        if (curr == "0") {
+            val lastZero = expression.lastIndexOf('0')
+            if (lastZero != -1 && lastZero == expression.length - 1) {
+                expression = expression.substring(0, lastZero) + digit
+                updateCalculatorDisplay()
+                return
+            }
+        }
+
+        if (curr.length < 12 && expression.length < 100) {
+            expression += digit
+            updateCalculatorDisplay()
         }
     }
 
