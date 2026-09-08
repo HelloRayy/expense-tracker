@@ -28,11 +28,13 @@ class _EditBudgetDialogState extends State<EditBudgetDialog> {
   void initState() {
     super.initState();
     final current = widget.repository.budget;
+    final income = current?.weeklyIncome ?? 0;
+    final savings = current?.weeklySavingsTarget ?? 0;
     _incomeController = TextEditingController(
-      text: (current?.weeklyIncome ?? 100000).toString(),
+      text: income > 0 ? income.toString() : '',
     );
     _savingsController = TextEditingController(
-      text: (current?.weeklySavingsTarget ?? 30000).toString(),
+      text: savings > 0 ? savings.toString() : '',
     );
   }
 
@@ -108,6 +110,12 @@ class _EditBudgetDialogState extends State<EditBudgetDialog> {
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
+                hintText: '0',
+                hintStyle: const TextStyle(
+                  color: AppColors.textMuted,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
                 filled: true,
                 fillColor: AppColors.background,
                 border: OutlineInputBorder(
@@ -135,6 +143,12 @@ class _EditBudgetDialogState extends State<EditBudgetDialog> {
                 prefixText: 'Rp ',
                 prefixStyle: const TextStyle(
                   color: PirschColors.mintGreen,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+                hintText: '0',
+                hintStyle: const TextStyle(
+                  color: AppColors.textMuted,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),

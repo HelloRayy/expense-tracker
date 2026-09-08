@@ -50,9 +50,9 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
         }
 
         private fun updateWidgets(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-            var remaining = 1380000L
-            var dailySafe = 30000L
-            var totalSpent = 120000L
+            var remaining = 0L
+            var dailySafe = 0L
+            var totalSpent = 0L
             var periodText = ""
 
             try {

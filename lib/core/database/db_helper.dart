@@ -47,7 +47,7 @@ class DbHelper {
           CREATE INDEX IF NOT EXISTS idx_expenses_created_at ON expenses (created_at DESC)
         ''');
 
-        // Insert default initial weekly budget (Rp 100.000 income, Rp 30.000 savings target)
+        // Insert default initial weekly budget (Rp 0 income, Rp 0 savings target)
         final defaultBudget = BudgetModel.createDefault();
         await db.insert('budget', defaultBudget.toMap());
       },
@@ -59,10 +59,10 @@ class DbHelper {
         }
         if (oldVersion < 3) {
           try {
-            await db.execute('ALTER TABLE budget ADD COLUMN weekly_income INTEGER DEFAULT 100000');
+            await db.execute('ALTER TABLE budget ADD COLUMN weekly_income INTEGER DEFAULT 0');
           } catch (_) {}
           try {
-            await db.execute('ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER DEFAULT 30000');
+            await db.execute('ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER DEFAULT 0');
           } catch (_) {}
 
           final now = DateTime.now();

@@ -87,7 +87,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
                     }
 
                     // Query exact active budget & total expenses to prevent cache drift
-                    var totalBudget = 1500000L
+                    var totalBudget = 0L
                     var startDate = ""
                     var endDate = ""
                     val budgetCursor = db.rawQuery(
@@ -149,7 +149,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
                 }
             } else {
                 val all = prefs.all
-                var remaining = 1500000L
+                var remaining = 0L
                 val raw = all["flutter.remaining_balance"] ?: all["remaining_balance"]
                 if (raw is Number) {
                     remaining = raw.toLong()

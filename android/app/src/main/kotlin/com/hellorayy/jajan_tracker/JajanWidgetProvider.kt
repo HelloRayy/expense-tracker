@@ -51,8 +51,8 @@ class JajanWidgetProvider : AppWidgetProvider() {
         }
 
         private fun updateWidgets(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-            var remaining = 1500000L
-            var dailySafe = 50000L
+            var remaining = 0L
+            var dailySafe = 0L
 
             try {
                 val prefs = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)

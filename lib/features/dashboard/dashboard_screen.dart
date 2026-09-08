@@ -575,13 +575,39 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
     required Color textSecondary,
     required bool isDark,
   }) {
+    final bool isUnset = widget.repository.weeklyIncome <= 0;
     final String message;
-    if (isOverBudget) {
+    final String buttonLabel;
+    final VoidCallback buttonAction;
+
+    if (isUnset) {
+      message = 'Yuk atur budget mingguanmu!';
+      buttonLabel = 'Atur budget';
+      buttonAction = () => EditBudgetDialog.show(context, widget.repository);
+    } else if (isOverBudget) {
       message = 'Batas jajan habis, tahan jajan dulu!';
+      buttonLabel = 'Catat sekarang';
+      buttonAction = () => QuickLogDialog.show(
+        context,
+        repository: widget.repository,
+        onComplete: () => setState(() {}),
+      );
     } else if (dailyAllowance < 20000) {
       message = 'Jatah menipis, catat pengeluaran!';
+      buttonLabel = 'Catat sekarang';
+      buttonAction = () => QuickLogDialog.show(
+        context,
+        repository: widget.repository,
+        onComplete: () => setState(() {}),
+      );
     } else {
       message = 'Ada jajan yang belum dicatat?';
+      buttonLabel = 'Catat sekarang';
+      buttonAction = () => QuickLogDialog.show(
+        context,
+        repository: widget.repository,
+        onComplete: () => setState(() {}),
+      );
     }
 
     return Container(
@@ -622,16 +648,12 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             color: isDark ? Colors.white : Colors.black,
             borderRadius: BorderRadius.circular(20),
             child: InkWell(
-              onTap: () => QuickLogDialog.show(
-                context,
-                repository: widget.repository,
-                onComplete: () => setState(() {}),
-              ),
+              onTap: buttonAction,
               borderRadius: BorderRadius.circular(20),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 child: Text(
-                  'Catat sekarang',
+                  buttonLabel,
                   style: TextStyle(
                     color: isDark ? Colors.black : Colors.white,
                     fontSize: 12,

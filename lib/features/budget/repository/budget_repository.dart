@@ -22,9 +22,9 @@ class BudgetRepository extends ChangeNotifier {
   int get spentToday => _spentToday;
   bool get isLoading => _isLoading;
 
-  int get weeklyIncome => _budget?.weeklyIncome ?? 100000;
-  int get weeklySavingsTarget => _budget?.weeklySavingsTarget ?? 30000;
-  int get spendableBudget => _budget?.spendableBudget ?? 70000;
+  int get weeklyIncome => _budget?.weeklyIncome ?? 0;
+  int get weeklySavingsTarget => _budget?.weeklySavingsTarget ?? 0;
+  int get spendableBudget => _budget?.spendableBudget ?? 0;
 
   /// Sisa seluruh uang yang dipegang (termasuk tabungan)
   int get remainingBalance {
@@ -49,7 +49,7 @@ class BudgetRepository extends ChangeNotifier {
 
   /// Status apakah jajan hari ini sudah melampaui batas hari ini
   bool get isOverBudgetToday {
-    return spentToday > dailyAllowance || dailyAllowance <= 0;
+    return remainingToday < 0;
   }
 
   /// Status apakah total jajan seminggu sudah memakan porsi target tabungan
@@ -125,8 +125,8 @@ class BudgetRepository extends ChangeNotifier {
     int? paydayDay,
   }) async {
     final now = DateTime.now();
-    final income = weeklyIncome ?? totalBudget ?? 100000;
-    final savings = weeklySavingsTarget ?? (income * 0.3).round();
+    final income = weeklyIncome ?? totalBudget ?? 0;
+    final savings = weeklySavingsTarget ?? (income > 0 ? (income * 0.3).round() : 0);
     final newBudget = BudgetModel(
       id: 1,
       weeklyIncome: income,

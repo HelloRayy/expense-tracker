@@ -223,13 +223,13 @@ class ShopeeAccessibilityService : AccessibilityService() {
         val prefs = getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
         val allEntries = prefs.all
 
-        var remaining = 1500000L
+        var remaining = 0L
         val rawRemaining = allEntries["flutter.remaining_balance"] ?: allEntries["remaining_balance"]
         if (rawRemaining is Number) {
             remaining = rawRemaining.toLong()
         }
 
-        var dailySafe = 50000L
+        var dailySafe = 0L
         val rawDaily = allEntries["flutter.daily_safe"] ?: allEntries["daily_safe"]
         if (rawDaily is Number) {
             dailySafe = rawDaily.toLong()

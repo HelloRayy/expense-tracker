@@ -15,8 +15,11 @@ class BudgetModel {
     int? paydayDay,
     required this.startDate,
     required this.endDate,
-  })  : weeklyIncome = weeklyIncome ?? totalBudget ?? 100000,
-        weeklySavingsTarget = weeklySavingsTarget ?? ((weeklyIncome ?? totalBudget ?? 100000) * 0.3).round();
+  })  : weeklyIncome = weeklyIncome ?? totalBudget ?? 0,
+        weeklySavingsTarget = weeklySavingsTarget ??
+            (((weeklyIncome ?? totalBudget ?? 0) > 0)
+                ? ((weeklyIncome ?? totalBudget ?? 0) * 0.3).round()
+                : 0);
 
   /// Backward-compatible alias for total weekly money
   int get totalBudget => weeklyIncome;
@@ -92,8 +95,8 @@ class BudgetModel {
   }
 
   factory BudgetModel.fromMap(Map<String, dynamic> map) {
-    final income = map['weekly_income'] as int? ?? map['total_budget'] as int? ?? 100000;
-    final savings = map['weekly_savings_target'] as int? ?? 30000;
+    final income = map['weekly_income'] as int? ?? map['total_budget'] as int? ?? 0;
+    final savings = map['weekly_savings_target'] as int? ?? 0;
 
     return BudgetModel(
       id: map['id'] as int? ?? 1,
@@ -141,8 +144,8 @@ class BudgetModel {
   }) {
     final now = DateTime.now();
     return BudgetModel(
-      weeklyIncome: income ?? total ?? 100000,
-      weeklySavingsTarget: savings ?? 30000,
+      weeklyIncome: income ?? total ?? 0,
+      weeklySavingsTarget: savings ?? 0,
       startDate: getMondayOfWeek(now),
       endDate: getSundayOfWeek(now),
     );

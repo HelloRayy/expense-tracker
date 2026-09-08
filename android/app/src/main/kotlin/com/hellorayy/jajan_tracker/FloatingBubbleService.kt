@@ -45,7 +45,7 @@ class FloatingBubbleService : Service() {
 
     private var currentAmount: Long = 0L
     private var expression: String = ""
-    private var dailyAllowance: Long = 50000L
+    private var dailyAllowance: Long = 0L
     private var isStandalone: Boolean = false
 
     private var cursorPosition: Int = 0
@@ -625,7 +625,7 @@ class FloatingBubbleService : Service() {
         if (rawDaily is Number) {
             return rawDaily.toLong()
         }
-        return 50000L
+        return 0L
     }
 
     private fun formatCompactDaily(amount: Long): String {
@@ -877,7 +877,7 @@ class FloatingBubbleService : Service() {
                     // Query adaptive weekly budget: weekly_income & weekly_savings_target
                     var weeklyIncome = 0L
                     var weeklySavingsTarget = 0L
-                    var totalBudgetFallback = 1500000L
+                    var totalBudgetFallback = 0L
                     var startDate = ""
                     var endDate = ""
 
@@ -983,7 +983,7 @@ class FloatingBubbleService : Service() {
                 }
             } else {
                 val all = prefs.all
-                var remaining = 1500000L
+                var remaining = 0L
                 val raw = all["flutter.remaining_balance"] ?: all["remaining_balance"]
                 if (raw is Number) {
                     remaining = raw.toLong()
