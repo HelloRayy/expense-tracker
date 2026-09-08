@@ -88,10 +88,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text=""
+            android:lines="1"
+            android:maxLines="1"
+            android:ellipsize="start"
+            android:text="0"
             android:textColor="#8E8E93"
             android:textSize="18sp"
-            android:visibility="gone" />
+            android:visibility="invisible" />
     </LinearLayout>
 
     <!-- 4-Column Thumb-Friendly Keypad -->

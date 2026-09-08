@@ -555,7 +555,8 @@ class FloatingBubbleService : Service() {
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             display?.text = ssb
-            formula?.visibility = View.GONE
+            formula?.text = "0"
+            formula?.visibility = View.INVISIBLE
         } else {
             val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
             val tokens = Regex("(\\d+|[+\\-×÷%])").findAll(expression)
@@ -608,7 +609,8 @@ class FloatingBubbleService : Service() {
                 formula?.setTextColor(if (isOverBudget) Color.parseColor("#E87B7B") else Color.parseColor("#8E8E93"))
                 formula?.visibility = View.VISIBLE
             } else {
-                formula?.visibility = View.GONE
+                formula?.text = "0"
+                formula?.visibility = View.INVISIBLE
             }
         }
     }
