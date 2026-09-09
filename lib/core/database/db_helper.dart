@@ -232,6 +232,24 @@ class DbHelper {
     });
   }
 
+  /// Atomic batch update of multiple expense categories across different categories.
+  Future<void> batchUpdateMultiCategories(Map<int, String?> categoryUpdates) async {
+    if (categoryUpdates.isEmpty) return;
+    final db = await database;
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+      for (final entry in categoryUpdates.entries) {
+        batch.update(
+          'expenses',
+          {'category_id': entry.value},
+          where: 'id = ?',
+          whereArgs: [entry.key],
+        );
+      }
+      await batch.commit(noResult: true);
+    });
+  }
+
   /// Retrieves all recorded expenses without period restrictions.
   Future<List<ExpenseModel>> getAllExpenses() async {
     final db = await database;

@@ -7,6 +7,7 @@ import '../../budget/models/expense_model.dart';
 /// Interactive transaction tile in CategoryAssignmentScreen with checkbox and category status.
 class CategoryTransactionTile extends StatelessWidget {
   final ExpenseModel expense;
+  final String? initialCategoryId;
   final bool isChecked;
   final String selectedCategoryId;
   final VoidCallback onToggle;
@@ -15,6 +16,7 @@ class CategoryTransactionTile extends StatelessWidget {
   const CategoryTransactionTile({
     super.key,
     required this.expense,
+    this.initialCategoryId,
     required this.isChecked,
     required this.selectedCategoryId,
     required this.onToggle,
@@ -25,37 +27,32 @@ class CategoryTransactionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final textPrimary = PirschColors.textPrimary(isDark);
     final textSecondary = PirschColors.textSecondary(isDark);
-    final cardBg = PirschColors.card(isDark);
-    final borderColor = PirschColors.border(isDark);
+    final dividerColor = PirschColors.divider(isDark);
+
+    final String? origCat = initialCategoryId ?? expense.categoryId;
 
     final bool isReassigning = isChecked &&
-        expense.categoryId != null &&
-        expense.categoryId != selectedCategoryId;
+        origCat != null &&
+        origCat != selectedCategoryId;
 
     final bool isPreviousMember = !isChecked &&
-        expense.categoryId == selectedCategoryId;
+        origCat == selectedCategoryId;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: isChecked ? cardBg : cardBg.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isChecked ? PirschColors.mintGreen.withValues(alpha: 0.5) : borderColor,
-          width: isChecked ? 1.5 : 1.0,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            HapticFeedback.selectionClick();
-            onToggle();
-          },
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            child: Row(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onToggle();
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: dividerColor, width: 1.0),
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 14),
+          child: Row(
               children: [
                 // Custom Checkbox
                 AnimatedContainer(
@@ -164,7 +161,6 @@ class CategoryTransactionTile extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }

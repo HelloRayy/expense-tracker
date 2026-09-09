@@ -82,6 +82,14 @@ class MockCategoryBudgetRepo extends ChangeNotifier implements BudgetRepository 
     int? paydayDay,
   }) async {}
 
+  Map<int, String?>? lastMultiCategoryUpdates;
+
+  @override
+  Future<void> batchAssignMultiCategories(Map<int, String?> categoryUpdates) async {
+    batchAssignCallCount++;
+    lastMultiCategoryUpdates = Map.from(categoryUpdates);
+  }
+
   @override
   Future<void> batchAssignCategory({
     required List<int> assignIds,
@@ -142,8 +150,10 @@ void main() {
       ),
     );
 
-    // Header checks
-    expect(find.text('Makanan'), findsOneWidget);
+    // Header & Tab checks
+    expect(find.byType(TabBar), findsOneWidget);
+    expect(find.widgetWithText(Tab, 'Makanan'), findsOneWidget);
+    expect(find.widgetWithText(Tab, 'Kopi & Minum'), findsOneWidget);
     expect(find.text('Centang transaksi untuk memasukkan ke kategori ini.'), findsOneWidget);
     expect(find.text('Total: Rp 25rb'), findsOneWidget);
 
@@ -153,10 +163,8 @@ void main() {
     expect(find.text('• Kopi & Minum'), findsOneWidget);
     expect(find.text('Bensin Motor'), findsOneWidget);
 
-    // Save bar initial state
-    expect(find.text('Belum ada perubahan'), findsOneWidget);
-    final saveButton = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Simpan'));
-    expect(saveButton.onPressed, isNull);
+    // Save CTA button is initially hidden when there are no changes
+    expect(find.widgetWithText(ElevatedButton, 'Simpan'), findsNothing);
   });
 
   testWidgets('Toggling check/uncheck updates pending diff without triggering DB calls', (tester) async {
@@ -183,7 +191,7 @@ void main() {
 
     // Reassign badge should appear
     expect(find.text('Pindah dari Kopi & Minum'), findsOneWidget);
-    expect(find.text('1 perubahan belum disimpan'), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, 'Simpan (1 Perubahan)'), findsOneWidget);
     expect(find.text('Total: Rp 43rb'), findsOneWidget); // 25k + 18k
     expect(repo.batchAssignCallCount, 0); // zero auto-save!
 
@@ -193,7 +201,7 @@ void main() {
 
     // Unassign badge should appear
     expect(find.text('Akan dicabut'), findsOneWidget);
-    expect(find.text('2 perubahan belum disimpan'), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, 'Simpan (2 Perubahan)'), findsOneWidget);
     expect(find.text('Total: Rp 18rb'), findsOneWidget);
     expect(repo.batchAssignCallCount, 0);
 
@@ -203,7 +211,7 @@ void main() {
     await tester.tap(find.text('Kopi Kenangan'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Belum ada perubahan'), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, 'Simpan (2 Perubahan)'), findsNothing);
     expect(find.text('Total: Rp 25rb'), findsOneWidget);
   });
 
@@ -252,21 +260,22 @@ void main() {
     await tester.tap(find.text('Nasi Padang'));
     await tester.pumpAndSettle();
 
-    expect(find.text('2 perubahan belum disimpan'), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, 'Simpan (2 Perubahan)'), findsOneWidget);
 
     // Tap 'Simpan'
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Simpan'));
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Simpan (2 Perubahan)'));
     await tester.pumpAndSettle();
 
     // Verify repository was called with exact minimal diff
     expect(repo.batchAssignCallCount, 1);
-    expect(repo.lastAssignIds, [3]);
-    expect(repo.lastTargetCategoryId, 'Makanan');
-    expect(repo.lastUnassignIds, [1]);
+    expect(repo.lastMultiCategoryUpdates, {
+      3: 'Makanan',
+      1: null,
+    });
 
     // Verify screen popped back to root
     expect(find.text('Open Assignment'), findsOneWidget);
-    expect(find.text('2 transaksi berhasil dimasukkan ke Makanan!'), findsOneWidget);
+    expect(find.text('2 transaksi berhasil diperbarui!'), findsOneWidget);
   });
 
   testWidgets('Tapping back button discards all pending changes without repository call', (tester) async {
@@ -309,7 +318,7 @@ void main() {
     // Select 'Bensin Motor'
     await tester.tap(find.text('Bensin Motor'));
     await tester.pumpAndSettle();
-    expect(find.text('1 perubahan belum disimpan'), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, 'Simpan (1 Perubahan)'), findsOneWidget);
 
     // Tap back button
     await tester.tap(find.byIcon(Icons.arrow_back_rounded));

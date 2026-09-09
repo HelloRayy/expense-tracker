@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../budget/repository/budget_repository.dart';
-import '../services/category_assign_evaluator.dart';
-import '../widgets/category_save_bar.dart';
+import '../models/expense_category.dart';
 import '../widgets/category_transaction_tile.dart';
 
-/// Standalone Screen for assigning/reassigning transactions to a selected category.
-/// Holds reversible client-side pending selections and commits in a single atomic DB batch.
+/// Standalone Screen for assigning/reassigning transactions to categories.
+/// Features swipeable tabs (Makanan, Kopi & Minum, Transport, Belanja),
+/// unboxed transaction items with bottom border only,
+/// and a floating full-width CTA without background container.
 class CategoryAssignmentScreen extends StatefulWidget {
   final BudgetRepository repository;
   final String selectedCategoryId;
@@ -22,57 +23,86 @@ class CategoryAssignmentScreen extends StatefulWidget {
   State<CategoryAssignmentScreen> createState() => _CategoryAssignmentScreenState();
 }
 
-class _CategoryAssignmentScreenState extends State<CategoryAssignmentScreen> {
+class _CategoryAssignmentScreenState extends State<CategoryAssignmentScreen>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+  final List<ExpenseCategory> _categories = ExpenseCategory.all;
+
   late Map<int, String?> _initialCategories;
-  late Set<int> _pendingSelectedIds;
+  late Map<int, String?> _pendingCategories;
   bool _isSaving = false;
 
   @override
   void initState() {
     super.initState();
     _initSelectionState();
+
+    final initialIndex = _categories.indexWhere(
+      (c) => c.id.toLowerCase() == widget.selectedCategoryId.toLowerCase(),
+    );
+    _tabController = TabController(
+      length: _categories.length,
+      initialIndex: initialIndex >= 0 ? initialIndex : 0,
+      vsync: this,
+    );
+    _tabController.addListener(() {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   void _initSelectionState() {
     _initialCategories = {};
+    _pendingCategories = {};
     for (final exp in widget.repository.expenses) {
       if (exp.id != null) {
         _initialCategories[exp.id!] = exp.categoryId;
+        _pendingCategories[exp.id!] = exp.categoryId;
       }
     }
-    _pendingSelectedIds = CategoryAssignEvaluator.buildInitialSelection(
-      initialCategories: _initialCategories,
-      selectedCategoryId: widget.selectedCategoryId,
-    );
   }
 
-  void _toggleSelection(int id) {
+  void _toggleSelection(int id, String categoryId) {
     setState(() {
-      if (_pendingSelectedIds.contains(id)) {
-        _pendingSelectedIds.remove(id);
+      if (_pendingCategories[id] == categoryId) {
+        // Uncheck -> unassigned (null)
+        _pendingCategories[id] = null;
       } else {
-        _pendingSelectedIds.add(id);
+        // Check -> assign to this category
+        _pendingCategories[id] = categoryId;
       }
     });
   }
 
-  Future<void> _commitChanges() async {
-    final diff = CategoryAssignEvaluator.computeDiff(
-      initialCategories: _initialCategories,
-      pendingSelectedIds: _pendingSelectedIds,
-      selectedCategoryId: widget.selectedCategoryId,
-    );
+  int get _totalChanges {
+    int count = 0;
+    for (final entry in _pendingCategories.entries) {
+      if (entry.value != _initialCategories[entry.key]) {
+        count++;
+      }
+    }
+    return count;
+  }
 
-    if (!diff.hasChanges || _isSaving) return;
+  Future<void> _commitChanges() async {
+    final Map<int, String?> diffUpdates = {};
+    for (final entry in _pendingCategories.entries) {
+      if (entry.value != _initialCategories[entry.key]) {
+        diffUpdates[entry.key] = entry.value;
+      }
+    }
+
+    if (diffUpdates.isEmpty || _isSaving) return;
 
     setState(() => _isSaving = true);
 
     try {
-      await widget.repository.batchAssignCategory(
-        assignIds: diff.toAssign,
-        targetCategoryId: widget.selectedCategoryId,
-        unassignIds: diff.toUnassign,
-      );
+      await widget.repository.batchAssignMultiCategories(diffUpdates);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -86,7 +116,7 @@ class _CategoryAssignmentScreenState extends State<CategoryAssignmentScreen> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    '${diff.totalChanges} transaksi berhasil dimasukkan ke ${widget.selectedCategoryId}!',
+                    '${diffUpdates.length} transaksi berhasil diperbarui!',
                     style: TextStyle(
                       color: PirschColors.textPrimary(Theme.of(context).brightness == Brightness.dark),
                       fontWeight: FontWeight.w600,
@@ -111,127 +141,210 @@ class _CategoryAssignmentScreenState extends State<CategoryAssignmentScreen> {
     final bgColor = PirschColors.bg(isDark);
     final textPrimary = PirschColors.textPrimary(isDark);
     final textSecondary = PirschColors.textSecondary(isDark);
+    final dividerColor = PirschColors.divider(isDark);
     final expenses = widget.repository.expenses;
 
-    final diff = CategoryAssignEvaluator.computeDiff(
-      initialCategories: _initialCategories,
-      pendingSelectedIds: _pendingSelectedIds,
-      selectedCategoryId: widget.selectedCategoryId,
-    );
+    final currentCategory = _categories[_tabController.index];
 
-    // Calculate total spend currently checked for this category
-    int totalSelectedAmount = 0;
+    // Calculate total spend currently assigned to the active tab category
+    int totalForCurrentTab = 0;
     for (final exp in expenses) {
-      if (exp.id != null && _pendingSelectedIds.contains(exp.id)) {
-        totalSelectedAmount += exp.amount;
+      if (exp.id != null && _pendingCategories[exp.id] == currentCategory.id) {
+        totalForCurrentTab += exp.amount;
       }
     }
+
+    final totalChanges = _totalChanges;
+    final hasChanges = totalChanges > 0;
 
     return Scaffold(
       backgroundColor: bgColor,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            // Top Bar
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () => Navigator.of(context).pop(),
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        child: Icon(Icons.arrow_back_rounded, color: textPrimary, size: 24),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Top Navigation Bar
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 20, 0),
+                  child: Row(
+                    children: [
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () => Navigator.of(context).pop(),
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: Icon(Icons.arrow_back_rounded, color: textPrimary, size: 24),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: PirschColors.mintGreen.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: PirschColors.mintGreen.withValues(alpha: 0.4)),
-                    ),
-                    child: Text(
-                      'Total: ${CurrencyFormatter.formatCompact(totalSelectedAmount)}',
-                      style: const TextStyle(
-                        color: PirschColors.mintGreen,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
+                ),
+
+                // Category Title Header with Total Badge
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 2, 20, 4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              currentCategory.displayName,
+                              style: TextStyle(
+                                color: textPrimary,
+                                fontSize: 28,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.5,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: PirschColors.mintGreen.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: PirschColors.mintGreen.withValues(alpha: 0.4)),
+                            ),
+                            child: Text(
+                              'Total: ${CurrencyFormatter.formatCompact(totalForCurrentTab)}',
+                              style: const TextStyle(
+                                color: PirschColors.mintGreen,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                      const SizedBox(height: 3),
+                      Text(
+                        'Centang transaksi untuk memasukkan ke kategori ini.',
+                        style: TextStyle(color: textSecondary, fontSize: 13),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+
+                const SizedBox(height: 8),
+
+                // Slideable Tab Switcher
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(bottom: BorderSide(color: dividerColor, width: 1.0)),
+                  ),
+                  child: TabBar(
+                    controller: _tabController,
+                    isScrollable: true,
+                    tabAlignment: TabAlignment.start,
+                    physics: const BouncingScrollPhysics(),
+                    indicatorColor: PirschColors.mintGreen,
+                    indicatorWeight: 2.5,
+                    labelColor: textPrimary,
+                    unselectedLabelColor: textSecondary,
+                    labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                    unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+                    dividerColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    labelPadding: const EdgeInsets.symmetric(horizontal: 14),
+                    tabs: _categories.map((cat) {
+                      return Tab(text: cat.displayName);
+                    }).toList(),
+                  ),
+                ),
+
+                // Swipeable Tab Content (PageView / TabBarView)
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    physics: const BouncingScrollPhysics(),
+                    children: _categories.map((cat) {
+                      if (expenses.isEmpty) {
+                        return Center(
+                          child: Text(
+                            'Belum ada transaksi pengeluaran.',
+                            style: TextStyle(color: textSecondary, fontSize: 14),
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(20, 6, 20, 96),
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: expenses.length,
+                        itemBuilder: (context, index) {
+                          final exp = expenses[index];
+                          final isChecked = exp.id != null &&
+                              _pendingCategories[exp.id] == cat.id;
+
+                          return CategoryTransactionTile(
+                            expense: exp,
+                            initialCategoryId: _initialCategories[exp.id],
+                            isChecked: isChecked,
+                            selectedCategoryId: cat.id,
+                            onToggle: () {
+                              if (exp.id != null) _toggleSelection(exp.id!, cat.id);
+                            },
+                            isDark: isDark,
+                          );
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
 
-            // Large Title
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 10, 24, 16),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.selectedCategoryId,
-                      style: TextStyle(
-                        color: textPrimary,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.5,
+            // Floating Full-Width CTA (Hidden by default, slides up when changes exist)
+            Positioned(
+              left: 20,
+              right: 20,
+              bottom: 16,
+              child: AnimatedSlide(
+                offset: hasChanges ? Offset.zero : const Offset(0, 1.8),
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutCubic,
+                child: AnimatedOpacity(
+                  opacity: hasChanges ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: hasChanges && !_isSaving ? _commitChanges : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: PirschColors.pill(isDark),
+                        foregroundColor: PirschColors.pillText(isDark),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
+                        elevation: 8,
+                        shadowColor: Colors.black.withValues(alpha: isDark ? 0.45 : 0.15),
                       ),
+                      child: _isSaving
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            )
+                          : Text(
+                              totalChanges > 1
+                                  ? 'Simpan ($totalChanges Perubahan)'
+                                  : 'Simpan (1 Perubahan)',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                              ),
+                            ),
                     ),
-                    const SizedBox(height: 3),
-                    Text(
-                      'Centang transaksi untuk memasukkan ke kategori ini.',
-                      style: TextStyle(color: textSecondary, fontSize: 13),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-
-            // Transactions Checklist Body
-            Expanded(
-              child: expenses.isEmpty
-                  ? Center(
-                      child: Text(
-                        'Belum ada transaksi pengeluaran.',
-                        style: TextStyle(color: textSecondary, fontSize: 14),
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: expenses.length,
-                      itemBuilder: (context, index) {
-                        final exp = expenses[index];
-                        final isChecked = exp.id != null && _pendingSelectedIds.contains(exp.id);
-
-                        return CategoryTransactionTile(
-                          expense: exp,
-                          isChecked: isChecked,
-                          selectedCategoryId: widget.selectedCategoryId,
-                          onToggle: () {
-                            if (exp.id != null) _toggleSelection(exp.id!);
-                          },
-                          isDark: isDark,
-                        );
-                      },
-                    ),
-            ),
-
-            // Sticky Bottom Save Bar
-            CategorySaveBar(
-              diff: diff,
-              isSaving: _isSaving,
-              onSave: _commitChanges,
-              isDark: isDark,
             ),
           ],
         ),

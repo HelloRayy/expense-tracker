@@ -177,31 +177,43 @@ class BudgetRepository extends ChangeNotifier {
     await loadData();
   }
 
-  /// Batch assign category to transactions and unassign deselected ones.
-  Future<void> batchAssignCategory({
-    required List<int> assignIds,
-    required String targetCategoryId,
-    required List<int> unassignIds,
-  }) async {
+  /// Batch update multiple categories across various expenses atomically.
+  Future<void> batchAssignMultiCategories(Map<int, String?> categoryUpdates) async {
+    if (categoryUpdates.isEmpty) return;
+
     if (kIsWeb) {
       for (int i = 0; i < _expenses.length; i++) {
         final exp = _expenses[i];
-        if (exp.id != null && assignIds.contains(exp.id)) {
-          _expenses[i] = exp.copyWith(categoryId: targetCategoryId);
-        } else if (exp.id != null && unassignIds.contains(exp.id)) {
-          _expenses[i] = exp.copyWith(clearCategory: true);
+        if (exp.id != null && categoryUpdates.containsKey(exp.id)) {
+          final newCat = categoryUpdates[exp.id];
+          _expenses[i] = exp.copyWith(
+            categoryId: newCat,
+            clearCategory: newCat == null,
+          );
         }
       }
       notifyListeners();
       return;
     }
 
-    await _db.batchUpdateExpenseCategories(
-      assignIds: assignIds,
-      targetCategoryId: targetCategoryId,
-      unassignIds: unassignIds,
-    );
+    await _db.batchUpdateMultiCategories(categoryUpdates);
     await loadData();
+  }
+
+  /// Batch assign category to transactions and unassign deselected ones.
+  Future<void> batchAssignCategory({
+    required List<int> assignIds,
+    required String targetCategoryId,
+    required List<int> unassignIds,
+  }) async {
+    final Map<int, String?> updates = {};
+    for (final id in assignIds) {
+      updates[id] = targetCategoryId;
+    }
+    for (final id in unassignIds) {
+      updates[id] = null;
+    }
+    await batchAssignMultiCategories(updates);
   }
 
   Future<void> updateBudget({
