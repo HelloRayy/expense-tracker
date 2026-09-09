@@ -729,7 +729,7 @@ void main() {
               child: RepaintBoundary(
                 key: boundaryKey,
                 child: const HomeWidget4x2Card(
-                  userName: 'Username',
+                  userName: 'Raditya Rayhan',
                   dailyAllowance: 50000,
                   weeklyIncome: 1500000,
                   totalSpent: 205000,
@@ -780,7 +780,7 @@ void main() {
               child: RepaintBoundary(
                 key: boundaryKey,
                 child: const HomeWidget4x2Card(
-                  userName: 'Username',
+                  userName: 'Raditya Rayhan',
                   dailyAllowance: 50000,
                   weeklyIncome: 1500000,
                   totalSpent: 205000,

@@ -53,7 +53,7 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
             var weeklyIncome = 0L
             var dailyAllowance = 0L
             var totalSpent = 0L
-            var userName = "Username"
+            var userName = "Raditya Rayhan"
 
             try {
                 val prefs = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)

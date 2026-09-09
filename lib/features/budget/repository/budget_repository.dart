@@ -254,7 +254,7 @@ class BudgetRepository extends ChangeNotifier {
       remainingToday: remainingToday,
       spentToday: spentToday,
       totalSpent: totalSpent,
-      userName: 'Username',
+      userName: 'Raditya Rayhan',
       formattedPeriod: _budget!.formattedPeriod,
     );
   }

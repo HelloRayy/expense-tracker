@@ -21,7 +21,7 @@ class NativeBridge {
     int remainingToday = 0,
     int spentToday = 0,
     int totalSpent = 0,
-    String userName = 'Username',
+    String userName = 'Raditya Rayhan',
     String formattedPeriod = '',
   }) async {
     try {

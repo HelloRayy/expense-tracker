@@ -20,7 +20,7 @@
             android:id="@+id/tv_widget_greeting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hi, Username"
+            android:text="Hi, Raditya Rayhan"
             android:textColor="#EBEBEB"
             android:textSize="16sp"
             android:textStyle="bold"

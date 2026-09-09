@@ -15,7 +15,7 @@ class HomeWidget4x2Card extends StatelessWidget {
 
   const HomeWidget4x2Card({
     super.key,
-    this.userName = 'Username',
+    this.userName = 'Raditya Rayhan',
     required this.dailyAllowance,
     required this.weeklyIncome,
     required this.totalSpent,

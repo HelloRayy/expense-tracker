@@ -49,7 +49,7 @@ class DashboardHeader extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Halo, Jajaner',
+                      'Halo, Raditya Rayhan',
                       style: TextStyle(
                         color: textSecondary,
                         fontSize: 12,
