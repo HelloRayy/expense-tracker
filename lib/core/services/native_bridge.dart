@@ -16,6 +16,7 @@ class NativeBridge {
     required int remainingBalance,
     required int totalBudget,
     required int dailySafe,
+    int? weeklyIncome,
     int dailyAllowance = 0,
     int remainingToday = 0,
     int spentToday = 0,
@@ -24,9 +25,11 @@ class NativeBridge {
     String formattedPeriod = '',
   }) async {
     try {
+      final effectiveWeeklyIncome = weeklyIncome ?? totalBudget;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('remaining_balance', remainingBalance);
       await prefs.setInt('total_budget', totalBudget);
+      await prefs.setInt('weekly_income', effectiveWeeklyIncome);
       await prefs.setInt('daily_safe', dailySafe);
       await prefs.setInt('daily_allowance', dailyAllowance);
       await prefs.setInt('remaining_today', remainingToday);
@@ -40,6 +43,7 @@ class NativeBridge {
       await _widgetChannel.invokeMethod('updateWidget', {
         'remaining_balance': remainingBalance,
         'total_budget': totalBudget,
+        'weekly_income': effectiveWeeklyIncome,
         'daily_safe': dailySafe,
         'daily_allowance': dailyAllowance,
         'remaining_today': remainingToday,

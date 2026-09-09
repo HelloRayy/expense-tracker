@@ -67,40 +67,72 @@
             android:fontFamily="sans-serif-medium" />
     </LinearLayout>
 
-    <!-- Bottom Metrics Row: Sisa Hari Ini (Left, Green) & Pengeluaran Hari Ini (Right, Red) -->
+    <!-- Bottom Metrics Row: Uang Masuk Mingguan (Left, Green) & Uang Keluar Keseluruhan (Right, Red) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <!-- Sisa jajan hari ini (Green) -->
-        <TextView
-            android:id="@+id/tv_widget_remaining"
+        <!-- Uang Masuk Mingguan (Green) -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rp 0"
-            android:textColor="#6ECE9D"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-medium" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="↓"
+                android:textColor="#6ECE9D"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_widget_remaining"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="Rp 0"
+                android:textColor="#6ECE9D"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="20dp"
             android:text=" " />
 
-        <!-- Pengeluaran hari ini (Red) -->
-        <TextView
-            android:id="@+id/tv_widget_spent"
+        <!-- Uang Keluar Keseluruhan (Red) -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rp 0"
-            android:textColor="#E87B7B"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-medium" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="↑"
+                android:textColor="#E87B7B"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_widget_spent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="Rp 0"
+                android:textColor="#E87B7B"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

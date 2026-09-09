@@ -248,6 +248,7 @@ class BudgetRepository extends ChangeNotifier {
     await _nativeBridge.syncBalanceToNative(
       remainingBalance: remainingBalance,
       totalBudget: _budget!.weeklyIncome,
+      weeklyIncome: _budget!.weeklyIncome,
       dailySafe: remainingToday,
       dailyAllowance: dailyAllowance,
       remainingToday: remainingToday,

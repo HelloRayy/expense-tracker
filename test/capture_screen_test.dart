@@ -731,8 +731,8 @@ void main() {
                 child: const HomeWidget4x2Card(
                   userName: 'Username',
                   dailyAllowance: 50000,
-                  remainingToday: 35000,
-                  spentToday: 15000,
+                  weeklyIncome: 1500000,
+                  totalSpent: 205000,
                   isDark: true,
                 ),
               ),
@@ -782,8 +782,8 @@ void main() {
                 child: const HomeWidget4x2Card(
                   userName: 'Username',
                   dailyAllowance: 50000,
-                  remainingToday: 35000,
-                  spentToday: 15000,
+                  weeklyIncome: 1500000,
+                  totalSpent: 205000,
                   isDark: false,
                 ),
               ),

@@ -4,12 +4,12 @@ import '../../core/utils/currency_formatter.dart';
 
 /// 4x2 Android Home Screen Widget component mirroring the native AppWidget layout.
 /// Displays greeting, subtitle, enlarged daily budget allowance (/hari),
-/// and bottom metrics for remaining today (green) and spent today (red).
+/// and bottom metrics for weekly income (green, with ↓ arrow) and total spent (red, with ↑ arrow).
 class HomeWidget4x2Card extends StatelessWidget {
   final String userName;
   final int dailyAllowance;
-  final int remainingToday;
-  final int spentToday;
+  final int weeklyIncome;
+  final int totalSpent;
   final bool isDark;
   final VoidCallback? onTap;
 
@@ -17,8 +17,8 @@ class HomeWidget4x2Card extends StatelessWidget {
     super.key,
     this.userName = 'Username',
     required this.dailyAllowance,
-    required this.remainingToday,
-    required this.spentToday,
+    required this.weeklyIncome,
+    required this.totalSpent,
     this.isDark = true,
     this.onTap,
   });
@@ -106,27 +106,51 @@ class HomeWidget4x2Card extends StatelessWidget {
 
               const Spacer(),
 
-              // Bottom Metrics: Sisa Hari Ini (Green) & Pengeluaran Hari Ini (Red)
+              // Bottom Metrics: Uang Masuk Mingguan (Green) & Uang Keluar Keseluruhan (Red)
               Row(
                 children: [
-                  Text(
-                    CurrencyFormatter.format(remainingToday),
-                    style: TextStyle(
-                      color: remainingToday < 0 ? redColor : greenColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.2,
-                    ),
+                  // Uang Masuk Mingguan (Green)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.arrow_downward_rounded,
+                        size: 16,
+                        color: greenColor,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        CurrencyFormatter.format(weeklyIncome),
+                        style: TextStyle(
+                          color: greenColor,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.2,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 24),
-                  Text(
-                    CurrencyFormatter.format(spentToday),
-                    style: TextStyle(
-                      color: redColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.2,
-                    ),
+                  const SizedBox(width: 20),
+                  // Uang Keluar Keseluruhan (Red)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.arrow_upward_rounded,
+                        size: 16,
+                        color: redColor,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        CurrencyFormatter.format(totalSpent),
+                        style: TextStyle(
+                          color: redColor,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.2,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

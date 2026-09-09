@@ -50,9 +50,9 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
         }
 
         private fun updateWidgets(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-            var remainingToday = 0L
+            var weeklyIncome = 0L
             var dailyAllowance = 0L
-            var spentToday = 0L
+            var totalSpent = 0L
             var userName = "Username"
 
             try {
@@ -69,14 +69,14 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
                     dailyAllowance = rawDailyAllowance.toLong()
                 }
 
-                val rawRemainingToday = allEntries["flutter.remaining_today"] ?: allEntries["remaining_today"] ?: allEntries["flutter.daily_safe"] ?: allEntries["daily_safe"]
-                if (rawRemainingToday is Number) {
-                    remainingToday = rawRemainingToday.toLong()
+                val rawWeeklyIncome = allEntries["flutter.weekly_income"] ?: allEntries["weekly_income"] ?: allEntries["flutter.total_budget"] ?: allEntries["total_budget"]
+                if (rawWeeklyIncome is Number) {
+                    weeklyIncome = rawWeeklyIncome.toLong()
                 }
 
-                val rawSpentToday = allEntries["flutter.spent_today"] ?: allEntries["spent_today"] ?: allEntries["flutter.total_spent"] ?: allEntries["total_spent"]
-                if (rawSpentToday is Number) {
-                    spentToday = rawSpentToday.toLong()
+                val rawTotalSpent = allEntries["flutter.total_spent"] ?: allEntries["total_spent"]
+                if (rawTotalSpent is Number) {
+                    totalSpent = rawTotalSpent.toLong()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -101,25 +101,16 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
                 }
             }
 
-            val isRemainingNegative = remainingToday < 0
-            val remainingStr = if (isRemainingNegative) {
-                try {
-                    "-${formatter.format(Math.abs(remainingToday))}"
-                } catch (_: Exception) {
-                    "-Rp ${Math.abs(remainingToday)}"
-                }
-            } else {
-                try {
-                    formatter.format(remainingToday)
-                } catch (_: Exception) {
-                    "Rp $remainingToday"
-                }
+            val weeklyIncomeStr = try {
+                formatter.format(weeklyIncome)
+            } catch (_: Exception) {
+                "Rp $weeklyIncome"
             }
 
-            val spentStr = try {
-                formatter.format(spentToday)
+            val totalSpentStr = try {
+                formatter.format(totalSpent)
             } catch (_: Exception) {
-                "Rp $spentToday"
+                "Rp $totalSpent"
             }
 
             val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -141,8 +132,8 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
                     views.setTextViewText(R.id.tv_widget_subtitle, "Batas jajan hari ini")
                     views.setTextViewText(R.id.tv_widget_daily_amount, dailyStr)
                     views.setTextViewText(R.id.tv_widget_daily_unit, "/hari")
-                    views.setTextViewText(R.id.tv_widget_remaining, remainingStr)
-                    views.setTextViewText(R.id.tv_widget_spent, spentStr)
+                    views.setTextViewText(R.id.tv_widget_remaining, weeklyIncomeStr)
+                    views.setTextViewText(R.id.tv_widget_spent, totalSpentStr)
 
                     // Hero Nominal Color (Soft White when safe, Soft Rose Red when negative)
                     if (isAllowanceNegative) {
@@ -151,14 +142,10 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
                         views.setTextColor(R.id.tv_widget_daily_amount, Color.parseColor("#EBEBEB"))
                     }
 
-                    // Remaining Today Color (Mint Green if safe, Rose Red if negative)
-                    if (isRemainingNegative) {
-                        views.setTextColor(R.id.tv_widget_remaining, Color.parseColor("#E87B7B"))
-                    } else {
-                        views.setTextColor(R.id.tv_widget_remaining, Color.parseColor("#6ECE9D"))
-                    }
+                    // Weekly Income Color (Mint Green)
+                    views.setTextColor(R.id.tv_widget_remaining, Color.parseColor("#6ECE9D"))
 
-                    // Spent Today Color (Always Rose Red)
+                    // Total Spent Color (Rose Red)
                     views.setTextColor(R.id.tv_widget_spent, Color.parseColor("#E87B7B"))
 
                     // Main Container click -> Open App Dashboard
