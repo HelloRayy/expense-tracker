@@ -11,6 +11,7 @@ import 'package:jajan_tracker/features/budget/models/expense_model.dart';
 import 'package:jajan_tracker/features/budget/repository/budget_repository.dart';
 import 'package:jajan_tracker/features/dashboard/dashboard_screen.dart';
 import 'package:jajan_tracker/features/quick_log/quick_log_dialog.dart';
+import 'package:jajan_tracker/features/expense_catalog/screens/expense_catalog_screen.dart';
 import 'package:jajan_tracker/features/settings/screens/budget_settings_detail_screen.dart';
 import 'package:jajan_tracker/features/settings/screens/settings_screen.dart';
 
@@ -482,6 +483,82 @@ void main() {
       final outPath = '/home/rayhan/.gemini/antigravity/brain/c3cf172f-5299-4a70-bc5d-1e40b03dd06d/actual_budget_settings_detail_light.png';
       File(outPath).writeAsBytesSync(bytes);
       print('BUDGET SETTINGS DETAIL LIGHT SAVED: $outPath');
+    });
+  });
+
+  testWidgets('Capture ExpenseCatalogScreen Dark Mode real screenshot', (tester) async {
+    tester.view.physicalSize = const Size(1179, 2556);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final GlobalKey boundaryKey = GlobalKey();
+    final repo = MockBudgetRepo();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Inter',
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: PirschColors.darkBg,
+        ),
+        home: RepaintBoundary(
+          key: boundaryKey,
+          child: ExpenseCatalogScreen(repository: repo),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final ui.Image image = await boundary.toImage(pixelRatio: 2.0);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final bytes = byteData!.buffer.asUint8List();
+
+      final outPath = '/home/rayhan/.gemini/antigravity/brain/c3cf172f-5299-4a70-bc5d-1e40b03dd06d/actual_expense_catalog_dark.png';
+      File(outPath).writeAsBytesSync(bytes);
+      print('EXPENSE CATALOG DARK SAVED: $outPath');
+    });
+  });
+
+  testWidgets('Capture ExpenseCatalogScreen Light Mode real screenshot', (tester) async {
+    tester.view.physicalSize = const Size(1179, 2556);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final GlobalKey boundaryKey = GlobalKey();
+    final repo = MockBudgetRepo();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Inter',
+          brightness: Brightness.light,
+          scaffoldBackgroundColor: PirschColors.lightBg,
+        ),
+        home: RepaintBoundary(
+          key: boundaryKey,
+          child: ExpenseCatalogScreen(repository: repo),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final ui.Image image = await boundary.toImage(pixelRatio: 2.0);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final bytes = byteData!.buffer.asUint8List();
+
+      final outPath = '/home/rayhan/.gemini/antigravity/brain/c3cf172f-5299-4a70-bc5d-1e40b03dd06d/actual_expense_catalog_light.png';
+      File(outPath).writeAsBytesSync(bytes);
+      print('EXPENSE CATALOG LIGHT SAVED: $outPath');
     });
   });
 }

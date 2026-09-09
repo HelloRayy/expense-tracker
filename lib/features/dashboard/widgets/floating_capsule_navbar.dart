@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 
 /// Floating Capsule Bottom Navigation Bar for Dashboard.
-/// Provides quick access to Home, Shopee Scanner, Quick Log (+), History, and Settings.
+/// Provides quick access to Home, Shopee Scanner, Quick Log (+), Expense Catalog, and Settings.
 class FloatingCapsuleNavbar extends StatelessWidget {
   final bool isDark;
   final Color borderColor;
   final Color textSecondary;
   final VoidCallback onTapShopee;
   final VoidCallback onTapQuickLog;
+  final VoidCallback onTapCatalog;
   final VoidCallback onTapSettings;
 
   const FloatingCapsuleNavbar({
@@ -18,6 +19,7 @@ class FloatingCapsuleNavbar extends StatelessWidget {
     required this.textSecondary,
     required this.onTapShopee,
     required this.onTapQuickLog,
+    required this.onTapCatalog,
     required this.onTapSettings,
   });
 
@@ -69,11 +71,11 @@ class FloatingCapsuleNavbar extends StatelessWidget {
             ),
           ),
 
-          // Nav 4: History / Filter
+          // Nav 4: Expense Catalog Cards
           IconButton(
-            tooltip: 'Riwayat & Filter',
-            icon: Icon(Icons.receipt_long_rounded, color: textSecondary, size: 24),
-            onPressed: () {},
+            tooltip: 'Katalog Kartu Jajan',
+            icon: Icon(Icons.grid_view_rounded, color: textSecondary, size: 24),
+            onPressed: onTapCatalog,
           ),
 
           // Nav 5: Settings

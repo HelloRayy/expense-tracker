@@ -4,13 +4,14 @@ import '../../../core/utils/currency_formatter.dart';
 import '../../budget/models/expense_model.dart';
 
 /// Spending by Category horizontal card section for Dashboard.
+/// Tapping any category card or header navigates to the standalone ExpenseCatalogScreen.
 class CategorySection extends StatelessWidget {
   final List<ExpenseModel> expenses;
   final Color cardColor;
   final Color borderColor;
   final Color textPrimary;
   final Color textSecondary;
-  final VoidCallback onSelectCategory;
+  final ValueChanged<String> onSelectCategory;
 
   const CategorySection({
     super.key,
@@ -43,40 +44,54 @@ class CategorySection extends StatelessWidget {
     }
 
     final categories = [
-      {'icon': Icons.restaurant_rounded, 'color': PirschColors.coralOrange, 'title': 'Makanan', 'total': foodTotal, 'preset': 'Makan'},
-      {'icon': Icons.local_cafe_rounded, 'color': PirschColors.mintGreen, 'title': 'Kopi & Minum', 'total': coffeeTotal, 'preset': 'Kopi'},
-      {'icon': Icons.directions_car_rounded, 'color': const Color(0xFF60A5FA), 'title': 'Transport', 'total': transportTotal, 'preset': 'Transport'},
-      {'icon': Icons.shopping_bag_rounded, 'color': PirschColors.warmYellow, 'title': 'Belanja/QRIS', 'total': shoppingTotal, 'preset': 'Jajan'},
+      {'icon': Icons.restaurant_rounded, 'color': PirschColors.coralOrange, 'title': 'Makanan', 'total': foodTotal, 'category': 'Makanan'},
+      {'icon': Icons.local_cafe_rounded, 'color': PirschColors.mintGreen, 'title': 'Kopi & Minum', 'total': coffeeTotal, 'category': 'Kopi'},
+      {'icon': Icons.directions_car_rounded, 'color': const Color(0xFF60A5FA), 'title': 'Transport', 'total': transportTotal, 'category': 'Transport'},
+      {'icon': Icons.shopping_bag_rounded, 'color': PirschColors.warmYellow, 'title': 'Belanja/QRIS', 'total': shoppingTotal, 'category': 'Belanja'},
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                'Kategori Pengeluaran',
-                style: TextStyle(
-                  color: textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
+        InkWell(
+          onTap: () => onSelectCategory('Semua'),
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    'Kategori Pengeluaran',
+                    style: TextStyle(
+                      color: textPrimary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+                const SizedBox(width: 8),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Buka katalog',
+                      style: TextStyle(
+                        color: textSecondary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(Icons.chevron_right_rounded, size: 16, color: textSecondary),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            Text(
-              'Sentuh untuk catat',
-              style: TextStyle(
-                color: textSecondary,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
+          ),
         ),
         const SizedBox(height: 12),
 
@@ -92,7 +107,7 @@ class CategorySection extends StatelessWidget {
               final cat = categories[i];
               final catColor = cat['color'] as Color;
               return InkWell(
-                onTap: onSelectCategory,
+                onTap: () => onSelectCategory(cat['category'] as String),
                 borderRadius: BorderRadius.circular(16),
                 child: Container(
                   width: 120,

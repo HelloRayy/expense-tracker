@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../budget/repository/budget_repository.dart';
+import '../expense_catalog/screens/expense_catalog_screen.dart';
 import '../quick_log/quick_log_dialog.dart';
 import '../settings/screens/budget_settings_detail_screen.dart';
 import '../settings/screens/settings_screen.dart';
@@ -75,6 +76,17 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       context,
       repository: widget.repository,
       onComplete: () => setState(() {}),
+    );
+  }
+
+  void _openExpenseCatalog([String category = 'Semua']) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ExpenseCatalogScreen(
+          repository: widget.repository,
+          initialCategory: category,
+        ),
+      ),
     );
   }
 
@@ -183,7 +195,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             borderColor: borderColor,
                             textPrimary: textPrimary,
                             textSecondary: textSecondary,
-                            onSelectCategory: _openQuickLog,
+                            onSelectCategory: _openExpenseCatalog,
                           ),
                           const SizedBox(height: 24),
 
@@ -312,6 +324,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                   textSecondary: textSecondary,
                   onTapShopee: _openShopee,
                   onTapQuickLog: _openQuickLog,
+                  onTapCatalog: () => _openExpenseCatalog('Semua'),
                   onTapSettings: _openSettings,
                 ),
               ),
