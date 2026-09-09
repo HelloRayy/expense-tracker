@@ -7,7 +7,12 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "capture": "node scripts/capture-target.js",
+    "build:clone": "node scripts/build-local-clone.js",
+    "diff": "node scripts/analyze-diff.js",
+    "test:visual": "playwright test",
+    "test": "playwright test"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -20,11 +25,15 @@
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/node": "^24.13.3",
+    "@types/pngjs": "^6.0.5",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.1.0",
     "oxlint": "^1.79.0",
+    "pixelmatch": "^7.2.0",
+    "pngjs": "^7.0.0",
     "typescript": "~6.0.2",
     "vite": "^8.2.2"
   }

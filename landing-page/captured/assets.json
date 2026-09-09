@@ -1,0 +1,436 @@
+{
+  "stylesheets": [
+    "https://pirsch.io/static/css/main.css?v=2026-09-09T13%3a12%3a15Z",
+    "https://pirsch.io/static/css/scroll.css?v=2026-09-09T13%3a12%3a15Z"
+  ],
+  "inlineStyles": [
+    "\n      *, *::before, *::after {\n        -moz-animation: none !important;\n        -moz-transition: none !important;\n        animation: none !important;\n        transition: none !important;\n        caret-color: transparent !important;\n      }\n      html {\n        scroll-behavior: auto !important;\n      }\n    "
+  ],
+  "images": [
+    {
+      "src": "https://pirsch.io/static/img/customers.png",
+      "alt": "Customers of Pirsch Analytics",
+      "class": ""
+    },
+    {
+      "src": "https://pirsch.io/static/img/overview-light.svg",
+      "alt": "See Beyond Clicks With the Best Google Analytics Alternative",
+      "class": "image image-1 show-light"
+    },
+    {
+      "src": "https://pirsch.io/static/img/dashboard-light.svg",
+      "alt": "See Beyond Clicks With the Best Google Analytics Alternative",
+      "class": "image image-2 show-light"
+    },
+    {
+      "src": "https://pirsch.io/static/img/funnels-light.svg",
+      "alt": "See Beyond Clicks With the Best Google Analytics Alternative",
+      "class": "image image-3 show-light"
+    },
+    {
+      "src": "https://pirsch.io/static/img/sessions-light.svg",
+      "alt": "See Beyond Clicks With the Best Google Analytics Alternative",
+      "class": "image image-4 show-light"
+    },
+    {
+      "src": "https://pirsch.io/static/img/overview-dark.svg",
+      "alt": "See Beyond Clicks With the Best Google Analytics Alternative",
+      "class": "image image-1 show-dark"
+    },
+    {
+      "src": "https://pirsch.io/static/img/dashboard-dark.svg",
+      "alt": "See Beyond Clicks With the Best Google Analytics Alternative",
+      "class": "image image-2 show-dark"
+    },
+    {
+      "src": "https://pirsch.io/static/img/funnels-dark.svg",
+      "alt": "See Beyond Clicks With the Best Google Analytics Alternative",
+      "class": "image image-3 show-dark"
+    },
+    {
+      "src": "https://pirsch.io/static/img/sessions-dark.svg",
+      "alt": "See Beyond Clicks With the Best Google Analytics Alternative",
+      "class": "image image-4 show-dark"
+    },
+    {
+      "src": "https://pirsch.io/static/img/globalx.png",
+      "alt": "Global X",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/maglr.png",
+      "alt": "Maglr",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/superblog.png",
+      "alt": "Superblog",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/stillalive-light.png",
+      "alt": "Stillalive Studios",
+      "class": "show-light"
+    },
+    {
+      "src": "https://pirsch.io/static/img/stillalive-dark.png",
+      "alt": "Stillalive Studios",
+      "class": "show-dark"
+    },
+    {
+      "src": "https://pirsch.io/static/img/toffolo.png",
+      "alt": "Toffolo",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/studiolenzing.png",
+      "alt": "Studio Lenzing",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/senja.png",
+      "alt": "Senja",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/spectate.png",
+      "alt": "Spectate",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/angular.svg",
+      "alt": "Angular",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/react.svg",
+      "alt": "React",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/wordpress.svg",
+      "alt": "Wordpress",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/framer.svg",
+      "alt": "Framer",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/webflow.svg",
+      "alt": "Webflow",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/laravel.svg",
+      "alt": "Laravel",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/drupal.svg",
+      "alt": "Drupal",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/go.svg",
+      "alt": "Go",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/vue.svg",
+      "alt": "Vue",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/star.svg",
+      "alt": "Star",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/star.svg",
+      "alt": "Star",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/star.svg",
+      "alt": "Star",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/star.svg",
+      "alt": "Star",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/star.svg",
+      "alt": "Star",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/star.svg",
+      "alt": "Star",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/star.svg",
+      "alt": "Star",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/star.svg",
+      "alt": "Star",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/star.svg",
+      "alt": "Star",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/star.svg",
+      "alt": "Star",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/star.svg",
+      "alt": "Star",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/star.svg",
+      "alt": "Star",
+      "class": "inverted"
+    },
+    {
+      "src": "https://pirsch.io/static/img/data-light.svg",
+      "alt": "Data",
+      "class": "show-light"
+    },
+    {
+      "src": "https://pirsch.io/static/img/data-dark.svg",
+      "alt": "Data",
+      "class": "show-dark"
+    },
+    {
+      "src": "https://pirsch.io/static/img/filter-light.svg",
+      "alt": "Filter",
+      "class": "show-light mask-bottom"
+    },
+    {
+      "src": "https://pirsch.io/static/img/filter-dark.svg",
+      "alt": "Filter",
+      "class": "show-dark mask-bottom"
+    },
+    {
+      "src": "https://pirsch.io/static/img/funnel-light.svg",
+      "alt": "Funnel Analysis with Pirsch Analytics",
+      "class": "show-light"
+    },
+    {
+      "src": "https://pirsch.io/static/img/funnel-dark.svg",
+      "alt": "Funnel Analysis with Pirsch Analytics",
+      "class": "show-dark"
+    },
+    {
+      "src": "https://pirsch.io/static/img/session-light.svg",
+      "alt": "Session Analysis with Pirsch Analytics",
+      "class": "show-light"
+    },
+    {
+      "src": "https://pirsch.io/static/img/session-dark.svg",
+      "alt": "Session Analysis with Pirsch Analytics",
+      "class": "show-dark"
+    },
+    {
+      "src": "https://pirsch.io/static/img/ab-light.svg",
+      "alt": "AB Testing with Pirsch Analytics",
+      "class": "show-light"
+    },
+    {
+      "src": "https://pirsch.io/static/img/ab-dark.svg",
+      "alt": "AB Testing with Pirsch Analytics",
+      "class": "show-dark"
+    },
+    {
+      "src": "https://pirsch.io/static/img/event-light.svg",
+      "alt": "Event Tracking with Pirsch Analytics",
+      "class": "show-light"
+    },
+    {
+      "src": "https://pirsch.io/static/img/event-dark.svg",
+      "alt": "Event Tracking with Pirsch Analytics",
+      "class": "show-dark"
+    },
+    {
+      "src": "https://pirsch.io/static/img/goal-light.svg",
+      "alt": "Conversion Goal Tracking with Pirsch Analytics",
+      "class": "show-light"
+    },
+    {
+      "src": "https://pirsch.io/static/img/goal-dark.svg",
+      "alt": "Conversion Goal Tracking with Pirsch Analytics",
+      "class": "show-dark"
+    },
+    {
+      "src": "https://pirsch.io/static/img/webhooks-light.svg",
+      "alt": "Native Webhooks of Pirsch Analytics",
+      "class": "show-light"
+    },
+    {
+      "src": "https://pirsch.io/static/img/webhooks-dark.svg",
+      "alt": "Native Webhooks of Pirsch Analytics",
+      "class": "show-dark"
+    },
+    {
+      "src": "https://pirsch.io/static/img/person1.png",
+      "alt": "Person",
+      "class": "person"
+    },
+    {
+      "src": "https://pirsch.io/static/img/person2.png",
+      "alt": "Person",
+      "class": "person"
+    },
+    {
+      "src": "https://pirsch.io/static/img/person3.png",
+      "alt": "Person",
+      "class": "person"
+    },
+    {
+      "src": "https://pirsch.io/static/img/person4.png",
+      "alt": "Person",
+      "class": "person"
+    },
+    {
+      "src": "https://pirsch.io/static/img/person1.png",
+      "alt": "Person",
+      "class": "person"
+    },
+    {
+      "src": "https://pirsch.io/static/img/person2.png",
+      "alt": "Person",
+      "class": "person"
+    },
+    {
+      "src": "https://pirsch.io/static/img/person3.png",
+      "alt": "Person",
+      "class": "person"
+    },
+    {
+      "src": "https://pirsch.io/static/img/person4.png",
+      "alt": "Person",
+      "class": "person"
+    },
+    {
+      "src": "https://pirsch.io/static/img/dashboard-retro-dark.svg",
+      "alt": "Dashboard Retro",
+      "class": "border-radius-medium"
+    },
+    {
+      "src": "https://pirsch.io/static/img/dashboard-contrast-light.svg",
+      "alt": "Dashboard Contrast",
+      "class": "border-radius-medium"
+    },
+    {
+      "src": "https://pirsch.io/static/img/dashboard-dark.svg",
+      "alt": "Dashboard Dark",
+      "class": "border-radius-medium"
+    },
+    {
+      "src": "https://pirsch.io/static/img/dashboard-light.svg",
+      "alt": "Dashboard Light",
+      "class": "border-radius-medium show-dark"
+    },
+    {
+      "src": "https://pirsch.io/static/img/dashboard-green-dark.svg",
+      "alt": "Dashboard Green",
+      "class": "border-radius-medium"
+    },
+    {
+      "src": "https://pirsch.io/static/img/dashboard-blue-light.svg",
+      "alt": "Dashboard Blue",
+      "class": "border-radius-medium"
+    },
+    {
+      "src": "https://pirsch.io/static/img/social-proof/karrfager.jpg",
+      "alt": "Karr Fager",
+      "class": ""
+    },
+    {
+      "src": "https://pirsch.io/static/img/social-proof/dezeiraudgaetan.jpg",
+      "alt": "Dezeiraud Gaëtan",
+      "class": ""
+    },
+    {
+      "src": "https://pirsch.io/static/img/social-proof/rishimohan.jpg",
+      "alt": "Rishi Mohan",
+      "class": ""
+    },
+    {
+      "src": "https://pirsch.io/static/img/social-proof/timdreier.png",
+      "alt": "Tim Dreier",
+      "class": ""
+    },
+    {
+      "src": "https://pirsch.io/static/img/social-proof/zepfietje.jpg",
+      "alt": "Zep Fietje",
+      "class": ""
+    },
+    {
+      "src": "https://pirsch.io/static/img/social-proof/leanderlenzing.jpg",
+      "alt": "Leander Lenzing",
+      "class": ""
+    },
+    {
+      "src": "https://pirsch.io/static/img/social-proof/toryhowell.jpg",
+      "alt": "Tory Howell",
+      "class": ""
+    },
+    {
+      "src": "https://pirsch.io/static/img/social-proof/bjarnbronsveld.jpg",
+      "alt": "Bjarn Bronsveld",
+      "class": ""
+    },
+    {
+      "src": "https://pirsch.io/static/img/social-proof/drkarinleipold.jpg",
+      "alt": "Dr. Karin Leipold",
+      "class": ""
+    },
+    {
+      "src": "https://pirsch.io/static/img/cta-light.svg",
+      "alt": "Pirsch Analytics Icon",
+      "class": "show-light"
+    },
+    {
+      "src": "https://pirsch.io/static/img/cta-dark.svg",
+      "alt": "Pirsch Analytics Icon",
+      "class": "show-dark"
+    }
+  ],
+  "svgs": [
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 26 38\"><path d=\"M1 24c6.627 0 12-5.373 12-12S7.627 0 1 0v24zm24-10c-6.627 0-12 5.373-12 12s5.373 12 12 12V14z\"></path><circle cx=\"21\" cy=\"6\" r=\"5\"></circle><circle cx=\"5\" cy=\"32\" r=\"5\"></circle></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"6\" fill=\"none\"><path d=\"M4.646 5.646a.5.5 0 0 0 .707 0l3.793-3.793A.5.5 0 0 0 8.793 1H1.207a.5.5 0 0 0-.354.854l3.793 3.793z\" fill=\"var(--color-primary)\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M5 14.143s.875-.857 3.5-.857S12.875 15 15.5 15s3.5-.857 3.5-.857V3.857s-.875.857-3.5.857S11.125 3 8.5 3 5 3.857 5 3.857v10.286zm0 0V21\" style=\"stroke: var(--color-secondary)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M16 11V7a4 4 0 1 0-8 0v4M7 21h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2z\" style=\"stroke: var(--color-secondary)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" style=\"stroke: var(--color-secondary)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 19V9m6 10V5M6 19v-5\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" style=\"stroke: var(--color-secondary)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M11 5.8l1.2-1.2a5.09 5.09 0 0 1 7.2 0c1.988 1.988 1.988 5.212 0 7.2L18.2 13\"></path><path d=\"M8 16l8-8\" stroke-miterlimit=\"10\"></path><path d=\"M13 18.2l-1.2 1.2c-1.988 1.988-5.212 1.988-7.2 0a5.09 5.09 0 0 1 0-7.2L5.8 11\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"6\" fill=\"none\"><path d=\"M4.646 5.646a.5.5 0 0 0 .707 0l3.793-3.793A.5.5 0 0 0 8.793 1H1.207a.5.5 0 0 0-.354.854l3.793 3.793z\" fill=\"var(--color-primary)\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" style=\"stroke: var(--color-secondary)\" stroke-width=\"2\" stroke-miterlimit=\"10\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M17 8l4 4-4 4m-7 4l4-16M7 8l-4 4 4 4\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M7.371 8.894l1.694-1.706c.946-.942 2.394-.942 3.34 0l.605.603L17.8 3 21 6.2l-4.782 4.782.639.637a2.3 2.3 0 0 1 0 3.324L10.712 21l-3.856-3.852v-2.201H4.652L3 13.296l4.371-4.402zm0 0l7.748 7.704\" style=\"stroke: var(--color-secondary)\" stroke-width=\"2\" stroke-miterlimit=\"10\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" style=\"stroke: var(--color-secondary)\" stroke-width=\"2\" stroke-miterlimit=\"10\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16 16h1m0-4h-1m0-4h1M7 16h1\"></path><path d=\"M7 12H8\"></path><path d=\"M12 5V3l9 2v15h-6M3 20V8h9v12H3z\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"6\" fill=\"none\"><path d=\"M4.646 5.646a.5.5 0 0 0 .707 0l3.793-3.793A.5.5 0 0 0 8.793 1H1.207a.5.5 0 0 0-.354.854l3.793 3.793z\" fill=\"var(--color-primary)\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" style=\"stroke: var(--color-secondary)\" stroke-width=\"2\" stroke-miterlimit=\"10\"><path d=\"M9 16h3m-3-4h6M9 8h6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z\" stroke-linejoin=\"round\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" stroke-linejoin=\"round\" stroke-width=\"2\" style=\"stroke: var(--color-secondary)\"><path transform=\"rotate(350 13 7)\" d=\"M13 7h5v14h-5z\"></path><path d=\"M5 3h5v18H5z\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" style=\"stroke: var(--color-secondary)\" stroke-width=\"2\" stroke-linejoin=\"round\"><path d=\"M5 21v-2c0-2.209 2.089-4 4.667-4h4.667C16.911 15 19 16.791 19 19v2\" stroke-linecap=\"round\"></path><path d=\"M12 11a4 4 0 1 0 0-8 4 4 0 1 0 0 8z\" stroke-miterlimit=\"10\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" style=\"stroke: var(--color-secondary)\" stroke-width=\"2\" stroke-miterlimit=\"10\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M17 8l4 4-4 4m-7 4l4-16M7 8l-4 4 4 4\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" style=\"stroke: var(--color-secondary)\" stroke-width=\"2\" stroke-miterlimit=\"10\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4.5 20l6.192-7.077M18.5 4l-5.654 6.461m-2.154 2.462L16 20h4l-7.154-9.538m-2.154 2.462L4 4h4l4.846 6.461\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" style=\"stroke: var(--color-secondary)\" stroke-width=\"2\" stroke-miterlimit=\"10\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7.847 16.54c1.118.183 2.249.269 3.382.255 0 0 4.97.136 6.838-1.616.922-.864 1.39-1.896 1.39-4.913s-.024-4.09-1.391-5.599c-1.719-1.898-6.838-1.656-6.838-1.656S6.11 2.768 4.39 4.666C3.024 6.175 3 7.247 3 10.265l.027 1.146c.072 12.814 10.023 9.136 11.069 8.996m-2.867-8.738V8.786a2.24 2.24 0 0 0-.171-.859 2.25 2.25 0 0 0-.486-.728c-.208-.208-.456-.374-.728-.486a2.26 2.26 0 0 0-.859-.171c-.595 0-1.166.236-1.587.657s-.657.992-.657 1.587v4.651m4.488-4.651a2.24 2.24 0 0 1 .171-.859 2.25 2.25 0 0 1 .486-.728c.208-.208.456-.374.728-.486a2.26 2.26 0 0 1 .859-.171c.595 0 1.166.236 1.587.657s.657.992.657 1.587v4.651\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" style=\"stroke: var(--color-secondary)\" stroke-width=\"2\" stroke-miterlimit=\"10\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6.902 5.067C8.965 6.616 11.185 9.757 12 11.443c.815-1.686 3.034-4.827 5.098-6.376C18.587 3.949 21 3.084 21 5.836c0 .55-.315 4.618-.5 5.278-.642 2.296-2.984 2.882-5.066 2.527 3.64.62 4.566 2.672 2.566 4.724-3.798 3.898-5.459-.978-5.885-2.227-.078-.229-.115-.336-.115-.245-.001-.091-.037.016-.115.245-.426 1.249-2.086 6.125-5.885 2.227-2-2.052-1.074-4.105 2.566-4.724-2.083.354-4.424-.231-5.066-2.527-.185-.661-.5-4.728-.5-5.278 0-2.752 2.413-1.887 3.902-.769h0z\"></path></svg>",
+    "<svg id=\"headerNavOpen\" class=\"icon show-mobile\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"var(--color-primary)\" stroke-width=\"2\" stroke-miterlimit=\"10\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 18h7m-7-6h14M5 6h14\"></path></svg>",
+    "<svg id=\"headerNavClose\" class=\"icon show-mobile\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" fill=\"none\" style=\"display: none;\"><path d=\"M17 7L7 17m10 0L7 7\" stroke=\"var(--color-primary)\" stroke-width=\"2\" stroke-miterlimit=\"10\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"97\" height=\"16\" fill=\"#ffda6e\"><path d=\"M9.803.88l1.927 3.911 4.32.629a1 1 0 0 1 .553 1.705l-3.125 3.043.737 4.3a1 1 0 0 1-1.451 1.054l-3.861-2.029-3.863 2.031a1 1 0 0 1-1.451-1.054l.737-4.3-3.123-3.045a1 1 0 0 1 .556-1.706l4.317-.627L8.003.88a1.04 1.04 0 0 1 1.8 0zm20.004 0l1.927 3.911 4.32.629a1 1 0 0 1 .553 1.705l-3.125 3.043.737 4.3a1 1 0 0 1-1.451 1.054l-3.861-2.029-3.863 2.031a1 1 0 0 1-1.451-1.054l.737-4.3-3.123-3.045a1 1 0 0 1 .556-1.706l4.317-.627L28.007.88a1.04 1.04 0 0 1 1.8 0zm20.004 0l1.927 3.911 4.32.629a1 1 0 0 1 .553 1.705l-3.125 3.043.737 4.3a1 1 0 0 1-1.451 1.054l-3.861-2.029-3.863 2.031a1 1 0 0 1-1.451-1.054l.737-4.3-3.123-3.045a1 1 0 0 1 .556-1.706l4.317-.627L48.011.88a1.04 1.04 0 0 1 1.8 0zm20.004 0l1.927 3.911 4.32.629a1 1 0 0 1 .553 1.705l-3.125 3.043.737 4.3a1 1 0 0 1-1.451 1.054l-3.861-2.029-3.863 2.031a1 1 0 0 1-1.451-1.054l.737-4.3-3.123-3.045a1 1 0 0 1 .556-1.706l4.317-.627L68.015.88a1.04 1.04 0 0 1 1.8 0zm20.004 0l1.927 3.911 4.32.629a1 1 0 0 1 .553 1.705l-3.125 3.043.737 4.3a1 1 0 0 1-1.451 1.054l-3.861-2.029-3.863 2.031a1 1 0 0 1-1.451-1.054l.737-4.3-3.123-3.045a1 1 0 0 1 .556-1.706l4.317-.627L88.019.88a1.04 1.04 0 0 1 1.8 0z\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"#000\" stroke-width=\"2\" stroke-linejoin=\"round\"><path d=\"M12 17a5 5 0 1 0 0-10 5 5 0 1 0 0 10z\"></path><path d=\"M5.636 5.636l.707.707M3 12h1m2.343 5.657l-.707.707M12 20v1m5.657-3.343l.707.707M20 12h1m-2.636-6.364l-.707.707M12 3v1\" stroke-linecap=\"round\"></path></svg>",
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"#000\"><path d=\"M12.515 14.242C9.517 11.161 9.017 6.498 11.183 3a8.4 8.4 0 0 0-4.497 2.498 9.2 9.2 0 0 0 0 12.991 9.2 9.2 0 0 0 12.991 0c.5-.5.999-1.082 1.332-1.666-2.998.5-6.162-.333-8.494-2.581z\" stroke-width=\"2\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"></path></svg>"
+  ]
+}
