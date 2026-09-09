@@ -323,7 +323,7 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Floating Label (Small Grey)
+          // Floating Label (Small Grey) - matching reference media_1788916130604.png
           Text(
             label,
             style: TextStyle(
@@ -332,23 +332,18 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 4),
 
-          // Big Minimal Form Field with Underline/Border
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: borderColor, width: 1.5),
-            ),
+          // Direct Input Row (Unboxed, matching reference)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
             child: Row(
               children: [
                 Text(
                   'Rp ',
                   style: TextStyle(
                     color: prefixColor,
-                    fontSize: 22,
+                    fontSize: 24,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -359,28 +354,37 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
                     onChanged: (_) => setState(() => _errorMessage = null),
                     style: TextStyle(
                       color: textPrimary,
-                      fontSize: 22,
+                      fontSize: 24,
                       fontWeight: FontWeight.w800,
                     ),
                     decoration: InputDecoration(
                       hintText: placeholder,
                       hintStyle: TextStyle(
-                        color: textSecondary.withValues(alpha: 0.5),
-                        fontSize: 22,
+                        color: textSecondary.withValues(alpha: 0.4),
+                        fontSize: 24,
                         fontWeight: FontWeight.w800,
                       ),
                       border: InputBorder.none,
                       isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 6),
                     ),
                   ),
                 ),
                 if (controller.text.isNotEmpty)
                   IconButton(
-                    icon: Icon(Icons.clear_rounded, size: 18, color: textSecondary),
+                    icon: Icon(Icons.clear_rounded, size: 20, color: textSecondary),
+                    splashRadius: 20,
                     onPressed: () => setState(() => controller.clear()),
                   ),
               ],
             ),
+          ),
+
+          // Bottom Underline Divider only (Faithful to reference)
+          Divider(
+            height: 1,
+            thickness: 1.2,
+            color: borderColor,
           ),
 
           if (_errorMessage != null) ...[

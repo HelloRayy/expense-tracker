@@ -152,7 +152,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final bgColor = PirschColors.bg(isDark);
-    final cardColor = PirschColors.card(isDark);
     final borderColor = PirschColors.border(isDark);
     final textPrimary = PirschColors.textPrimary(isDark);
     final textSecondary = PirschColors.textSecondary(isDark);
@@ -205,7 +204,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
 
-            // Section 1: General
+            // Section 1: General (Unboxed, direct on background with dividers)
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -221,53 +220,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         letterSpacing: -0.2,
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: cardColor,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: borderColor),
-                      ),
-                      child: Column(
-                        children: [
-                          _buildSettingTile(
-                            icon: Icons.account_balance_wallet_outlined,
-                            title: 'Atur Budget Mingguan',
-                            subtitle: 'Uang mingguan, target tabungan & kuota',
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => BudgetSettingsDetailScreen(
-                                    repository: widget.repository,
-                                  ),
-                                ),
-                              );
-                            },
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            borderColor: borderColor,
-                            showDivider: true,
+                    const SizedBox(height: 4),
+                    _buildSettingTile(
+                      icon: Icons.account_balance_wallet_outlined,
+                      title: 'Atur Budget Mingguan',
+                      subtitle: 'Uang mingguan, target tabungan & kuota',
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => BudgetSettingsDetailScreen(
+                              repository: widget.repository,
+                            ),
                           ),
-                          _buildSettingTile(
-                            icon: Icons.notifications_none_rounded,
-                            title: 'Notifikasi & Shopee Watcher',
-                            subtitle: 'Deteksi checkout, floating bubble & tile',
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => ShopeeSettingsScreen(
-                                    repository: widget.repository,
-                                  ),
-                                ),
-                              );
-                            },
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            borderColor: borderColor,
-                            showDivider: false,
+                        );
+                      },
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                      borderColor: borderColor,
+                      showDivider: true,
+                    ),
+                    _buildSettingTile(
+                      icon: Icons.notifications_none_rounded,
+                      title: 'Notifikasi & Shopee Watcher',
+                      subtitle: 'Deteksi checkout, floating bubble & tile',
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => ShopeeSettingsScreen(
+                              repository: widget.repository,
+                            ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                      borderColor: borderColor,
+                      showDivider: true,
                     ),
                   ],
                 ),
@@ -276,7 +264,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 28)),
 
-            // Section 2: Data & Support (Reference: Support)
+            // Section 2: Data & Support (Unboxed, direct on background with dividers)
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -292,38 +280,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         letterSpacing: -0.2,
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: cardColor,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: borderColor),
-                      ),
-                      child: Column(
-                        children: [
-                          _buildSettingTile(
-                            icon: Icons.delete_outline_rounded,
-                            iconColor: PirschColors.roseRed,
-                            title: 'Hapus Riwayat Pengeluaran',
-                            subtitle: 'Bersihkan seluruh catatan jajan minggu ini',
-                            onTap: _confirmResetData,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            borderColor: borderColor,
-                            showDivider: true,
-                          ),
-                          _buildSettingTile(
-                            icon: Icons.info_outline_rounded,
-                            title: 'Tentang Aplikasi',
-                            subtitle: 'Versi 1.0.0 • Info sistem adaptive jajan',
-                            onTap: _showAboutDialog,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            borderColor: borderColor,
-                            showDivider: false,
-                          ),
-                        ],
-                      ),
+                    const SizedBox(height: 4),
+                    _buildSettingTile(
+                      icon: Icons.delete_outline_rounded,
+                      iconColor: PirschColors.roseRed,
+                      title: 'Hapus Riwayat Pengeluaran',
+                      subtitle: 'Bersihkan seluruh catatan jajan minggu ini',
+                      onTap: _confirmResetData,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                      borderColor: borderColor,
+                      showDivider: true,
+                    ),
+                    _buildSettingTile(
+                      icon: Icons.info_outline_rounded,
+                      title: 'Tentang Aplikasi',
+                      subtitle: 'Versi 1.0.0 • Info sistem adaptive jajan',
+                      onTap: _showAboutDialog,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                      borderColor: borderColor,
+                      showDivider: true,
                     ),
                   ],
                 ),
@@ -354,9 +331,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           color: Colors.transparent,
           child: InkWell(
             onTap: onTap,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(12),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 15),
               child: Row(
                 children: [
                   Icon(
@@ -364,7 +341,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     size: 22,
                     color: iconColor ?? textPrimary,
                   ),
-                  const SizedBox(width: 14),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -373,8 +350,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           title,
                           style: TextStyle(
                             color: textPrimary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: -0.2,
                           ),
                         ),
@@ -407,9 +384,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Divider(
             height: 1,
             thickness: 1,
-            indent: 52,
-            endIndent: 16,
-            color: borderColor,
+            color: borderColor.withValues(alpha: 0.8),
           ),
       ],
     );
