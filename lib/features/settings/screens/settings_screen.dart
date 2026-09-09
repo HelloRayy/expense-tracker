@@ -48,7 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: PirschColors.roseRed,
+              backgroundColor: PirschColors.red(isDark),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
             child: const Text('Hapus Bersih', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
@@ -89,11 +89,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: PirschColors.mintGreen.withValues(alpha: 0.15),
+                    color: PirschColors.green(isDark).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   alignment: Alignment.center,
-                  child: const Icon(Icons.wallet_rounded, color: PirschColors.mintGreen, size: 24),
+                  child: Icon(Icons.wallet_rounded, color: PirschColors.green(isDark), size: 24),
                 ),
                 const SizedBox(width: 14),
                 Column(
@@ -134,11 +134,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: ElevatedButton(
                 onPressed: () => Navigator.of(ctx).pop(),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isDark ? Colors.white : Colors.black,
-                  foregroundColor: isDark ? Colors.black : Colors.white,
+                  backgroundColor: PirschColors.pill(isDark),
+                  foregroundColor: PirschColors.pillText(isDark),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(23)),
                 ),
-                child: const Text('Tutup', style: TextStyle(fontWeight: FontWeight.w700)),
+                child: Text('Tutup', style: TextStyle(color: PirschColors.pillText(isDark), fontWeight: FontWeight.w700)),
               ),
             ),
           ],
@@ -282,7 +282,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const SizedBox(height: 4),
                     _buildSettingTile(
                       icon: Icons.delete_outline_rounded,
-                      iconColor: PirschColors.roseRed,
+                      iconColor: PirschColors.red(isDark),
                       title: 'Hapus Riwayat Pengeluaran',
                       subtitle: 'Bersihkan seluruh catatan jajan minggu ini',
                       onTap: _confirmResetData,

@@ -229,12 +229,13 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
                     label: 'Total Uang Mingguan yang Dipegang',
                     controller: _incomeController,
                     placeholder: '0',
-                    prefixColor: PirschColors.mintGreen,
+                    prefixColor: PirschColors.green(isDark),
                     helpText: 'Masukkan total seluruh uang atau pemasukan yang Anda pegang untuk siklus minggu ini.',
                     calculationSummary: _buildSummaryCard(
                       spendable: spendable,
                       dailyEst: dailyEst,
                       savings: savings,
+                      isDark: isDark,
                       cardColor: cardColor,
                       elevatedColor: elevatedColor,
                       borderColor: borderColor,
@@ -253,12 +254,13 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
                     label: 'Target Tabungan di Akhir Minggu',
                     controller: _savingsController,
                     placeholder: '0',
-                    prefixColor: PirschColors.warmYellow,
+                    prefixColor: PirschColors.yellow(isDark),
                     helpText: 'Nominal yang wajib tersisa di akhir minggu. Rumus adaptive akan otomatis menjaga agar target ini tidak tersentuh!',
                     calculationSummary: _buildSummaryCard(
                       spendable: spendable,
                       dailyEst: dailyEst,
                       savings: savings,
+                      isDark: isDark,
                       cardColor: cardColor,
                       elevatedColor: elevatedColor,
                       borderColor: borderColor,
@@ -275,7 +277,7 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
               ),
             ),
 
-            // Sticky Bottom Pill Button (Reference: Black Pill Save Button)
+            // Sticky Bottom Pill Button (Ergonomic WCAG Compliant)
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 20),
               child: SizedBox(
@@ -284,8 +286,8 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
                 child: ElevatedButton(
                   onPressed: _save,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isDark ? Colors.white : Colors.black,
-                    foregroundColor: isDark ? Colors.black : Colors.white,
+                    backgroundColor: PirschColors.pill(isDark),
+                    foregroundColor: PirschColors.pillText(isDark),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(26),
@@ -294,7 +296,7 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
                   child: Text(
                     'Simpan',
                     style: TextStyle(
-                      color: isDark ? Colors.black : Colors.white,
+                      color: PirschColors.pillText(isDark),
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.2,
@@ -427,17 +429,17 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              color: PirschColors.roseRed.withValues(alpha: 0.08),
+              color: PirschColors.red(isDark).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: PirschColors.roseRed.withValues(alpha: 0.2)),
+              border: Border.all(color: PirschColors.red(isDark).withValues(alpha: 0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Reset Nilai Budget',
                   style: TextStyle(
-                    color: PirschColors.roseRed,
+                    color: PirschColors.red(isDark),
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
@@ -461,13 +463,13 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
                     decoration: BoxDecoration(
                       color: Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: PirschColors.roseRed.withValues(alpha: 0.3)),
+                      border: Border.all(color: PirschColors.red(isDark).withValues(alpha: 0.35)),
                     ),
                     alignment: Alignment.center,
-                    child: const Text(
+                    child: Text(
                       'Kembalikan ke Default (Rp 0)',
                       style: TextStyle(
-                        color: PirschColors.roseRed,
+                        color: PirschColors.red(isDark),
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                       ),
@@ -486,6 +488,7 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
     required int spendable,
     required int dailyEst,
     required int savings,
+    required bool isDark,
     required Color cardColor,
     required Color elevatedColor,
     required Color borderColor,
@@ -528,8 +531,8 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
               ),
               Text(
                 '${CurrencyFormatter.format(dailyEst)} / hari',
-                style: const TextStyle(
-                  color: PirschColors.mintGreen,
+                style: TextStyle(
+                  color: PirschColors.green(isDark),
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
                 ),
@@ -546,8 +549,8 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
               ),
               Text(
                 CurrencyFormatter.format(savings),
-                style: const TextStyle(
-                  color: PirschColors.warmYellow,
+                style: TextStyle(
+                  color: PirschColors.yellow(isDark),
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                 ),

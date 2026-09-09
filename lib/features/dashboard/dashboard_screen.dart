@@ -388,6 +388,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
     required Color textPrimary,
     required Color textSecondary,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isNegative = remainingToday < 0;
     final displayAmount = isNegative
         ? '-${CurrencyFormatter.format(remainingToday.abs())}'
@@ -530,20 +531,20 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
           // Sub-metrics Row below Hero: ↙ Sisa Saldo & ↗ Terpakai (Side-by-Side)
           Row(
             children: [
-              // Left: ↙ Sisa Saldo (Green)
+              // Left: ↙ Sisa Saldo (WCAG AA Compliant Green)
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.south_west_rounded,
                     size: 15,
-                    color: PirschColors.mintGreen,
+                    color: PirschColors.green(isDark),
                   ),
                   const SizedBox(width: 4),
                   Text(
                     CurrencyFormatter.format(remaining),
                     style: TextStyle(
-                      color: remaining < 0 ? PirschColors.roseRed : PirschColors.mintGreen,
+                      color: remaining < 0 ? PirschColors.red(isDark) : PirschColors.green(isDark),
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.2,
@@ -553,20 +554,20 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               ),
               const SizedBox(width: 20),
 
-              // Right: ↗ Terpakai (Red)
+              // Right: ↗ Terpakai (WCAG AA Compliant Red)
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.north_east_rounded,
                     size: 15,
-                    color: PirschColors.roseRed,
+                    color: PirschColors.red(isDark),
                   ),
                   const SizedBox(width: 4),
                   Text(
                     CurrencyFormatter.format(spent),
-                    style: const TextStyle(
-                      color: PirschColors.roseRed,
+                    style: TextStyle(
+                      color: PirschColors.red(isDark),
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.2,
