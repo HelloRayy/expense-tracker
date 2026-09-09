@@ -206,20 +206,13 @@ class _CategoryAssignmentScreenState extends State<CategoryAssignmentScreen>
                               ),
                             ),
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: PirschColors.mintGreen.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: PirschColors.mintGreen.withValues(alpha: 0.4)),
-                            ),
-                            child: Text(
-                              'Total: ${CurrencyFormatter.formatCompact(totalForCurrentTab)}',
-                              style: const TextStyle(
-                                color: PirschColors.mintGreen,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                              ),
+                          Text(
+                            'Total: ${CurrencyFormatter.formatCompact(totalForCurrentTab)}',
+                            style: TextStyle(
+                              color: PirschColors.green(isDark),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.2,
                             ),
                           ),
                         ],
