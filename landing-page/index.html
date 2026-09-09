@@ -236,206 +236,369 @@
         box-shadow: 0 0 8px #6ECE9D;
       }
 
-      /* Centered Download Hub Container (Obsidian & Zen Style) */
-      .download-hub-card {
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
+      /* Raycast Section 1: Download Hub (Gambar 1) */
+      .raycast-download-container {
+        background: #090a0f;
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: var(--border-radius-large);
-        padding: 44px;
-        max-width: 980px;
-        margin: 32px auto 0 auto;
-        box-shadow: 0 16px 45px -10px rgba(0,0,0,0.06);
-      }
-      @media (max-width: 860px) {
-        .download-hub-card {
-          padding: 24px;
-        }
-      }
-      .download-hub-grid {
+        padding: 52px 44px;
         display: grid;
-        grid-template-columns: 1.35fr 0.85fr;
-        gap: 40px;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 44px;
         align-items: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.45);
+        color: #ffffff;
       }
-      @media (max-width: 860px) {
-        .download-hub-grid {
+      @media (max-width: 960px) {
+        .raycast-download-container {
           grid-template-columns: 1fr;
-          gap: 28px;
+          padding: 32px 24px;
+          gap: 36px;
         }
       }
-      .qr-bridge-container {
-        background: rgba(0, 0, 0, 0.02);
-        border: 1px solid var(--color-border);
-        border-radius: 16px;
-        padding: 24px;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+      .raycast-hero-heading {
+        font-size: clamp(2rem, 3.4vw, 2.75rem);
+        font-weight: 700;
+        line-height: 1.15;
+        letter-spacing: -0.035em;
+        color: #ffffff;
+        margin-bottom: 16px;
       }
-      .theme-dark .qr-bridge-container {
-        background: rgba(255, 255, 255, 0.02);
+      .raycast-hero-heading .highlight-muted {
+        color: rgba(255, 255, 255, 0.55);
+        display: block;
       }
-      .download-badges {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin: 18px 0 24px 0;
+      .raycast-hero-desc {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.65);
+        line-height: 1.6;
+        margin-bottom: 28px;
+        max-width: 480px;
       }
-      .badge-tag {
+      .raycast-download-btn {
+        background: #ffffff;
+        color: #000000 !important;
+        border-radius: 12px;
+        padding: 14px 28px;
+        font-size: 1rem;
+        font-weight: 700;
         display: inline-flex;
         align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        box-shadow: 0 4px 25px rgba(255, 255, 255, 0.2);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .raycast-download-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(255, 255, 255, 0.3);
+      }
+      .raycast-meta-row {
+        margin-top: 18px;
+        display: flex;
+        flex-direction: column;
         gap: 6px;
         font-size: 0.82rem;
-        font-weight: 600;
-        padding: 5px 12px;
-        border-radius: 20px;
-        background: rgba(110, 206, 157, 0.12);
-        color: #1b7a4d;
-        border: 1px solid rgba(110, 206, 157, 0.3);
+        color: rgba(255, 255, 255, 0.5);
       }
-      .theme-dark .badge-tag {
-        color: #6ECE9D;
-      }
-      .checksum-box {
-        background: rgba(0, 0, 0, 0.03);
-        border: 1px solid var(--color-border);
-        border-radius: 12px;
-        padding: 16px;
-        text-align: left;
-        margin-top: 16px;
-      }
-      .theme-dark .checksum-box {
-        background: rgba(255, 255, 255, 0.02);
-      }
-      .checksum-code {
-        font-family: 'DM Mono', monospace;
-        font-size: 0.78rem;
-        word-break: break-all;
-        color: var(--color-secondary);
-        display: block;
-        margin: 8px 0;
-      }
-      .checksum-copy-btn {
-        background: transparent;
-        border: 1px solid var(--color-border);
-        border-radius: 6px;
-        padding: 4px 10px;
-        font-size: 0.78rem;
-        font-weight: 600;
-        cursor: pointer;
+      .raycast-sha-pill {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        color: var(--color-primary);
-      }
-      .checksum-copy-btn:hover {
-        background: rgba(0,0,0,0.05);
-      }
-      .theme-dark .checksum-copy-btn:hover {
-        background: rgba(255,255,255,0.08);
-      }
-
-      /* Visual Sideloading 3-Steps Grid */
-      .steps-container {
-        max-width: 980px;
-        margin: 32px auto 0 auto;
-      }
-      .steps-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
-      }
-      @media (max-width: 860px) {
-        .steps-grid {
-          grid-template-columns: 1fr;
-          gap: 16px;
-        }
-      }
-      .step-card {
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius-medium);
-        padding: 28px 24px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        position: relative;
-        transition: transform 0.2s ease, border-color 0.2s ease;
-      }
-      .step-card:hover {
-        border-color: rgba(110, 206, 157, 0.4);
-        transform: translateY(-2px);
-      }
-      .step-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-      .step-number {
-        font-family: 'DM Mono', monospace;
-        font-size: 0.9rem;
-        font-weight: 700;
-        padding: 4px 10px;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 8px;
-        background: rgba(110, 206, 157, 0.15);
-        color: #1b7a4d;
-        border: 1px solid rgba(110, 206, 157, 0.3);
+        padding: 5px 10px;
+        font-family: 'DM Mono', monospace;
+        font-size: 0.78rem;
+        color: rgba(255, 255, 255, 0.7);
+        width: fit-content;
       }
-      .theme-dark .step-number {
+      .raycast-sha-btn {
+        background: transparent;
+        border: none;
         color: #6ECE9D;
+        cursor: pointer;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0;
       }
 
-      /* Zen Browser Style Showcase Cards */
-      .showcase-card-wide {
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius-large);
-        padding: 44px;
-        margin-bottom: 28px;
+      /* Keyboard Stage in Right Card */
+      .raycast-keyboard-canvas {
+        background: #0f1016;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        padding: 24px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+      .keyboard-bg-grid {
+        position: absolute;
+        inset: 0;
         display: grid;
-        grid-template-columns: 1.15fr 0.85fr;
-        gap: 40px;
-        align-items: center;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.03);
-        transition: border-color 0.2s ease;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        gap: 8px;
+        padding: 16px;
+        pointer-events: none;
+        opacity: 0.12;
       }
-      @media (max-width: 900px) {
-        .showcase-card-wide {
-          grid-template-columns: 1fr;
-          padding: 28px 20px;
-          gap: 24px;
-        }
+      .key-faint {
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 8px;
+        display: flex;
+        align-items: flex-start;
+        padding: 6px 8px;
+        font-family: 'DM Mono', monospace;
+        font-size: 0.75rem;
+        color: #fff;
+        font-weight: 500;
       }
-      .showcase-card-wide:hover {
-        border-color: rgba(110, 206, 157, 0.4);
-      }
-      .showcase-split-grid {
+      .keycap-cards-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 28px;
-        margin-bottom: 28px;
+        gap: 14px;
+        position: relative;
+        z-index: 2;
       }
-      @media (max-width: 860px) {
-        .showcase-split-grid {
+      @media (max-width: 520px) {
+        .keycap-cards-grid {
           grid-template-columns: 1fr;
-          gap: 20px;
         }
       }
-      .showcase-card-half {
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
+      .keycap-card {
+        background: rgba(22, 24, 32, 0.88);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.11);
+        border-radius: 14px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        transition: border-color 0.2s ease, transform 0.2s ease;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      }
+      .keycap-card:hover {
+        border-color: rgba(110, 206, 157, 0.5);
+        transform: translateY(-2px);
+      }
+      .keycap-card-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6ECE9D;
+        margin-bottom: 2px;
+      }
+      .keycap-card-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #ffffff;
+        line-height: 1.35;
+        margin-bottom: 2px;
+      }
+      .keycap-tagline {
+        font-weight: 400;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.65);
+      }
+      .keycap-card-desc {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.6);
+        line-height: 1.4;
+        margin: 0;
+      }
+
+      /* Raycast Section 2: Carousel Track (Gambar 2) */
+      .raycast-carousel-section {
+        background: #090a0f;
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: var(--border-radius-large);
-        padding: 36px 30px;
+        padding: 48px 40px;
+        margin-top: 32px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.45);
+        color: #ffffff;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+      }
+      @media (max-width: 860px) {
+        .raycast-carousel-section {
+          padding: 32px 20px;
+        }
+      }
+      .carousel-header-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 36px;
+      }
+      .carousel-header-titles h2 {
+        font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        color: #ffffff;
+        margin: 0 0 8px 0;
+        line-height: 1.2;
+      }
+      .carousel-header-titles p {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin: 0;
+      }
+      .capsule-filter-bar {
+        display: inline-flex;
+        background: #111218;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 30px;
+        padding: 4px;
+        gap: 4px;
+      }
+      .capsule-pill {
+        padding: 8px 16px;
+        border-radius: 24px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.6);
+        background: transparent;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .capsule-pill.active {
+        background: #22242f;
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      }
+      .capsule-pill:hover:not(.active) {
+        color: rgba(255, 255, 255, 0.9);
+      }
+      .carousel-track {
+        display: flex;
+        gap: 24px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 20px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+      }
+      .carousel-track::-webkit-scrollbar {
+        height: 6px;
+      }
+      .carousel-track::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+      }
+      .carousel-card {
+        flex: 0 0 310px;
+        min-width: 310px;
+        height: 480px;
+        border-radius: 22px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 24px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.03);
-        transition: border-color 0.2s ease;
+        scroll-snap-align: start;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
       }
-      .showcase-card-half:hover {
-        border-color: rgba(110, 206, 157, 0.4);
+      .carousel-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(255, 255, 255, 0.28);
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+      }
+      .card-theme-emerald {
+        background: radial-gradient(circle at 50% 85%, rgba(110, 206, 157, 0.28) 0%, rgba(14, 20, 16, 0.96) 75%);
+      }
+      .card-theme-blue {
+        background: radial-gradient(circle at 50% 85%, rgba(56, 189, 248, 0.28) 0%, rgba(10, 16, 26, 0.96) 75%);
+      }
+      .card-theme-purple {
+        background: radial-gradient(circle at 50% 85%, rgba(168, 85, 247, 0.28) 0%, rgba(20, 12, 30, 0.96) 75%);
+      }
+      .card-theme-amber {
+        background: radial-gradient(circle at 50% 85%, rgba(251, 191, 36, 0.28) 0%, rgba(24, 18, 10, 0.96) 75%);
+      }
+      .card-theme-cyan {
+        background: radial-gradient(circle at 50% 85%, rgba(45, 212, 191, 0.28) 0%, rgba(10, 22, 22, 0.96) 75%);
+      }
+      .carousel-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .carousel-card-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .carousel-app-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+      }
+      .carousel-card-arrow {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.7);
+        transition: all 0.2s ease;
+      }
+      .carousel-card:hover .carousel-card-arrow {
+        background: rgba(255, 255, 255, 0.18);
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.35);
+      }
+      .carousel-card-body h3 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0 0 6px 0;
+      }
+      .carousel-card-body p {
+        font-size: 0.86rem;
+        color: rgba(255, 255, 255, 0.65);
+        line-height: 1.45;
+        margin: 0;
+      }
+      .carousel-card-stage {
+        margin-top: 18px;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
       }
 
       /* FAQ Accordion Styling */
@@ -513,7 +676,6 @@
         </a>
         <nav id="headerNav">
             <a href="#download" class="">Download</a>
-            <a href="#panduan" class="">Panduan</a>
             <a href="#fitur" class="">Fitur</a>
             <a href="#faq" class="">FAQ</a>
             <a href="https://github.com/HelloRayy/expense-tracker" class="" target="_blank" rel="noreferrer">GitHub</a>
@@ -652,418 +814,422 @@
     </div>
 </section>
 
-<section id="download" class="content">
+<section id="download" class="content" style="padding-top: 24px;">
     <div class="section-content">
-        <div class="gradient-container" data-sal="slide-up" data-sal-duration="800">
-            <div class="gradient yellow right"></div>
-        </div>
-        
-        <div class="nummeration" data-sal="slide-up">
-            <div class="number">1</div>
-            <div class="text">Download Hub</div>
-        </div>
-        
-        <h2 data-sal="slide-up" data-sal-delay="100">Download Jajan Tracker untuk Android</h2>
-        <p data-sal="slide-up" data-sal-delay="200">
-            Unduh file APK mandiri secara gratis. 100% offline, bebas iklan selamanya, dan open-source.
-        </p>
-
-        <!-- Centered Download Hub Card (Obsidian & Zen Browser Style) -->
-        <div class="download-hub-card sal-animate" data-sal="slide-up" data-sal-delay="300">
-            <div class="download-hub-grid">
-                <div>
-                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                        <span class="lucide-icon" style="color: #1b7a4d; background: rgba(110, 206, 157, 0.2); width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/>
+        <!-- Raycast Section 1: Split Download Hub Hero (Gambar 1) -->
+        <div class="raycast-download-container sal-animate" data-sal="slide-up">
+            <!-- Left Column: Hero Copy & Download Button -->
+            <div class="raycast-hero-content">
+                <div class="raycast-hero-heading">
+                    Bukan cuma hemat waktu.
+                    <span class="highlight-muted">Rasanya seperti tidak membuang waktu sama sekali.</span>
+                </div>
+                <p class="raycast-hero-desc">
+                    Unduh file APK mandiri Jajan Tracker untuk Android. 100% offline, bebas iklan selamanya, dan privasi penuh.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 14px; align-items: flex-start;">
+                    <a href="https://github.com/HelloRayy/expense-tracker/releases/download/v1.0.0/app-release.apk" class="raycast-download-btn">
+                        <span class="lucide-icon" style="color: #000;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>
                             </svg>
                         </span>
-                        <div>
-                            <h3 style="font-size: 1.8rem; margin: 0; line-height: 1.2;">Jajan Tracker v1.0.0</h3>
-                            <small style="color: var(--color-secondary);">Official Stable Release • Khusus Android</small>
-                        </div>
-                    </div>
+                        <span>Download APK</span>
+                    </a>
 
-                    <div class="download-badges">
-                        <span class="badge-tag">
-                            <span class="lucide-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>
-                                </svg>
-                            </span>
-                            <span>Android 10+ (API 29+)</span>
-                        </span>
-                        <span class="badge-tag">
-                            <span class="lucide-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/>
-                                </svg>
-                            </span>
-                            <span>Universal (arm64 &amp; armv7)</span>
-                        </span>
-                        <span class="badge-tag">
-                            <span class="lucide-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>
-                                </svg>
-                            </span>
-                            <span>Bebas Iklan &amp; Pelacak</span>
-                        </span>
-                    </div>
-
-                    <div style="margin: 20px 0 12px 0;">
-                        <a href="https://github.com/HelloRayy/expense-tracker/releases/download/v1.0.0/app-release.apk" class="button" style="padding: 16px 28px; font-size: 1.05rem; font-weight: 700; width: 100%; justify-content: center; box-shadow: 0 6px 20px rgba(110,206,157,0.25);">
-                            <span class="lucide-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>
-                                </svg>
-                            </span>
-                            <span>Download APK Langsung (app-release.apk • ~25 MB)</span>
-                        </a>
-                    </div>
-
-                    <div class="checksum-box">
-                        <strong style="font-size: 0.85rem; display: block;">Integritas &amp; Verifikasi Checksum (SHA-256):</strong>
-                        <code class="checksum-code" id="shaCode">a8b9e17c8d234a9f12089cfa65b219e48b4c09d57a3e2189fb409581a02931bc</code>
-                        <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between;">
-                            <button class="checksum-copy-btn" onclick="copyChecksum()">
-                                <span class="lucide-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-                                    </svg>
-                                </span>
-                                <span id="copyBtnText">Salin SHA-256</span>
+                    <div class="raycast-meta-row">
+                        <div class="raycast-sha-pill">
+                            <span style="color: rgba(255,255,255,0.45); font-size: 0.72rem;">SHA-256:</span>
+                            <span id="shaCode" style="letter-spacing: 0.02em;">a8b9e17c...a02931bc</span>
+                            <button class="raycast-sha-btn" onclick="copyChecksum()" id="copyBtnText" title="Salin Full Hash">
+                                Salin
                             </button>
-                            <span style="font-size: 0.75rem; color: var(--color-secondary);">Universal APK (arm64 &amp; arm7)</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px; font-size: 0.78rem; color: rgba(255, 255, 255, 0.45); margin-top: 4px;">
+                            <span>v1.0.0 Stable • Android 10+</span>
+                            <span>•</span>
+                            <a href="https://github.com/HelloRayy/expense-tracker/releases" target="_blank" rel="noreferrer" style="color: rgba(255, 255, 255, 0.75); text-decoration: underline;">GitHub Releases &rarr;</a>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Right Column: Desktop QR Code Bridge -->
-                <div class="qr-bridge-container">
-                    <div style="background: #ffffff; padding: 10px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); margin-bottom: 12px;">
-                        <svg width="130" height="130" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="130" height="130" rx="10" fill="#FFFFFF"/>
-                            <!-- Top Left Finder -->
-                            <rect x="12" y="12" width="32" height="32" rx="6" fill="#111111"/>
-                            <rect x="17" y="17" width="22" height="22" rx="3" fill="#FFFFFF"/>
-                            <rect x="22" y="22" width="12" height="12" rx="2" fill="#111111"/>
-                            <!-- Top Right Finder -->
-                            <rect x="86" y="12" width="32" height="32" rx="6" fill="#111111"/>
-                            <rect x="91" y="17" width="22" height="22" rx="3" fill="#FFFFFF"/>
-                            <rect x="96" y="22" width="12" height="12" rx="2" fill="#111111"/>
-                            <!-- Bottom Left Finder -->
-                            <rect x="12" y="86" width="32" height="32" rx="6" fill="#111111"/>
-                            <rect x="17" y="91" width="22" height="22" rx="3" fill="#FFFFFF"/>
-                            <rect x="22" y="96" width="12" height="12" rx="2" fill="#111111"/>
-                            <!-- Timing and Data Modules -->
-                            <rect x="52" y="16" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="62" y="16" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="72" y="16" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="52" y="26" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="72" y="26" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="52" y="36" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="62" y="36" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="16" y="52" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="26" y="52" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="36" y="52" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <!-- Center Download Badge -->
-                            <rect x="50" y="50" width="30" height="30" rx="7" fill="#6ECE9D"/>
-                            <path d="M65 57v12M59 64l6 6 6-6" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <rect x="88" y="52" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="98" y="52" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="108" y="52" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="16" y="62" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="36" y="62" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="88" y="62" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="108" y="62" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="16" y="72" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="26" y="72" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="88" y="72" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="98" y="72" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="52" y="88" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="62" y="88" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="72" y="88" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="88" y="88" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="108" y="88" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="52" y="98" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="72" y="98" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="98" y="98" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="52" y="108" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="62" y="108" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="88" y="108" width="6" height="6" rx="1.5" fill="#111111"/>
-                            <rect x="108" y="108" width="6" height="6" rx="1.5" fill="#111111"/>
-                        </svg>
+            <!-- Right Column: Raycast Keyboard Canvas with Keycaps (Gambar 1) -->
+            <div class="raycast-keyboard-canvas">
+                <!-- Background Etched Keyboard Grid -->
+                <div class="keyboard-bg-grid">
+                    <div class="key-faint">esc</div>
+                    <div class="key-faint">F1</div>
+                    <div class="key-faint">F2</div>
+                    <div class="key-faint">F3</div>
+                    <div class="key-faint">±<br>§</div>
+                    <div class="key-faint">!<br>1</div>
+                    <div class="key-faint">@<br>2</div>
+                    <div class="key-faint">#<br>3</div>
+                    <div class="key-faint">&rarr;|<br>tab</div>
+                    <div class="key-faint">Q</div>
+                    <div class="key-faint">W</div>
+                    <div class="key-faint">E</div>
+                    <div class="key-faint">caps</div>
+                    <div class="key-faint">A</div>
+                    <div class="key-faint">S</div>
+                    <div class="key-faint">D</div>
+                </div>
+
+                <!-- 4 Floating Raycast Keycap Micro-cards -->
+                <div class="keycap-cards-grid">
+                    <!-- Keycap 1: Fast -->
+                    <div class="keycap-card">
+                        <div class="keycap-card-icon">
+                            <span class="lucide-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="keycap-card-title">
+                            Fast. <span class="keycap-tagline">Catat &lt; 2 detik.</span>
+                        </div>
+                        <p class="keycap-card-desc">Buka langsung simpan pengeluaran tanpa alur lambat.</p>
                     </div>
-                    <strong style="font-size: 0.95rem; display: block; margin-bottom: 4px;">Scan dengan Kamera HP</strong>
-                    <p style="font-size: 0.8rem; color: var(--color-secondary); margin: 0 0 10px 0; line-height: 1.4;">
-                        Buka kamera ponsel Anda untuk langsung download file APK ke Android tanpa kabel.
-                    </p>
-                    <a href="https://github.com/HelloRayy/expense-tracker/releases" target="_blank" rel="noreferrer" style="font-size: 0.8rem; text-decoration: underline; color: var(--color-primary);">
-                        Lihat GitHub Releases &rarr;
-                    </a>
+
+                    <!-- Keycap 2: Home First -->
+                    <div class="keycap-card">
+                        <div class="keycap-card-icon">
+                            <span class="lucide-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="keycap-card-title">
+                            Home First. <span class="keycap-tagline">Widget 4x2.</span>
+                        </div>
+                        <p class="keycap-card-desc">Sadar saldo jajan langsung dari Home Screen ponsel.</p>
+                    </div>
+
+                    <!-- Keycap 3: Private -->
+                    <div class="keycap-card">
+                        <div class="keycap-card-icon">
+                            <span class="lucide-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="keycap-card-title">
+                            Private. <span class="keycap-tagline">100% Offline.</span>
+                        </div>
+                        <p class="keycap-card-desc">Tersimpan di SQLite lokal. Nol internet, nol analitik.</p>
+                    </div>
+
+                    <!-- Keycap 4: Aware -->
+                    <div class="keycap-card">
+                        <div class="keycap-card-icon">
+                            <span class="lucide-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="keycap-card-title">
+                            Aware. <span class="keycap-tagline">Smart Nudge.</span>
+                        </div>
+                        <p class="keycap-card-desc">Floating chip melayang saat buka Shopee / QRIS.</p>
+                    </div>
                 </div>
             </div>
         </div>
 
         <script>
             function copyChecksum() {
-                const code = document.getElementById('shaCode').innerText;
-                navigator.clipboard.writeText(code).then(() => {
+                const fullHash = "a8b9e17c8d234a9f12089cfa65b219e48b4c09d57a3e2189fb409581a02931bc";
+                navigator.clipboard.writeText(fullHash).then(() => {
                     const btn = document.getElementById('copyBtnText');
                     btn.innerText = 'Tersalin!';
-                    setTimeout(() => { btn.innerText = 'Salin SHA-256'; }, 2000);
+                    setTimeout(() => { btn.innerText = 'Salin'; }, 2000);
                 });
             }
         </script>
     </div>
 </section>
 
-<section id="panduan" class="content">
+<!-- Raycast Section 2: Extensions Carousel Track (Gambar 2) -->
+<section id="fitur" class="content" style="padding-top: 24px;">
     <div class="section-content">
-        <div class="gradient-container" data-sal="slide-up" data-sal-duration="800">
-            <div class="gradient yellow left"></div>
-        </div>
-        
-        <div class="nummeration" data-sal="slide-up">
-            <div class="number">2</div>
-            <div class="text">Instalasi Mandiri</div>
-        </div>
-        
-        <h2 data-sal="slide-up" data-sal-delay="100">3 Langkah Mudah Pasang APK di Android</h2>
-        <p data-sal="slide-up" data-sal-delay="200">
-            Sideloading di Android sangat cepat dan aman. Ikuti panduan singkat 3 langkah berikut:
-        </p>
-
-        <!-- Visual Sideloading 3-Steps Grid -->
-        <div class="steps-container sal-animate" data-sal="slide-up" data-sal-delay="300">
-            <div class="steps-grid">
-                <div class="step-card">
-                    <div class="step-header">
-                        <span class="step-number">01</span>
-                        <strong style="font-size: 1.1rem;">Unduh File APK</strong>
-                    </div>
-                    <p style="font-size: 0.9rem; color: var(--color-secondary); margin: 0; line-height: 1.55;">
-                        Ketuk tombol download di atas. Jika Google Chrome menampilkan peringatan <em>"File mungkin berbahaya"</em>, pilih <strong>Tetap Unduh</strong> (ini adalah peringatan umum Android untuk file mandiri).
-                    </p>
+        <div class="raycast-carousel-section sal-animate" data-sal="slide-up">
+            <!-- Header Bar with Title & Capsule Pills -->
+            <div class="carousel-header-bar">
+                <div class="carousel-header-titles">
+                    <h2>Kendali finansial tanpa ribet.</h2>
+                    <p>Fitur cerdas yang bekerja otomatis di latar belakang ponselmu.</p>
                 </div>
-                
-                <div class="step-card">
-                    <div class="step-header">
-                        <span class="step-number">02</span>
-                        <strong style="font-size: 1.1rem;">Izinkan Sumber Ini</strong>
-                    </div>
-                    <p style="font-size: 0.9rem; color: var(--color-secondary); margin: 0; line-height: 1.55;">
-                        Buka file <code>app-release.apk</code> yang baru diunduh. Pada pop-up proteksi Android, ketuk <strong>Setelan</strong> lalu aktifkan toggle <strong>Izinkan dari sumber ini</strong>.
-                    </p>
-                </div>
-                
-                <div class="step-card">
-                    <div class="step-header">
-                        <span class="step-number">03</span>
-                        <strong style="font-size: 1.1rem;">Pasang &amp; Tambah Widget</strong>
-                    </div>
-                    <p style="font-size: 0.9rem; color: var(--color-secondary); margin: 0; line-height: 1.55;">
-                        Pilih <strong>Install</strong>. Setelah selesai, buka aplikasi, tahan layar utama HP (Home Screen), pilih menu <strong>Widget</strong>, lalu pasang <strong>Jajan Tracker 4x2</strong>!
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="fitur" class="content">
-    <div class="section-content">
-        <div class="gradient-container" data-sal="slide-up" data-sal-duration="800">
-            <div class="gradient white right"></div>
-        </div>
-        
-        <div class="nummeration" data-sal="slide-up">
-            <div class="number">3</div>
-            <div class="text">Fitur Unggulan</div>
-        </div>
-        
-        <h2 data-sal="slide-up" data-sal-delay="100">Dirancang Khusus untuk Pengendali Uang Jajan</h2>
-        <p data-sal="slide-up" data-sal-delay="200">
-            Bukan aplikasi akuntansi korporat yang membosankan. Jajan Tracker fokus pada kemudahan mencatat 0-friction, widget home screen adaptif, dan pengingat belanja tepat waktu.
-        </p>
-
-        <!-- Showcase 1: Home Screen Widget 4x2 Wide Card -->
-        <div class="showcase-card-wide sal-animate" data-sal="slide-up" data-sal-delay="300">
-            <div>
-                <span class="badge-tag" style="margin-bottom: 12px;">
-                    <span class="lucide-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>
-                        </svg>
-                    </span>
-                    <span>Fitur Unggulan #1</span>
-                </span>
-                <h3 style="font-size: 1.55rem; margin: 0 0 12px 0; line-height: 1.25;">Home Screen Widget 4x2: Sadar Saldo Tanpa Perlu Buka Aplikasi</h3>
-                <p style="font-size: 0.95rem; color: var(--color-secondary); line-height: 1.6; margin-bottom: 20px;">
-                    Cukup nyalakan layar ponselmu. Widget interaktif real-time ini memberi tahu sisa saldo jajan hari ini, batas aman belanja harian, dan hitungan mundur hari gajian. Dilengkapi tombol 1-Tap Quick-Log langsung dari layar depan tanpa perlu membuka menu aplikasi.
-                </p>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
-                        <span class="status-indicator status-green"></span>
-                        <span><strong>Hijau:</strong> Saldo aman, jatah jajan masih leluasa</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
-                        <span class="status-indicator status-yellow"></span>
-                        <span><strong>Kuning:</strong> Budget mulai menipis, berhati-hati</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
-                        <span class="status-indicator status-red"></span>
-                        <span><strong>Merah:</strong> Overbudget! Segera rem pengeluaran</span>
-                    </div>
+                <div class="capsule-filter-bar">
+                    <button class="capsule-pill active" onclick="scrollCarousel(0, this)">Semua Fitur</button>
+                    <button class="capsule-pill" onclick="scrollCarousel(0, this)">Widget 4x2</button>
+                    <button class="capsule-pill" onclick="scrollCarousel(344, this)">Shopee Nudge</button>
+                    <button class="capsule-pill" onclick="scrollCarousel(688, this)">Amplop Mental</button>
+                    <button class="capsule-pill" onclick="scrollCarousel(1032, this)">Quick Numpad</button>
+                    <button class="capsule-pill" onclick="scrollCarousel(1376, this)">Privasi SQLite</button>
                 </div>
             </div>
 
-            <!-- Widget Mockup Display -->
-            <div class="widget-4x2-mock" style="width: 100%; max-width: 360px;">
-                <div class="widget-header-row">
-                    <span style="font-size: 0.8rem; font-weight: 600; color: #999;">Sisa Uang Jajan</span>
-                    <span class="widget-status-badge">Aman Jajan</span>
-                </div>
-                <div class="widget-balance-val">Rp 340.000</div>
-                <div class="widget-progress-track">
-                    <div class="widget-progress-fill"></div>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #aaa; margin-bottom: 14px;">
-                    <span>Jatah: <strong>Rp 42.500 / hari</strong></span>
-                    <span>Gajian: <strong>8 hari lagi</strong></span>
-                </div>
-                <div style="display: flex; gap: 6px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">
-                    <span style="flex: 1; text-align: center; font-size: 0.75rem; padding: 4px; background: rgba(255,255,255,0.06); border-radius: 6px;">+5rb</span>
-                    <span style="flex: 1; text-align: center; font-size: 0.75rem; padding: 4px; background: rgba(110,206,157,0.2); color: #6ECE9D; border-radius: 6px; font-weight: 600;">+10rb</span>
-                    <span style="flex: 1; text-align: center; font-size: 0.75rem; padding: 4px; background: rgba(255,255,255,0.06); border-radius: 6px;">+20rb</span>
-                    <span style="flex: 1; text-align: center; font-size: 0.75rem; padding: 4px; background: rgba(255,255,255,0.06); border-radius: 6px;">+50rb</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Showcase 2: Split 2-Column Cards (ShopeePay Nudge & Mental Accounting) -->
-        <div class="showcase-split-grid sal-animate" data-sal="slide-up" data-sal-delay="400">
-            <!-- Card A: ShopeePay Nudge -->
-            <div class="showcase-card-half">
-                <div>
-                    <span class="badge-tag" style="margin-bottom: 12px;">
-                        <span class="lucide-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M16 10a4 4 0 0 1-8 0"/><path d="M3.103 6.034h17.794"/><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"/>
-                            </svg>
-                        </span>
-                        <span>Shopee &amp; QRIS Detection</span>
-                    </span>
-                    <h3 style="font-size: 1.35rem; margin: 0 0 10px 0; line-height: 1.3;">Pre-Transaction Nudge: Rem Belanja Sebelum Checkout</h3>
-                    <p style="font-size: 0.9rem; color: var(--color-secondary); line-height: 1.6; margin-bottom: 20px;">
-                        Mendeteksi saat aplikasi Shopee atau scanner QRIS dibuka. Floating chip transparan melayang lembut selama 6 detik untuk menyadarkan sisa uang jajan sebelum checkout terjadi.
-                    </p>
-                </div>
-                
-                <div class="card-preview-container" style="padding: 16px;">
-                    <div class="floating-nudge-mock">
-                        <span class="nudge-indicator-dot"></span>
-                        <div style="font-size: 0.8rem; line-height: 1.3;">
-                            <div style="font-weight: 700; color: #6ECE9D;">Sisa Uang Jajan: Rp 125.000</div>
-                            <div style="color: #aaa; font-size: 0.72rem;">Sadar sebelum checkout! (6s)</div>
-                        </div>
-                    </div>
-                    <div style="text-align: center; margin-top: 12px;">
-                        <small style="color: var(--color-secondary); font-size: 0.75rem;">
-                            🔒 Zero Keystroke Logging • Murni Deteksi Nama Paket
-                        </small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card B: Mental Accounting -->
-            <div class="showcase-card-half">
-                <div>
-                    <span class="badge-tag" style="margin-bottom: 12px;">
-                        <span class="lucide-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>
-                            </svg>
-                        </span>
-                        <span>Amplop Virtual</span>
-                    </span>
-                    <h3 style="font-size: 1.35rem; margin: 0 0 10px 0; line-height: 1.3;">Mental Accounting: Bebas Jajan Tanpa Rasa Bersalah</h3>
-                    <p style="font-size: 0.9rem; color: var(--color-secondary); line-height: 1.6; margin-bottom: 20px;">
-                        Pisahkan Uang Pokok (sewa kos, tagihan, cicilan, tabungan) dari Uang Jajan harian secara tegas. Selama uang pokok terkunci aman, kamu bebas menikmati kopi dan camilan tanpa kepikiran.
-                    </p>
-                </div>
-                
-                <div class="card-preview-container" style="padding: 16px;">
-                    <div class="mental-mock">
-                        <div class="mental-card mental-locked">
-                            <div>
-                                <strong style="display: block; font-size: 0.85rem;">Uang Pokok &amp; Tabungan</strong>
-                                <small style="color: var(--color-secondary);">Terkunci aman</small>
+            <!-- Horizontal Scrollable Track with 5 Glow Cards -->
+            <div class="carousel-track" id="featureCarouselTrack">
+                <!-- Card 1: Home Screen Widget 4x2 (Emerald Glow) -->
+                <div class="carousel-card card-theme-emerald" id="widget">
+                    <div>
+                        <div class="carousel-card-top">
+                            <div class="carousel-card-brand">
+                                <div class="carousel-app-icon" style="background: rgba(110, 206, 157, 0.15); color: #6ECE9D; border-color: rgba(110, 206, 157, 0.3);">
+                                    <span class="lucide-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 1.1rem; margin: 0; color: #fff;">Widget 4x2</h3>
+                                    <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Home Screen Glance</span>
+                                </div>
                             </div>
-                            <span style="font-weight: 700; font-family: 'DM Mono', monospace;">Rp 3.500.000</span>
-                        </div>
-                        <div class="mental-card mental-spendable">
-                            <div>
-                                <strong style="display: block; font-size: 0.85rem; color: #1b7a4d;">Uang Jajan Bebas</strong>
-                                <small style="color: #2b8257;">Tersedia periode ini</small>
+                            <div class="carousel-card-arrow">
+                                <span class="lucide-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m9 18 6-6-6-6"/>
+                                    </svg>
+                                </span>
                             </div>
-                            <span style="font-weight: 800; font-size: 1.1rem; color: #1b7a4d; font-family: 'DM Mono', monospace;">Rp 750.000</span>
+                        </div>
+                        <div class="carousel-card-body" style="margin-top: 14px;">
+                            <p>Sadar sisa uang jajan hari ini, jatah belanja harian, dan hitungan mundur hari gajian tanpa perlu buka aplikasi.</p>
+                        </div>
+                    </div>
+
+                    <!-- Visual Stage: Mini Widget 4x2 -->
+                    <div class="carousel-card-stage">
+                        <div class="widget-4x2-mock" style="width: 100%; padding: 14px; background: rgba(10, 15, 12, 0.92); border-radius: 16px; border: 1px solid rgba(110, 206, 157, 0.25);">
+                            <div class="widget-header-row" style="margin-bottom: 6px;">
+                                <span style="font-size: 0.72rem; color: #888;">Sisa Uang Jajan</span>
+                                <span class="widget-status-badge" style="font-size: 0.68rem; padding: 2px 8px; background: rgba(110, 206, 157, 0.15); color: #6ECE9D; border-radius: 12px; font-weight: 600;">Aman Jajan</span>
+                            </div>
+                            <div class="widget-balance-val" style="font-size: 1.4rem; font-weight: 700; color: #6ECE9D; margin-bottom: 8px;">Rp 340.000</div>
+                            <div class="widget-progress-track" style="height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 8px; overflow: hidden;">
+                                <div style="height: 100%; width: 68%; background: #6ECE9D; border-radius: 2px;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #aaa; margin-bottom: 10px;">
+                                <span>Jatah: <strong style="color: #fff;">42.5rb/hr</strong></span>
+                                <span>Gajian: <strong style="color: #fff;">8 hari</strong></span>
+                            </div>
+                            <div style="display: flex; gap: 4px;">
+                                <span style="flex: 1; text-align: center; font-size: 0.7rem; padding: 3px; background: rgba(255,255,255,0.06); border-radius: 5px;">+5rb</span>
+                                <span style="flex: 1; text-align: center; font-size: 0.7rem; padding: 3px; background: rgba(110,206,157,0.25); color: #6ECE9D; border-radius: 5px; font-weight: 600;">+10rb</span>
+                                <span style="flex: 1; text-align: center; font-size: 0.7rem; padding: 3px; background: rgba(255,255,255,0.06); border-radius: 5px;">+20rb</span>
+                                <span style="flex: 1; text-align: center; font-size: 0.7rem; padding: 3px; background: rgba(255,255,255,0.06); border-radius: 5px;">+50rb</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: ShopeePay Pre-Transaction Nudge (Blue Glow) -->
+                <div class="carousel-card card-theme-blue" id="nudge">
+                    <div>
+                        <div class="carousel-card-top">
+                            <div class="carousel-card-brand">
+                                <div class="carousel-app-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.3);">
+                                    <span class="lucide-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M16 10a4 4 0 0 1-8 0"/><path d="M3.103 6.034h17.794"/><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 1.1rem; margin: 0; color: #fff;">Shopee Nudge</h3>
+                                    <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Smart Deteksi Belanja</span>
+                                </div>
+                            </div>
+                            <div class="carousel-card-arrow">
+                                <span class="lucide-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m9 18 6-6-6-6"/>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="carousel-card-body" style="margin-top: 14px;">
+                            <p>Floating chip transparan melayang lembut selama 6 detik saat aplikasi Shopee atau scanner QRIS dibuka.</p>
+                        </div>
+                    </div>
+
+                    <!-- Visual Stage: Floating Chip Mock -->
+                    <div class="carousel-card-stage" style="flex-direction: column; gap: 14px;">
+                        <div class="floating-nudge-mock" style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.92); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px;">
+                            <span class="nudge-indicator-dot" style="background: #38bdf8; box-shadow: 0 0 8px #38bdf8;"></span>
+                            <div style="font-size: 0.78rem; line-height: 1.35;">
+                                <div style="font-weight: 700; color: #38bdf8;">Sisa Jajan: Rp 125.000</div>
+                                <div style="color: #94a3b8; font-size: 0.7rem;">Sadar sebelum checkout! (6s)</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.72rem; color: rgba(255, 255, 255, 0.5); text-align: center;">
+                            🔒 Zero Keystroke Logging • Deteksi Package ID
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Mental Accounting (Amber Glow) -->
+                <div class="carousel-card card-theme-amber">
+                    <div>
+                        <div class="carousel-card-top">
+                            <div class="carousel-card-brand">
+                                <div class="carousel-app-icon" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border-color: rgba(251, 191, 36, 0.3);">
+                                    <span class="lucide-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 1.1rem; margin: 0; color: #fff;">Amplop Mental</h3>
+                                    <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Mental Accounting</span>
+                                </div>
+                            </div>
+                            <div class="carousel-card-arrow">
+                                <span class="lucide-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m9 18 6-6-6-6"/>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="carousel-card-body" style="margin-top: 14px;">
+                            <p>Pisahkan Uang Pokok (kos, tagihan, cicilan) dari Uang Jajan bebas. Nikmati jajan santai tanpa rasa bersalah.</p>
+                        </div>
+                    </div>
+
+                    <!-- Visual Stage: Mental Cards -->
+                    <div class="carousel-card-stage" style="flex-direction: column; gap: 8px; width: 100%;">
+                        <div style="background: rgba(30, 20, 10, 0.88); border: 1px solid rgba(251, 191, 36, 0.22); border-radius: 12px; padding: 10px 14px; width: 100%; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.75);">Uang Pokok</div>
+                                <div style="font-size: 0.65rem; color: rgba(255,255,255,0.4);">Terkunci aman</div>
+                            </div>
+                            <span style="font-family: 'DM Mono', monospace; font-size: 0.85rem; font-weight: 700; color: #fff;">Rp 3.500.000</span>
+                        </div>
+                        <div style="background: rgba(251, 191, 36, 0.14); border: 1px solid rgba(251, 191, 36, 0.4); border-radius: 12px; padding: 10px 14px; width: 100%; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-size: 0.75rem; font-weight: 700; color: #fbbf24;">Uang Jajan Bebas</div>
+                                <div style="font-size: 0.65rem; color: rgba(251, 191, 36, 0.8);">Siap dinikmati</div>
+                            </div>
+                            <span style="font-family: 'DM Mono', monospace; font-size: 0.95rem; font-weight: 800; color: #fbbf24;">Rp 750.000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Quick Numpad (Cyan Glow) -->
+                <div class="carousel-card card-theme-cyan">
+                    <div>
+                        <div class="carousel-card-top">
+                            <div class="carousel-card-brand">
+                                <div class="carousel-app-icon" style="background: rgba(45, 212, 191, 0.15); color: #2dd4bf; border-color: rgba(45, 212, 191, 0.3);">
+                                    <span class="lucide-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect width="18" height="18" x="3" y="3" rx="2"/><line x1="8" x2="16" y1="12" y2="12"/><line x1="12" x2="12" y1="8" y2="16"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 1.1rem; margin: 0; color: #fff;">Quick Numpad</h3>
+                                    <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Input 0-Friction</span>
+                                </div>
+                            </div>
+                            <div class="carousel-card-arrow">
+                                <span class="lucide-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m9 18 6-6-6-6"/>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="carousel-card-body" style="margin-top: 14px;">
+                            <p>Ketik nominal instan dengan preset tombol cepat (+5rb, +10rb, +20rb, +50rb). Selesai catat dalam waktu 2 detik.</p>
+                        </div>
+                    </div>
+
+                    <!-- Visual Stage: Mini Numpad -->
+                    <div class="carousel-card-stage" style="width: 100%;">
+                        <div style="background: rgba(10, 20, 20, 0.92); border: 1px solid rgba(45, 212, 191, 0.3); border-radius: 14px; padding: 12px; width: 100%;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #888; margin-bottom: 4px;">
+                                <span>Kopi Susu</span>
+                                <span style="color: #2dd4bf; font-weight: 700; font-family: 'DM Mono', monospace;">Rp 20.000</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 6px;">
+                                <span style="background: rgba(45, 212, 191, 0.15); color: #2dd4bf; border-radius: 4px; font-size: 0.65rem; text-align: center; padding: 2px 0;">+5rb</span>
+                                <span style="background: #2dd4bf; color: #000; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-align: center; padding: 2px 0;">+10rb</span>
+                                <span style="background: rgba(45, 212, 191, 0.15); color: #2dd4bf; border-radius: 4px; font-size: 0.65rem; text-align: center; padding: 2px 0;">+20rb</span>
+                                <span style="background: rgba(45, 212, 191, 0.15); color: #2dd4bf; border-radius: 4px; font-size: 0.65rem; text-align: center; padding: 2px 0;">+50rb</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; text-align: center; font-size: 0.75rem;">
+                                <div style="background: rgba(255,255,255,0.06); border-radius: 4px; padding: 4px 0;">1</div>
+                                <div style="background: rgba(255,255,255,0.06); border-radius: 4px; padding: 4px 0;">2</div>
+                                <div style="background: rgba(255,255,255,0.06); border-radius: 4px; padding: 4px 0;">3</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: 100% Offline SQLite (Purple Glow) -->
+                <div class="carousel-card card-theme-purple">
+                    <div>
+                        <div class="carousel-card-top">
+                            <div class="carousel-card-brand">
+                                <div class="carousel-app-icon" style="background: rgba(168, 85, 247, 0.15); color: #a855f7; border-color: rgba(168, 85, 247, 0.3);">
+                                    <span class="lucide-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                            <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 1.1rem; margin: 0; color: #fff;">Offline SQLite</h3>
+                                    <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Privasi On-Device</span>
+                                </div>
+                            </div>
+                            <div class="carousel-card-arrow">
+                                <span class="lucide-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m9 18 6-6-6-6"/>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="carousel-card-body" style="margin-top: 14px;">
+                            <p>Data tersimpan di penyimpanan lokal HP Anda sendiri. Nol izin INTERNET, nol analitik pihak ketiga, 100% open source.</p>
+                        </div>
+                    </div>
+
+                    <!-- Visual Stage: Security & SQLite Badges -->
+                    <div class="carousel-card-stage" style="flex-direction: column; gap: 8px; width: 100%;">
+                        <div style="background: rgba(20, 12, 30, 0.88); border: 1px solid rgba(168, 85, 247, 0.28); border-radius: 12px; padding: 12px 14px; width: 100%;">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: #a855f7; margin-bottom: 4px;">🛡️ 0 Network Permissions</div>
+                            <div style="font-size: 0.7rem; color: rgba(255,255,255,0.65); line-height: 1.3;">Tidak ada lalu lintas data yang keluar dari smartphone Anda.</div>
+                        </div>
+                        <div style="display: flex; gap: 6px; width: 100%;">
+                            <span style="flex: 1; text-align: center; font-size: 0.68rem; padding: 6px 4px; background: rgba(255,255,255,0.06); border-radius: 8px; color: rgba(255,255,255,0.8);">SQLite On-Device</span>
+                            <span style="flex: 1; text-align: center; font-size: 0.68rem; padding: 6px 4px; background: rgba(255,255,255,0.06); border-radius: 8px; color: rgba(255,255,255,0.8);">MIT Open Source</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Showcase 3: 100% Offline & SQLite Wide Card -->
-        <div class="showcase-card-wide sal-animate" data-sal="slide-up" data-sal-delay="500">
-            <div>
-                <span class="badge-tag" style="margin-bottom: 12px;">
-                    <span class="lucide-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
-                        </svg>
-                    </span>
-                    <span>100% Offline &amp; On-Device</span>
-                </span>
-                <h3 style="font-size: 1.55rem; margin: 0 0 12px 0; line-height: 1.25;">100% Offline &amp; Database SQLite di Ponsel Anda Sendiri</h3>
-                <p style="font-size: 0.95rem; color: var(--color-secondary); line-height: 1.6; margin-bottom: 20px;">
-                    Tanpa akun, tanpa email, dan tanpa koneksi internet. Izin <code>android.permission.INTERNET</code> dihapus total dari Android Manifest kami. Semua data catatan keuanganmu tersimpan aman dalam file database SQLite lokal di ponsel Anda tanpa risiko kebocoran privasi.
-                </p>
-                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                    <span class="badge-tag">
-                        <span>🔒 0 Data Terkirim ke Cloud</span>
-                    </span>
-                    <span class="badge-tag">
-                        <span>⚡ Catat Numpad &lt; 2 Detik</span>
-                    </span>
-                    <span class="badge-tag">
-                        <span>📄 Lisensi Open-Source MIT</span>
-                    </span>
-                </div>
-            </div>
-
-            <!-- Numpad Custom Display -->
-            <div class="numpad-mock" style="width: 100%; max-width: 280px;">
-                <div style="font-size: 0.75rem; color: #888; margin-bottom: 4px; display: flex; justify-content: space-between;">
-                    <span>Tambah Jajan</span>
-                    <span>Es Kopi Susu</span>
-                </div>
-                <div class="numpad-display">Rp 20.000</div>
-                <div class="numpad-presets">
-                    <span class="numpad-preset-btn">+5rb</span>
-                    <span class="numpad-preset-btn" style="background: #6ECE9D; color: #0A0A0A;">+10rb</span>
-                    <span class="numpad-preset-btn">+20rb</span>
-                    <span class="numpad-preset-btn">+50rb</span>
-                </div>
-                <div class="numpad-grid">
-                    <div class="numpad-key">1</div><div class="numpad-key">2</div><div class="numpad-key">3</div>
-                    <div class="numpad-key">4</div><div class="numpad-key">5</div><div class="numpad-key">6</div>
-                    <div class="numpad-key">7</div><div class="numpad-key">8</div><div class="numpad-key">9</div>
-                    <div class="numpad-key">000</div><div class="numpad-key">0</div><div class="numpad-key numpad-key-action">Simpan</div>
-                </div>
-            </div>
-        </div>
+        <script>
+            function scrollCarousel(scrollPos, btn) {
+                const track = document.getElementById('featureCarouselTrack');
+                if (track) track.scrollTo({ left: scrollPos, behavior: 'smooth' });
+                document.querySelectorAll('.capsule-pill').forEach(p => p.classList.remove('active'));
+                if (btn) btn.classList.add('active');
+            }
+        </script>
     </div>
 </section>
 
@@ -1074,7 +1240,7 @@
         </div>
         
         <div class="nummeration" data-sal="slide-up">
-            <div class="number">4</div>
+            <div class="number">3</div>
             <div class="text">Bantuan &amp; Tanya Jawab</div>
         </div>
         
