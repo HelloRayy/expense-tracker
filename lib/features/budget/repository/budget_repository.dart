@@ -249,7 +249,11 @@ class BudgetRepository extends ChangeNotifier {
       remainingBalance: remainingBalance,
       totalBudget: _budget!.weeklyIncome,
       dailySafe: remainingToday,
+      dailyAllowance: dailyAllowance,
+      remainingToday: remainingToday,
+      spentToday: spentToday,
       totalSpent: totalSpent,
+      userName: 'Username',
       formattedPeriod: _budget!.formattedPeriod,
     );
   }

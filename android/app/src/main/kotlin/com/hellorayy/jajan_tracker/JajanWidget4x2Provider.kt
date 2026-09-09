@@ -50,33 +50,33 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
         }
 
         private fun updateWidgets(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-            var remaining = 0L
-            var dailySafe = 0L
-            var totalSpent = 0L
-            var periodText = ""
+            var remainingToday = 0L
+            var dailyAllowance = 0L
+            var spentToday = 0L
+            var userName = "Username"
 
             try {
                 val prefs = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
                 val allEntries = prefs.all
 
-                val rawRemaining = allEntries["flutter.remaining_balance"] ?: allEntries["remaining_balance"]
-                if (rawRemaining is Number) {
-                    remaining = rawRemaining.toLong()
+                val rawUserName = allEntries["flutter.user_name"] ?: allEntries["user_name"]
+                if (rawUserName != null && rawUserName.toString().isNotBlank()) {
+                    userName = rawUserName.toString().trim()
                 }
 
-                val rawDaily = allEntries["flutter.daily_safe"] ?: allEntries["daily_safe"]
-                if (rawDaily is Number) {
-                    dailySafe = rawDaily.toLong()
+                val rawDailyAllowance = allEntries["flutter.daily_allowance"] ?: allEntries["daily_allowance"] ?: allEntries["flutter.daily_safe"] ?: allEntries["daily_safe"]
+                if (rawDailyAllowance is Number) {
+                    dailyAllowance = rawDailyAllowance.toLong()
                 }
 
-                val rawSpent = allEntries["flutter.total_spent"] ?: allEntries["total_spent"]
-                if (rawSpent is Number) {
-                    totalSpent = rawSpent.toLong()
+                val rawRemainingToday = allEntries["flutter.remaining_today"] ?: allEntries["remaining_today"] ?: allEntries["flutter.daily_safe"] ?: allEntries["daily_safe"]
+                if (rawRemainingToday is Number) {
+                    remainingToday = rawRemainingToday.toLong()
                 }
 
-                val rawPeriod = allEntries["flutter.formatted_period"] ?: allEntries["formatted_period"]
-                if (rawPeriod != null) {
-                    periodText = rawPeriod.toString().trim()
+                val rawSpentToday = allEntries["flutter.spent_today"] ?: allEntries["spent_today"] ?: allEntries["flutter.total_spent"] ?: allEntries["total_spent"]
+                if (rawSpentToday is Number) {
+                    spentToday = rawSpentToday.toLong()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -86,46 +86,40 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
                 maximumFractionDigits = 0
             }
 
-            val isDailyNegative = dailySafe < 0
-            val dailyStr = if (isDailyNegative) {
+            val isAllowanceNegative = dailyAllowance < 0
+            val dailyStr = if (isAllowanceNegative) {
                 try {
-                    "-${formatter.format(Math.abs(dailySafe))}"
+                    "-${formatter.format(Math.abs(dailyAllowance))}"
                 } catch (_: Exception) {
-                    "-Rp ${Math.abs(dailySafe)}"
+                    "-Rp ${Math.abs(dailyAllowance)}"
                 }
             } else {
                 try {
-                    formatter.format(dailySafe)
+                    formatter.format(dailyAllowance)
                 } catch (_: Exception) {
-                    "Rp $dailySafe"
+                    "Rp $dailyAllowance"
                 }
             }
 
-            val isRemainingNegative = remaining < 0
+            val isRemainingNegative = remainingToday < 0
             val remainingStr = if (isRemainingNegative) {
                 try {
-                    "↙ -${formatter.format(Math.abs(remaining))}"
+                    "-${formatter.format(Math.abs(remainingToday))}"
                 } catch (_: Exception) {
-                    "↙ -Rp ${Math.abs(remaining)}"
+                    "-Rp ${Math.abs(remainingToday)}"
                 }
             } else {
                 try {
-                    "↙ ${formatter.format(remaining)}"
+                    formatter.format(remainingToday)
                 } catch (_: Exception) {
-                    "↙ Rp $remaining"
+                    "Rp $remainingToday"
                 }
             }
 
             val spentStr = try {
-                "↗ ${formatter.format(totalSpent)}"
+                formatter.format(spentToday)
             } catch (_: Exception) {
-                "↗ Rp $totalSpent"
-            }
-
-            val subtitleText = if (periodText.isNotEmpty()) {
-                "batas jajan hari ini ⌄ • $periodText"
-            } else {
-                "batas jajan hari ini ⌄"
+                "Rp $spentToday"
             }
 
             val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -140,41 +134,35 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
             }
             val appPendingIntent = PendingIntent.getActivity(context, 2001, appIntent, pendingIntentFlags)
 
-            // Intent to open Quick-Log Floating Calculator
-            val calcIntent = Intent(context, QuickTileTrampolineActivity::class.java).apply {
-                this.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            }
-            val calcPendingIntent = PendingIntent.getActivity(context, 2002, calcIntent, pendingIntentFlags)
-
             for (widgetId in appWidgetIds) {
                 try {
                     val views = RemoteViews(context.packageName, R.layout.widget_jajan_4x2)
-                    views.setTextViewText(R.id.tv_widget_greeting, "Hi, Sobat")
-                    views.setTextViewText(R.id.tv_widget_subtitle, subtitleText)
+                    views.setTextViewText(R.id.tv_widget_greeting, "Hi, $userName")
+                    views.setTextViewText(R.id.tv_widget_subtitle, "Batas jajan hari ini")
                     views.setTextViewText(R.id.tv_widget_daily_amount, dailyStr)
-                    views.setTextViewText(R.id.tv_widget_daily_unit, "/ hari")
+                    views.setTextViewText(R.id.tv_widget_daily_unit, "/hari")
                     views.setTextViewText(R.id.tv_widget_remaining, remainingStr)
                     views.setTextViewText(R.id.tv_widget_spent, spentStr)
 
-                    // Hero Nominal Color (White when safe, Red when negative/overbudget)
-                    if (isDailyNegative || remaining <= 0) {
-                        views.setTextColor(R.id.tv_widget_daily_amount, Color.parseColor("#EF4444"))
+                    // Hero Nominal Color (Soft White when safe, Soft Rose Red when negative)
+                    if (isAllowanceNegative) {
+                        views.setTextColor(R.id.tv_widget_daily_amount, Color.parseColor("#E87B7B"))
                     } else {
-                        views.setTextColor(R.id.tv_widget_daily_amount, Color.parseColor("#FFFFFF"))
+                        views.setTextColor(R.id.tv_widget_daily_amount, Color.parseColor("#EBEBEB"))
                     }
 
-                    // Remaining Balance Color
+                    // Remaining Today Color (Mint Green if safe, Rose Red if negative)
                     if (isRemainingNegative) {
-                        views.setTextColor(R.id.tv_widget_remaining, Color.parseColor("#EF4444"))
+                        views.setTextColor(R.id.tv_widget_remaining, Color.parseColor("#E87B7B"))
                     } else {
-                        views.setTextColor(R.id.tv_widget_remaining, Color.parseColor("#10B981"))
+                        views.setTextColor(R.id.tv_widget_remaining, Color.parseColor("#6ECE9D"))
                     }
 
-                    // Click listeners:
-                    // Main Container -> Open App Dashboard
+                    // Spent Today Color (Always Rose Red)
+                    views.setTextColor(R.id.tv_widget_spent, Color.parseColor("#E87B7B"))
+
+                    // Main Container click -> Open App Dashboard
                     views.setOnClickPendingIntent(R.id.widget_4x2_container, appPendingIntent)
-                    // 3-Dots Action Button -> Open Instant Floating Calculator
-                    views.setOnClickPendingIntent(R.id.btn_widget_action, calcPendingIntent)
 
                     appWidgetManager.updateAppWidget(widgetId, views)
                 } catch (e: Exception) {

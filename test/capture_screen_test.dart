@@ -15,6 +15,7 @@ import 'package:jajan_tracker/features/expense_catalog/screens/expense_catalog_s
 import 'package:jajan_tracker/features/settings/screens/budget_settings_detail_screen.dart';
 import 'package:jajan_tracker/features/settings/screens/settings_screen.dart';
 import 'package:jajan_tracker/features/categories/screens/category_assignment_screen.dart';
+import 'package:jajan_tracker/features/widgets/home_widget_4x2_card.dart';
 
 class MockBudgetRepo extends ChangeNotifier implements BudgetRepository {
   @override
@@ -701,6 +702,108 @@ void main() {
       final outPath = '/home/rayhan/.gemini/antigravity/brain/c3cf172f-5299-4a70-bc5d-1e40b03dd06d/actual_category_assignment_pending.png';
       File(outPath).writeAsBytesSync(bytes);
       print('CATEGORY ASSIGNMENT PENDING SAVED: $outPath');
+    });
+  });
+
+  testWidgets('Capture HomeWidget4x2Card real screenshot in Pirsch Dark Mode', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1080, 800);
+    tester.view.devicePixelRatio = 2.75;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final GlobalKey boundaryKey = GlobalKey();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Inter',
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: const Color(0xFF000000),
+        ),
+        home: Scaffold(
+          backgroundColor: const Color(0xFF000000),
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: RepaintBoundary(
+                key: boundaryKey,
+                child: const HomeWidget4x2Card(
+                  userName: 'Username',
+                  dailyAllowance: 50000,
+                  remainingToday: 35000,
+                  spentToday: 15000,
+                  isDark: true,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final ui.Image image = await boundary.toImage(pixelRatio: 2.5);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final bytes = byteData!.buffer.asUint8List();
+
+      final outPath = '/home/rayhan/.gemini/antigravity/brain/c3cf172f-5299-4a70-bc5d-1e40b03dd06d/actual_widget_4x2_dark.png';
+      File(outPath).writeAsBytesSync(bytes);
+      print('WIDGET 4X2 DARK SAVED: $outPath');
+    });
+  });
+
+  testWidgets('Capture HomeWidget4x2Card real screenshot in Pirsch Light Mode', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1080, 800);
+    tester.view.devicePixelRatio = 2.75;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final GlobalKey boundaryKey = GlobalKey();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Inter',
+          brightness: Brightness.light,
+          scaffoldBackgroundColor: const Color(0xFFE5E5E5),
+        ),
+        home: Scaffold(
+          backgroundColor: const Color(0xFFE5E5E5),
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: RepaintBoundary(
+                key: boundaryKey,
+                child: const HomeWidget4x2Card(
+                  userName: 'Username',
+                  dailyAllowance: 50000,
+                  remainingToday: 35000,
+                  spentToday: 15000,
+                  isDark: false,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final ui.Image image = await boundary.toImage(pixelRatio: 2.5);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final bytes = byteData!.buffer.asUint8List();
+
+      final outPath = '/home/rayhan/.gemini/antigravity/brain/c3cf172f-5299-4a70-bc5d-1e40b03dd06d/actual_widget_4x2_light.png';
+      File(outPath).writeAsBytesSync(bytes);
+      print('WIDGET 4X2 LIGHT SAVED: $outPath');
     });
   });
 }

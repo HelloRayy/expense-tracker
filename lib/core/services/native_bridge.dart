@@ -16,7 +16,11 @@ class NativeBridge {
     required int remainingBalance,
     required int totalBudget,
     required int dailySafe,
+    int dailyAllowance = 0,
+    int remainingToday = 0,
+    int spentToday = 0,
     int totalSpent = 0,
+    String userName = 'Username',
     String formattedPeriod = '',
   }) async {
     try {
@@ -24,7 +28,11 @@ class NativeBridge {
       await prefs.setInt('remaining_balance', remainingBalance);
       await prefs.setInt('total_budget', totalBudget);
       await prefs.setInt('daily_safe', dailySafe);
+      await prefs.setInt('daily_allowance', dailyAllowance);
+      await prefs.setInt('remaining_today', remainingToday);
+      await prefs.setInt('spent_today', spentToday);
       await prefs.setInt('total_spent', totalSpent);
+      await prefs.setString('user_name', userName);
       await prefs.setString('formatted_period', formattedPeriod);
       await prefs.setString('last_updated', DateTime.now().toIso8601String());
 
@@ -33,7 +41,11 @@ class NativeBridge {
         'remaining_balance': remainingBalance,
         'total_budget': totalBudget,
         'daily_safe': dailySafe,
+        'daily_allowance': dailyAllowance,
+        'remaining_today': remainingToday,
+        'spent_today': spentToday,
         'total_spent': totalSpent,
+        'user_name': userName,
         'formatted_period': formattedPeriod,
       });
     } catch (e) {
