@@ -188,9 +188,7 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.08)
-                        : Colors.black.withValues(alpha: 0.06),
+                    color: PirschColors.divider(isDark),
                     width: 0.8,
                   ),
                 ),
@@ -387,13 +385,11 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
             ),
           ),
 
-          // Bottom Underline Divider only (Faithful to reference - soft hairline)
+          // Bottom Underline Divider only (Ultra-soft hairline)
           Divider(
             height: 1,
             thickness: 0.8,
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.08)
-                : Colors.black.withValues(alpha: 0.06),
+            color: PirschColors.divider(isDark),
           ),
 
           if (_errorMessage != null) ...[

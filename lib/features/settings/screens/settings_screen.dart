@@ -324,9 +324,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required bool isDark,
     required bool showDivider,
   }) {
-    final dividerColor = isDark
-        ? Colors.white.withValues(alpha: 0.08)
-        : Colors.black.withValues(alpha: 0.06);
+    final dividerColor = PirschColors.divider(isDark);
 
     return Column(
       children: [
@@ -386,7 +384,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         if (showDivider)
           Divider(
             height: 1,
-            thickness: 0.6,
+            thickness: 0.5,
             color: dividerColor,
           ),
       ],

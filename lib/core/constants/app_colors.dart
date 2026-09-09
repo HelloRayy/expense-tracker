@@ -21,6 +21,7 @@ class PirschColors {
   static const Color darkBorder = Color(0x1FFFFFFF);   // Hairline ~12% white
   static const Color darkTextPrimary = Color(0xFFEBEBEB); // Softened from #FFFFFF to prevent eye strain/halation (16.6:1)
   static const Color darkTextSecondary = Color(0xFFA3A3A3); // Soft secondary grey
+  static const Color darkDivider = Color(0x12FFFFFF);  // Ultra-soft dark hairline divider (~7% white)
   static const Color darkPill = Color(0xFFE8E8E8); // Ergonomic soft white pill
 
   // Light Theme Tokens (Warm Paper with Anti-Harsh Calibrated Contrast)
@@ -28,6 +29,7 @@ class PirschColors {
   static const Color lightCard = Color(0xFFFFFFFF);
   static const Color lightCardElevated = Color(0xFFF2EFE6);
   static const Color lightBorder = Color(0x0F000000);  // Hairline ~6% black
+  static const Color lightDivider = Color(0xFFECE7DC); // Ultra-soft warm hairline divider (~3% delta from #F8F5ED)
   static const Color lightTextPrimary = Color(0xFF222222); // Softened from #0A0A0A to prevent optical vibration (14.6:1)
   static const Color lightTextSecondary = Color(0xFF666666); // 5.3:1 (safe AA)
   static const Color lightPill = Color(0xFF1C1C1E); // Ergonomic soft black pill
@@ -37,6 +39,7 @@ class PirschColors {
   static Color card(bool isDark) => isDark ? darkCard : lightCard;
   static Color cardElevated(bool isDark) => isDark ? darkCardElevated : lightCardElevated;
   static Color border(bool isDark) => isDark ? darkBorder : lightBorder;
+  static Color divider(bool isDark) => isDark ? darkDivider : lightDivider;
   static Color textPrimary(bool isDark) => isDark ? darkTextPrimary : lightTextPrimary;
   static Color textSecondary(bool isDark) => isDark ? darkTextSecondary : lightTextSecondary;
   static Color pill(bool isDark) => isDark ? darkPill : lightPill;
