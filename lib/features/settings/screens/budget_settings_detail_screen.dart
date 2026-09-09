@@ -187,7 +187,12 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
               margin: const EdgeInsets.symmetric(horizontal: 24),
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(color: borderColor, width: 1.5),
+                  bottom: BorderSide(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.06),
+                    width: 0.8,
+                  ),
                 ),
               ),
               child: TabBar(
@@ -380,11 +385,13 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
             ),
           ),
 
-          // Bottom Underline Divider only (Faithful to reference)
+          // Bottom Underline Divider only (Faithful to reference - soft hairline)
           Divider(
             height: 1,
-            thickness: 1.2,
-            color: borderColor,
+            thickness: 0.8,
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : Colors.black.withValues(alpha: 0.06),
           ),
 
           if (_errorMessage != null) ...[

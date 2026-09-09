@@ -152,7 +152,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final bgColor = PirschColors.bg(isDark);
-    final borderColor = PirschColors.border(isDark);
     final textPrimary = PirschColors.textPrimary(isDark);
     final textSecondary = PirschColors.textSecondary(isDark);
 
@@ -236,7 +235,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       },
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
-                      borderColor: borderColor,
+                      isDark: isDark,
                       showDivider: true,
                     ),
                     _buildSettingTile(
@@ -254,7 +253,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       },
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
-                      borderColor: borderColor,
+                      isDark: isDark,
                       showDivider: true,
                     ),
                   ],
@@ -289,7 +288,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onTap: _confirmResetData,
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
-                      borderColor: borderColor,
+                      isDark: isDark,
                       showDivider: true,
                     ),
                     _buildSettingTile(
@@ -299,7 +298,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onTap: _showAboutDialog,
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
-                      borderColor: borderColor,
+                      isDark: isDark,
                       showDivider: true,
                     ),
                   ],
@@ -322,9 +321,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required VoidCallback onTap,
     required Color textPrimary,
     required Color textSecondary,
-    required Color borderColor,
+    required bool isDark,
     required bool showDivider,
   }) {
+    final dividerColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
+
     return Column(
       children: [
         Material(
@@ -383,8 +386,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         if (showDivider)
           Divider(
             height: 1,
-            thickness: 1,
-            color: borderColor.withValues(alpha: 0.8),
+            thickness: 0.6,
+            color: dividerColor,
           ),
       ],
     );
