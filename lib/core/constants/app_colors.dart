@@ -49,6 +49,21 @@ class PirschColors {
   static Color green(bool isDark) => isDark ? mintGreen : accessibleGreen;
   static Color yellow(bool isDark) => isDark ? warmYellow : accessibleAmber;
   static Color red(bool isDark) => isDark ? roseRed : accessibleCrimson;
+
+  // Landing Page Ambient Radial Gradient Glow Tokens
+  static Color ambientGlowColor({
+    required bool isDark,
+    required bool isOverBudget,
+    required bool isWarning,
+  }) {
+    if (isOverBudget) {
+      return roseRed.withValues(alpha: isDark ? 0.14 : 0.08);
+    }
+    if (isWarning) {
+      return warmYellow.withValues(alpha: isDark ? 0.14 : 0.08);
+    }
+    return mintGreen.withValues(alpha: isDark ? 0.14 : 0.08);
+  }
 }
 
 /// Backward compatibility aliases mapped to Pirsch Design Tokens

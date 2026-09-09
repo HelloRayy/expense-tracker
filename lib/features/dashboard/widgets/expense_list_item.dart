@@ -8,6 +8,7 @@ class ExpenseListItem extends StatelessWidget {
   final ExpenseModel exp;
   final Color cardColor;
   final Color borderColor;
+  final Color? dividerColor;
   final Color textPrimary;
   final Color textSecondary;
   final ValueChanged<int> onDelete;
@@ -17,6 +18,7 @@ class ExpenseListItem extends StatelessWidget {
     required this.exp,
     required this.cardColor,
     required this.borderColor,
+    this.dividerColor,
     required this.textPrimary,
     required this.textSecondary,
     required this.onDelete,
@@ -51,10 +53,7 @@ class ExpenseListItem extends StatelessWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(
-          color: PirschColors.roseRed,
-          borderRadius: BorderRadius.circular(16),
-        ),
+        color: PirschColors.roseRed.withValues(alpha: 0.85),
         child: const Icon(Icons.delete_outline, color: Colors.white, size: 24),
       ),
       confirmDismiss: (dir) async {
@@ -97,12 +96,15 @@ class ExpenseListItem extends StatelessWidget {
         }
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 14),
         decoration: BoxDecoration(
-          color: cardColor,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: borderColor),
+          color: Colors.transparent,
+          border: Border(
+            bottom: BorderSide(
+              color: dividerColor ?? PirschColors.divider(Theme.of(context).brightness == Brightness.dark),
+              width: 1.0,
+            ),
+          ),
         ),
         child: Row(
           children: [

@@ -7,6 +7,7 @@ import '../quick_log/quick_log_dialog.dart';
 import '../settings/screens/budget_settings_detail_screen.dart';
 import '../settings/screens/settings_screen.dart';
 import '../settings/screens/shopee_settings_screen.dart';
+import 'widgets/ambient_glow_background.dart';
 import 'widgets/category_section.dart';
 import 'widgets/dashboard_header.dart';
 import 'widgets/expense_list_item.dart';
@@ -133,11 +134,21 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         final expenses = widget.repository.expenses;
         final displayedExpenses = _showAllTransactions ? expenses : expenses.take(5).toList();
         final isOverBudget = remaining < 0 || remainingToday < 0;
+        final isWarning = !isOverBudget && (remainingToday < 20000 || remaining < dailyAllowance);
+        final ambientColor = PirschColors.ambientGlowColor(
+          isDark: isDark,
+          isOverBudget: isOverBudget,
+          isWarning: isWarning,
+        );
+        final dividerColor = PirschColors.divider(isDark);
 
         return Scaffold(
           backgroundColor: bgColor,
           body: Stack(
             children: [
+              // Ambient radial glow matching landing page aesthetic
+              AmbientGlowBackground(glowColor: ambientColor),
+
               // Main scrollable body
               RefreshIndicator(
                 color: PirschColors.mintGreen,
@@ -281,6 +292,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                                   exp: exp,
                                   cardColor: cardColor,
                                   borderColor: borderColor,
+                                  dividerColor: dividerColor,
                                   textPrimary: textPrimary,
                                   textSecondary: textSecondary,
                                   onDelete: (id) => widget.repository.deleteExpense(id),
