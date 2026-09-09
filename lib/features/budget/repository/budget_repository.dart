@@ -109,16 +109,14 @@ class BudgetRepository extends ChangeNotifier {
         await _db.updateBudget(_budget!);
       }
 
-      _totalSpent = await _db.getTotalSpentForPeriod(
-        _budget!.startDate,
-        _budget!.endDate,
-      );
-      _spentUntilYesterday = await _db.getSpentUntilYesterday(_budget!.startDate);
-      _spentToday = await _db.getSpentToday();
+      // Single query for period expenses; aggregates are derived in-memory for speed and consistency
       _expenses = await _db.getExpensesForPeriod(
         _budget!.startDate,
         _budget!.endDate,
       );
+      _totalSpent = _expenses.fold<int>(0, (sum, e) => sum + e.amount);
+      _spentToday = _expenses.where((e) => e.isToday).fold<int>(0, (sum, e) => sum + e.amount);
+      _spentUntilYesterday = _totalSpent - _spentToday;
 
       await _syncNative();
     } catch (e) {

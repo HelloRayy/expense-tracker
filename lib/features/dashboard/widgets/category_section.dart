@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../budget/models/expense_model.dart';
+import '../../categories/models/expense_category.dart';
 
 /// Spending by Category horizontal card section for Dashboard.
-/// Tapping any category card or header navigates to the standalone ExpenseCatalogScreen.
+/// Tapping any category card opens CategoryAssignmentScreen for that category.
 class CategorySection extends StatelessWidget {
   final List<ExpenseModel> expenses;
   final Color cardColor;
@@ -23,37 +24,26 @@ class CategorySection extends StatelessWidget {
     required this.onSelectCategory,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    int foodTotal = 0;
-    int coffeeTotal = 0;
-    int transportTotal = 0;
-    int shoppingTotal = 0;
-
+  Map<ExpenseCategory, int> _computeCategoryTotals() {
+    final totals = {for (final cat in ExpenseCategory.all) cat: 0};
     for (final exp in expenses) {
-      if (exp.categoryId == 'Makanan') {
-        foodTotal += exp.amount;
-      } else if (exp.categoryId == 'Kopi' || exp.categoryId == 'Kopi & Minum') {
-        coffeeTotal += exp.amount;
-      } else if (exp.categoryId == 'Transport') {
-        transportTotal += exp.amount;
-      } else if (exp.categoryId == 'Belanja' || exp.categoryId == 'Belanja/QRIS') {
-        shoppingTotal += exp.amount;
+      final category = ExpenseCategory.fromId(exp.categoryId);
+      if (category != null) {
+        totals[category] = (totals[category] ?? 0) + exp.amount;
       }
     }
+    return totals;
+  }
 
-    final categories = [
-      {'icon': Icons.restaurant_rounded, 'color': PirschColors.coralOrange, 'title': 'Makanan', 'total': foodTotal, 'category': 'Makanan'},
-      {'icon': Icons.local_cafe_rounded, 'color': PirschColors.mintGreen, 'title': 'Kopi & Minum', 'total': coffeeTotal, 'category': 'Kopi & Minum'},
-      {'icon': Icons.directions_car_rounded, 'color': const Color(0xFF60A5FA), 'title': 'Transport', 'total': transportTotal, 'category': 'Transport'},
-      {'icon': Icons.shopping_bag_rounded, 'color': PirschColors.warmYellow, 'title': 'Belanja/QRIS', 'total': shoppingTotal, 'category': 'Belanja/QRIS'},
-    ];
+  @override
+  Widget build(BuildContext context) {
+    final totals = _computeCategoryTotals();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         InkWell(
-          onTap: () => onSelectCategory('Semua'),
+          onTap: () => onSelectCategory(ExpenseCategory.all.first.id),
           borderRadius: BorderRadius.circular(8),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -77,7 +67,7 @@ class CategorySection extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Buka katalog',
+                      'Kelola kategori',
                       style: TextStyle(
                         color: textSecondary,
                         fontSize: 12,
@@ -100,13 +90,14 @@ class CategorySection extends StatelessWidget {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
-            itemCount: categories.length,
-            separatorBuilder: (_, index) => const SizedBox(width: 12),
+            itemCount: ExpenseCategory.all.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 12),
             itemBuilder: (context, i) {
-              final cat = categories[i];
-              final catColor = cat['color'] as Color;
+              final cat = ExpenseCategory.all[i];
+              final total = totals[cat] ?? 0;
+
               return InkWell(
-                onTap: () => onSelectCategory(cat['category'] as String),
+                onTap: () => onSelectCategory(cat.id),
                 borderRadius: BorderRadius.circular(16),
                 child: Container(
                   width: 120,
@@ -126,10 +117,10 @@ class CategorySection extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
-                              color: catColor.withValues(alpha: 0.15),
+                              color: cat.color.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Icon(cat['icon'] as IconData, size: 16, color: catColor),
+                            child: Icon(cat.icon, size: 16, color: cat.color),
                           ),
                           const Icon(Icons.arrow_forward_ios_rounded, size: 10, color: PirschColors.mintGreen),
                         ],
@@ -138,7 +129,7 @@ class CategorySection extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            cat['title'] as String,
+                            cat.displayName,
                             style: TextStyle(
                               color: textSecondary,
                               fontSize: 11,
@@ -149,7 +140,7 @@ class CategorySection extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            cat['total'] == 0 ? 'Rp 0' : CurrencyFormatter.formatCompact(cat['total'] as int),
+                            total == 0 ? 'Rp 0' : CurrencyFormatter.formatCompact(total),
                             style: TextStyle(
                               color: textPrimary,
                               fontSize: 13,

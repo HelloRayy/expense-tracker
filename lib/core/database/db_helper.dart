@@ -16,6 +16,14 @@ class DbHelper {
     return _db!;
   }
 
+  static Future<void> _safeExecute(DatabaseExecutor db, String sql) async {
+    try {
+      await db.execute(sql);
+    } catch (_) {
+      // Column/index already exists or table structure is current
+    }
+  }
+
   Future<Database> _initDb() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'jajan_tracker.db');
@@ -37,18 +45,10 @@ class DbHelper {
         ''');
 
         // Defensive column check in case table was partially created in a previous run
-        try {
-          await db.execute('ALTER TABLE budget ADD COLUMN total_budget INTEGER NOT NULL DEFAULT 0');
-        } catch (_) {}
-        try {
-          await db.execute('ALTER TABLE budget ADD COLUMN payday_day INTEGER NOT NULL DEFAULT 25');
-        } catch (_) {}
-        try {
-          await db.execute('ALTER TABLE budget ADD COLUMN weekly_income INTEGER NOT NULL DEFAULT 0');
-        } catch (_) {}
-        try {
-          await db.execute('ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
-        } catch (_) {}
+        await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN total_budget INTEGER NOT NULL DEFAULT 0');
+        await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN payday_day INTEGER NOT NULL DEFAULT 25');
+        await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN weekly_income INTEGER NOT NULL DEFAULT 0');
+        await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
 
         await db.execute('''
           CREATE TABLE IF NOT EXISTS expenses (
@@ -73,17 +73,11 @@ class DbHelper {
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
-          await db.execute('''
-            CREATE INDEX IF NOT EXISTS idx_expenses_created_at ON expenses (created_at DESC)
-          ''');
+          await _safeExecute(db, 'CREATE INDEX IF NOT EXISTS idx_expenses_created_at ON expenses (created_at DESC)');
         }
         if (oldVersion < 3) {
-          try {
-            await db.execute('ALTER TABLE budget ADD COLUMN weekly_income INTEGER DEFAULT 0');
-          } catch (_) {}
-          try {
-            await db.execute('ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER DEFAULT 0');
-          } catch (_) {}
+          await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN weekly_income INTEGER DEFAULT 0');
+          await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER DEFAULT 0');
 
           final now = DateTime.now();
           final start = BudgetModel.getMondayOfWeek(now).toIso8601String();
@@ -94,47 +88,23 @@ class DbHelper {
           );
         }
         if (oldVersion < 4) {
-          try {
-            await db.execute('ALTER TABLE budget ADD COLUMN total_budget INTEGER NOT NULL DEFAULT 0');
-          } catch (_) {}
-          try {
-            await db.execute('ALTER TABLE budget ADD COLUMN payday_day INTEGER NOT NULL DEFAULT 25');
-          } catch (_) {}
-          try {
-            await db.execute('ALTER TABLE budget ADD COLUMN weekly_income INTEGER NOT NULL DEFAULT 0');
-          } catch (_) {}
-          try {
-            await db.execute('ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
-          } catch (_) {}
+          await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN total_budget INTEGER NOT NULL DEFAULT 0');
+          await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN payday_day INTEGER NOT NULL DEFAULT 25');
+          await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN weekly_income INTEGER NOT NULL DEFAULT 0');
+          await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
         }
         if (oldVersion < 5) {
-          try {
-            await db.execute('ALTER TABLE expenses ADD COLUMN category_id TEXT DEFAULT NULL');
-          } catch (_) {}
-          try {
-            await db.execute('CREATE INDEX IF NOT EXISTS idx_expenses_category_id ON expenses (category_id)');
-          } catch (_) {}
+          await _safeExecute(db, 'ALTER TABLE expenses ADD COLUMN category_id TEXT DEFAULT NULL');
+          await _safeExecute(db, 'CREATE INDEX IF NOT EXISTS idx_expenses_category_id ON expenses (category_id)');
         }
       },
       onOpen: (db) async {
-        try {
-          await db.execute('ALTER TABLE budget ADD COLUMN total_budget INTEGER NOT NULL DEFAULT 0');
-        } catch (_) {}
-        try {
-          await db.execute('ALTER TABLE budget ADD COLUMN payday_day INTEGER NOT NULL DEFAULT 25');
-        } catch (_) {}
-        try {
-          await db.execute('ALTER TABLE budget ADD COLUMN weekly_income INTEGER NOT NULL DEFAULT 0');
-        } catch (_) {}
-        try {
-          await db.execute('ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
-        } catch (_) {}
-        try {
-          await db.execute('ALTER TABLE expenses ADD COLUMN category_id TEXT DEFAULT NULL');
-        } catch (_) {}
-        try {
-          await db.execute('CREATE INDEX IF NOT EXISTS idx_expenses_category_id ON expenses (category_id)');
-        } catch (_) {}
+        await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN total_budget INTEGER NOT NULL DEFAULT 0');
+        await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN payday_day INTEGER NOT NULL DEFAULT 25');
+        await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN weekly_income INTEGER NOT NULL DEFAULT 0');
+        await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
+        await _safeExecute(db, 'ALTER TABLE expenses ADD COLUMN category_id TEXT DEFAULT NULL');
+        await _safeExecute(db, 'CREATE INDEX IF NOT EXISTS idx_expenses_category_id ON expenses (category_id)');
       },
     );
   }

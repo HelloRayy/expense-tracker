@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../budget/repository/budget_repository.dart';
-import '../shopee_settings_screen.dart';
 import '../widgets/setting_tile.dart';
 import 'budget_settings_detail_screen.dart';
+import 'shopee_settings_screen.dart';
 
 /// Main Settings Screen with clean, unboxed list design.
 class SettingsScreen extends StatefulWidget {

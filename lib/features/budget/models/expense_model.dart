@@ -15,17 +15,28 @@ class ExpenseModel {
     required this.createdAt,
   });
 
-  String get formattedTime {
+  bool get isToday {
     final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final expenseDate = DateTime(createdAt.year, createdAt.month, createdAt.day);
+    return createdAt.year == now.year &&
+        createdAt.month == now.month &&
+        createdAt.day == now.day;
+  }
+
+  bool get isYesterday {
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    return createdAt.year == yesterday.year &&
+        createdAt.month == yesterday.month &&
+        createdAt.day == yesterday.day;
+  }
+
+  String get formattedTime {
     final hour = createdAt.hour.toString().padLeft(2, '0');
     final minute = createdAt.minute.toString().padLeft(2, '0');
     final timeStr = '$hour:$minute';
 
-    if (expenseDate == today) {
+    if (isToday) {
       return 'Hari ini, $timeStr';
-    } else if (expenseDate == today.subtract(const Duration(days: 1))) {
+    } else if (isYesterday) {
       return 'Kemarin, $timeStr';
     } else {
       try {

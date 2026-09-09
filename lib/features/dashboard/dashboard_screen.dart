@@ -6,7 +6,7 @@ import '../expense_catalog/screens/expense_catalog_screen.dart';
 import '../quick_log/quick_log_dialog.dart';
 import '../settings/screens/budget_settings_detail_screen.dart';
 import '../settings/screens/settings_screen.dart';
-import '../settings/shopee_settings_screen.dart';
+import '../settings/screens/shopee_settings_screen.dart';
 import 'widgets/category_section.dart';
 import 'widgets/dashboard_header.dart';
 import 'widgets/expense_list_item.dart';
