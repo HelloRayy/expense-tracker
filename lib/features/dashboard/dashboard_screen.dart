@@ -328,8 +328,8 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             ],
                           ],
 
-                          // Padding space for floating bottom bar
-                          const SizedBox(height: 110),
+                          // Padding space for floating bottom bar with safe area
+                          SizedBox(height: 120 + MediaQuery.of(context).padding.bottom),
                         ]),
                       ),
                     ),
@@ -337,11 +337,35 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 ),
               ),
 
+              // Bottom Gradient Fade (Scrim) to smoothly fade out scrolling items behind the floating navbar
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: 120 + MediaQuery.of(context).padding.bottom,
+                child: IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          bgColor.withValues(alpha: 0.0),
+                          bgColor.withValues(alpha: 0.8),
+                          bgColor,
+                        ],
+                        stops: const [0.0, 0.5, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
               // Floating Capsule Bottom Navigation Bar
               Positioned(
                 left: 24,
                 right: 24,
-                bottom: 24,
+                bottom: 20 + MediaQuery.of(context).padding.bottom,
                 child: FloatingCapsuleNavbar(
                   isDark: isDark,
                   borderColor: borderColor,
