@@ -989,8 +989,16 @@ class FloatingBubbleService : Service() {
                     remaining = raw.toLong()
                 }
                 editor.putLong("flutter.remaining_balance", remaining - currentAmount)
+
+                var currentSpent = 0L
+                val rawSpent = all["flutter.total_spent"] ?: all["total_spent"]
+                if (rawSpent is Number) {
+                    currentSpent = rawSpent.toLong()
+                }
+                editor.putLong("flutter.total_spent", currentSpent + currentAmount)
+                editor.putLong("total_spent", currentSpent + currentAmount)
             }
-            editor.apply()
+            editor.commit()
 
             // 3. Update Widget & Quick Tile
             JajanWidgetProvider.updateAllWidgets(this)

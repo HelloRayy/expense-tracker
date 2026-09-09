@@ -44,43 +44,26 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
                 if (appWidgetIds != null && appWidgetIds.isNotEmpty()) {
                     updateWidgets(context, appWidgetManager, appWidgetIds)
                 }
+
+                // Explicit broadcast to notify launcher widgets
+                val updateIntent = Intent(context, JajanWidget4x2Provider::class.java).apply {
+                    action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                    if (appWidgetIds != null && appWidgetIds.isNotEmpty()) {
+                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds)
+                    }
+                }
+                context.sendBroadcast(updateIntent)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
 
         private fun updateWidgets(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-            var weeklyIncome = 0L
-            var dailyAllowance = 0L
-            var totalSpent = 0L
-            var userName = "Raditya Rayhan"
-
-            try {
-                val prefs = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
-                val allEntries = prefs.all
-
-                val rawUserName = allEntries["flutter.user_name"] ?: allEntries["user_name"]
-                if (rawUserName != null && rawUserName.toString().isNotBlank()) {
-                    userName = rawUserName.toString().trim()
-                }
-
-                val rawDailyAllowance = allEntries["flutter.daily_allowance"] ?: allEntries["daily_allowance"] ?: allEntries["flutter.daily_safe"] ?: allEntries["daily_safe"]
-                if (rawDailyAllowance is Number) {
-                    dailyAllowance = rawDailyAllowance.toLong()
-                }
-
-                val rawWeeklyIncome = allEntries["flutter.weekly_income"] ?: allEntries["weekly_income"] ?: allEntries["flutter.total_budget"] ?: allEntries["total_budget"]
-                if (rawWeeklyIncome is Number) {
-                    weeklyIncome = rawWeeklyIncome.toLong()
-                }
-
-                val rawTotalSpent = allEntries["flutter.total_spent"] ?: allEntries["total_spent"]
-                if (rawTotalSpent is Number) {
-                    totalSpent = rawTotalSpent.toLong()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            val data = JajanWidgetStorage.loadWidgetData(context)
+            val userName = data.userName
+            val dailyAllowance = data.dailyAllowance
+            val weeklyIncome = data.weeklyIncome
+            val totalSpent = data.totalSpent
 
             val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID")).apply {
                 maximumFractionDigits = 0
@@ -148,8 +131,13 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
                     // Total Spent Color (Rose Red)
                     views.setTextColor(R.id.tv_widget_spent, Color.parseColor("#E87B7B"))
 
-                    // Main Container click -> Open App Dashboard
+                    // Attach click PendingIntent to container and all interactive subviews
                     views.setOnClickPendingIntent(R.id.widget_4x2_container, appPendingIntent)
+                    views.setOnClickPendingIntent(R.id.tv_widget_daily_amount, appPendingIntent)
+                    views.setOnClickPendingIntent(R.id.tv_widget_greeting, appPendingIntent)
+                    views.setOnClickPendingIntent(R.id.tv_widget_subtitle, appPendingIntent)
+                    views.setOnClickPendingIntent(R.id.tv_widget_remaining, appPendingIntent)
+                    views.setOnClickPendingIntent(R.id.tv_widget_spent, appPendingIntent)
 
                     appWidgetManager.updateAppWidget(widgetId, views)
                 } catch (e: Exception) {

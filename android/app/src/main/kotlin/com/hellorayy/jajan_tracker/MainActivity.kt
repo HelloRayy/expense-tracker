@@ -25,6 +25,10 @@ class MainActivity : FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, WIDGET_CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
                 "updateWidget" -> {
+                    val args = call.arguments as? Map<*, *>
+                    if (args != null) {
+                        JajanWidgetStorage.saveWidgetData(applicationContext, args)
+                    }
                     JajanWidgetProvider.updateAllWidgets(applicationContext)
                     JajanWidget4x2Provider.updateAllWidgets(applicationContext)
                     JajanQuickTileService.requestTileUpdate(applicationContext)
@@ -124,8 +128,17 @@ class MainActivity : FlutterActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         if (intent.action == JajanWidgetProvider.ACTION_QUICK_LOG) {
-            // Can notify Flutter if needed
+            flutterEngine?.dartExecutor?.binaryMessenger?.let { messenger ->
+                MethodChannel(messenger, WIDGET_CHANNEL).invokeMethod("onAction", "ACTION_QUICK_LOG")
+            }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        JajanWidgetProvider.updateAllWidgets(applicationContext)
+        JajanWidget4x2Provider.updateAllWidgets(applicationContext)
+        JajanQuickTileService.requestTileUpdate(applicationContext)
     }
 
     private fun isAccessibilityServiceEnabled(context: Context, serviceClass: Class<*>): Boolean {

@@ -42,14 +42,8 @@ class JajanQuickTileService : TileService() {
     private fun updateTileState() {
         val tile = qsTile ?: return
 
-        val prefs = getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
-        val allEntries = prefs.all
-
-        var remaining = 0L
-        val rawRemaining = allEntries["flutter.remaining_balance"] ?: allEntries["remaining_balance"]
-        if (rawRemaining is Number) {
-            remaining = rawRemaining.toLong()
-        }
+        val data = JajanWidgetStorage.loadWidgetData(this)
+        val remaining = data.remainingBalance
 
         val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID")).apply {
             maximumFractionDigits = 0

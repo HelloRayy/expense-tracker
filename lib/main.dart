@@ -55,6 +55,13 @@ class _JajanAppState extends State<JajanApp> {
   @override
   void initState() {
     super.initState();
+    if (!kIsWeb) {
+      NativeBridge.instance.setActionListener((action) {
+        if (action == 'ACTION_QUICK_LOG') {
+          _openQuickLogDirectly();
+        }
+      });
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.initialAction == 'ACTION_QUICK_LOG') {
         _openQuickLogDirectly();

@@ -44,6 +44,15 @@ class JajanWidgetProvider : AppWidgetProvider() {
                 if (appWidgetIds != null && appWidgetIds.isNotEmpty()) {
                     updateWidgets(context, appWidgetManager, appWidgetIds)
                 }
+
+                val updateIntent = Intent(context, JajanWidgetProvider::class.java).apply {
+                    action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                    if (appWidgetIds != null && appWidgetIds.isNotEmpty()) {
+                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds)
+                    }
+                }
+                context.sendBroadcast(updateIntent)
+
                 JajanWidget4x2Provider.updateAllWidgets(context)
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -51,27 +60,9 @@ class JajanWidgetProvider : AppWidgetProvider() {
         }
 
         private fun updateWidgets(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-            var remaining = 0L
-            var dailySafe = 0L
-
-            try {
-                val prefs = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
-                val allEntries = prefs.all
-
-                // Safely read remaining_balance regardless of whether Flutter wrote it as Long or Int
-                val rawRemaining = allEntries["flutter.remaining_balance"] ?: allEntries["remaining_balance"]
-                if (rawRemaining is Number) {
-                    remaining = rawRemaining.toLong()
-                }
-
-                // Safely read daily_safe
-                val rawDaily = allEntries["flutter.daily_safe"] ?: allEntries["daily_safe"]
-                if (rawDaily is Number) {
-                    dailySafe = rawDaily.toLong()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            val data = JajanWidgetStorage.loadWidgetData(context)
+            val remaining = data.remainingBalance
+            val dailySafe = data.dailySafe
 
             val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID")).apply {
                 maximumFractionDigits = 0

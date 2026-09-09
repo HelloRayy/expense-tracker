@@ -177,8 +177,16 @@ class NotificationActionReceiver : BroadcastReceiver() {
                     remaining = raw.toLong()
                 }
                 editor.putLong("flutter.remaining_balance", remaining - amount)
+
+                var currentSpent = 0L
+                val rawSpent = all["flutter.total_spent"] ?: all["total_spent"]
+                if (rawSpent is Number) {
+                    currentSpent = rawSpent.toLong()
+                }
+                editor.putLong("flutter.total_spent", currentSpent + amount)
+                editor.putLong("total_spent", currentSpent + amount)
             }
-            editor.apply()
+            editor.commit()
 
             // Update Widget & Quick Tile
             JajanWidgetProvider.updateAllWidgets(context)

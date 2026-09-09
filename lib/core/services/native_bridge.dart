@@ -122,6 +122,21 @@ class NativeBridge {
     }
   }
 
+  void Function(String action)? _actionListener;
+
+  /// Register listener for actions triggered from native (e.g. widget click when app is already running)
+  void setActionListener(void Function(String action) listener) {
+    _actionListener = listener;
+    _widgetChannel.setMethodCallHandler((call) async {
+      if (call.method == 'onAction') {
+        final action = call.arguments?.toString();
+        if (action != null) {
+          _actionListener?.call(action);
+        }
+      }
+    });
+  }
+
   /// Check if app was opened via Widget Quick-Log action
   Future<String?> getInitialAction() async {
     try {
