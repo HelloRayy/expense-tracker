@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../budget/repository/budget_repository.dart';
+import '../widgets/budget_reset_card.dart';
+import '../widgets/budget_summary_card.dart';
 
+/// Detail screen for configuring weekly budget income and savings target.
 class BudgetSettingsDetailScreen extends StatefulWidget {
   final BudgetRepository repository;
 
@@ -125,7 +128,6 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final bgColor = PirschColors.bg(isDark);
-    final cardColor = PirschColors.card(isDark);
     final elevatedColor = PirschColors.cardElevated(isDark);
     final borderColor = PirschColors.border(isDark);
     final textPrimary = PirschColors.textPrimary(isDark);
@@ -182,7 +184,7 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
               ),
             ),
 
-            // Segmented Underline Tab Bar (Faithful to Reference Layout)
+            // Segmented Underline Tab Bar
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 24),
               decoration: BoxDecoration(
@@ -229,21 +231,13 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
                     placeholder: '0',
                     prefixColor: PirschColors.green(isDark),
                     helpText: 'Masukkan total seluruh uang atau pemasukan yang Anda pegang untuk siklus minggu ini.',
-                    calculationSummary: _buildSummaryCard(
-                      spendable: spendable,
-                      dailyEst: dailyEst,
-                      savings: savings,
-                      isDark: isDark,
-                      cardColor: cardColor,
-                      elevatedColor: elevatedColor,
-                      borderColor: borderColor,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
+                    spendable: spendable,
+                    dailyEst: dailyEst,
+                    savings: savings,
                     isDark: isDark,
                     textPrimary: textPrimary,
                     textSecondary: textSecondary,
-                    cardColor: cardColor,
+                    elevatedColor: elevatedColor,
                     borderColor: borderColor,
                   ),
 
@@ -254,28 +248,20 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
                     placeholder: '0',
                     prefixColor: PirschColors.yellow(isDark),
                     helpText: 'Nominal yang wajib tersisa di akhir minggu. Rumus adaptive akan otomatis menjaga agar target ini tidak tersentuh!',
-                    calculationSummary: _buildSummaryCard(
-                      spendable: spendable,
-                      dailyEst: dailyEst,
-                      savings: savings,
-                      isDark: isDark,
-                      cardColor: cardColor,
-                      elevatedColor: elevatedColor,
-                      borderColor: borderColor,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
+                    spendable: spendable,
+                    dailyEst: dailyEst,
+                    savings: savings,
                     isDark: isDark,
                     textPrimary: textPrimary,
                     textSecondary: textSecondary,
-                    cardColor: cardColor,
+                    elevatedColor: elevatedColor,
                     borderColor: borderColor,
                   ),
                 ],
               ),
             ),
 
-            // Sticky Bottom Pill Button (Ergonomic WCAG Compliant)
+            // Sticky Bottom Pill Button
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 20),
               child: SizedBox(
@@ -315,11 +301,13 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
     required String placeholder,
     required Color prefixColor,
     required String helpText,
-    required Widget calculationSummary,
+    required int spendable,
+    required int dailyEst,
+    required int savings,
     required bool isDark,
     required Color textPrimary,
     required Color textSecondary,
-    required Color cardColor,
+    required Color elevatedColor,
     required Color borderColor,
   }) {
     return SingleChildScrollView(
@@ -328,7 +316,6 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Floating Label (Small Grey) - matching reference media_1788916130604.png
           Text(
             label,
             style: TextStyle(
@@ -339,7 +326,7 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
           ),
           const SizedBox(height: 4),
 
-          // Direct Input Row (Unboxed, matching reference)
+          // Direct Input Row
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Row(
@@ -385,7 +372,7 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
             ),
           ),
 
-          // Bottom Underline Divider only (Ultra-soft hairline)
+          // Underline Divider
           Divider(
             height: 1,
             thickness: 0.8,
@@ -416,142 +403,24 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
 
           const SizedBox(height: 24),
           // Live Calculation Card
-          calculationSummary,
+          BudgetSummaryCard(
+            spendable: spendable,
+            dailyEst: dailyEst,
+            savings: savings,
+            isDark: isDark,
+            elevatedColor: elevatedColor,
+            borderColor: borderColor,
+            textPrimary: textPrimary,
+            textSecondary: textSecondary,
+          ),
 
           const SizedBox(height: 32),
 
-          // Danger Action Card (Reference: Red Text Button inside Light Rounded Box)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            decoration: BoxDecoration(
-              color: PirschColors.red(isDark).withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: PirschColors.red(isDark).withValues(alpha: 0.2)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Reset Nilai Budget',
-                  style: TextStyle(
-                    color: PirschColors.red(isDark),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Atur ulang uang mingguan dan target tabungan menjadi Rp 0.',
-                  style: TextStyle(
-                    color: textSecondary,
-                    fontSize: 12,
-                    height: 1.3,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                InkWell(
-                  onTap: _resetToDefault,
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: PirschColors.red(isDark).withValues(alpha: 0.35)),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Kembalikan ke Default (Rp 0)',
-                      style: TextStyle(
-                        color: PirschColors.red(isDark),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSummaryCard({
-    required int spendable,
-    required int dailyEst,
-    required int savings,
-    required bool isDark,
-    required Color cardColor,
-    required Color elevatedColor,
-    required Color borderColor,
-    required Color textPrimary,
-    required Color textSecondary,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: elevatedColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: borderColor),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Boleh Dibelanjakan:',
-                style: TextStyle(color: textSecondary, fontSize: 13),
-              ),
-              Text(
-                CurrencyFormatter.format(spendable),
-                style: TextStyle(
-                  color: textPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Estimasi Batas Harian:',
-                style: TextStyle(color: textSecondary, fontSize: 13),
-              ),
-              Text(
-                '${CurrencyFormatter.format(dailyEst)} / hari',
-                style: TextStyle(
-                  color: PirschColors.green(isDark),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Target Tabungan Akhir:',
-                style: TextStyle(color: textSecondary, fontSize: 13),
-              ),
-              Text(
-                CurrencyFormatter.format(savings),
-                style: TextStyle(
-                  color: PirschColors.yellow(isDark),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
+          // Danger Action Card
+          BudgetResetCard(
+            isDark: isDark,
+            textSecondary: textSecondary,
+            onReset: _resetToDefault,
           ),
         ],
       ),

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../budget/repository/budget_repository.dart';
 import '../shopee_settings_screen.dart';
+import '../widgets/setting_tile.dart';
 import 'budget_settings_detail_screen.dart';
 
+/// Main Settings Screen with clean, unboxed list design.
 class SettingsScreen extends StatefulWidget {
   final BudgetRepository repository;
 
@@ -187,7 +189,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
 
-            // Large Title (Reference: "Settings")
+            // Large Title
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
@@ -203,7 +205,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
 
-            // Section 1: General (Unboxed, direct on background with dividers)
+            // Section 1: General
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -220,7 +222,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    _buildSettingTile(
+                    SettingTile(
                       icon: Icons.account_balance_wallet_outlined,
                       title: 'Atur Budget Mingguan',
                       subtitle: 'Uang mingguan, target tabungan & kuota',
@@ -238,7 +240,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       isDark: isDark,
                       showDivider: true,
                     ),
-                    _buildSettingTile(
+                    SettingTile(
                       icon: Icons.notifications_none_rounded,
                       title: 'Notifikasi & Shopee Watcher',
                       subtitle: 'Deteksi checkout, floating bubble & tile',
@@ -263,7 +265,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 28)),
 
-            // Section 2: Data & Support (Unboxed, direct on background with dividers)
+            // Section 2: Support & Data
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -280,7 +282,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    _buildSettingTile(
+                    SettingTile(
                       icon: Icons.delete_outline_rounded,
                       iconColor: PirschColors.red(isDark),
                       title: 'Hapus Riwayat Pengeluaran',
@@ -291,7 +293,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       isDark: isDark,
                       showDivider: true,
                     ),
-                    _buildSettingTile(
+                    SettingTile(
                       icon: Icons.info_outline_rounded,
                       title: 'Tentang Aplikasi',
                       subtitle: 'Versi 1.0.0 • Info sistem adaptive jajan',
@@ -310,84 +312,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildSettingTile({
-    required IconData icon,
-    Color? iconColor,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-    required Color textPrimary,
-    required Color textSecondary,
-    required bool isDark,
-    required bool showDivider,
-  }) {
-    final dividerColor = PirschColors.divider(isDark);
-
-    return Column(
-      children: [
-        Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(12),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 15),
-              child: Row(
-                children: [
-                  Icon(
-                    icon,
-                    size: 22,
-                    color: iconColor ?? textPrimary,
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: TextStyle(
-                            color: textPrimary,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: -0.2,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          subtitle,
-                          style: TextStyle(
-                            color: textSecondary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    size: 20,
-                    color: textSecondary.withValues(alpha: 0.6),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        if (showDivider)
-          Divider(
-            height: 1,
-            thickness: 0.5,
-            color: dividerColor,
-          ),
-      ],
     );
   }
 }

@@ -4,7 +4,11 @@ import 'package:flutter/services.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../budget/repository/budget_repository.dart';
+import 'services/calculator_evaluator.dart';
+import 'widgets/quick_log_expression_display.dart';
+import 'widgets/quick_log_keypad.dart';
 
+/// Bottom sheet dialog for quickly logging an expense with an interactive calculator.
 class QuickLogDialog extends StatefulWidget {
   final BudgetRepository repository;
   final VoidCallback? onComplete;
@@ -78,89 +82,9 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     _resetCursorBlink();
   }
 
-  int _evaluate(String expr) {
-    if (expr.trim().isEmpty) return 0;
+  int get _currentTotal => CalculatorEvaluator.evaluate(_expression);
 
-    final rawTokens = expr.trim().split(RegExp(r'\s+'));
-    if (rawTokens.isEmpty) return 0;
-
-    final List<dynamic> tokens = [];
-    for (final t in rawTokens) {
-      if (t == '+' || t == '-' || t == '×' || t == '÷' || t == '*' || t == '/') {
-        tokens.add(t == '*' ? '×' : (t == '/' ? '÷' : t));
-      } else {
-        if (t.endsWith('%')) {
-          final clean = t.replaceAll('%', '').replaceAll('.', '').replaceAll(',', '').trim();
-          final val = double.tryParse(clean) ?? 0.0;
-          tokens.add(val / 100.0);
-        } else {
-          final clean = t.replaceAll('.', '').replaceAll(',', '').trim();
-          final val = double.tryParse(clean) ?? 0.0;
-          tokens.add(val);
-        }
-      }
-    }
-
-    if (tokens.isEmpty) return 0;
-
-    // Discard trailing operator if expression is mid-typing (e.g. "25.000 × ")
-    if (tokens.last is String) {
-      tokens.removeLast();
-    }
-    if (tokens.isEmpty) return 0;
-
-    // Pass 1: Multiplication and Division (× and ÷)
-    final List<dynamic> pass1 = [];
-    int i = 0;
-    while (i < tokens.length) {
-      final token = tokens[i];
-      if (token == '×' || token == '÷') {
-        if (pass1.isNotEmpty && i + 1 < tokens.length && tokens[i + 1] is num) {
-          final prev = (pass1.removeLast() as num).toDouble();
-          final next = (tokens[i + 1] as num).toDouble();
-          if (token == '×') {
-            pass1.add(prev * next);
-          } else {
-            pass1.add(next != 0 ? prev / next : 0.0);
-          }
-          i += 2;
-          continue;
-        }
-      }
-      pass1.add(token);
-      i++;
-    }
-
-    // Pass 2: Addition and Subtraction (+ and -)
-    if (pass1.isEmpty) return 0;
-    double result = pass1[0] is num ? (pass1[0] as num).toDouble() : 0.0;
-    int j = 1;
-    while (j < pass1.length) {
-      final op = pass1[j];
-      if (j + 1 < pass1.length && pass1[j + 1] is num) {
-        final val = (pass1[j + 1] as num).toDouble();
-        if (op == '+') {
-          result += val;
-        } else if (op == '-') {
-          result -= val;
-        }
-        j += 2;
-      } else {
-        j++;
-      }
-    }
-
-    return result.round().clamp(0, 999999999);
-  }
-
-  int get _currentTotal => _evaluate(_expression);
-
-  bool get _hasOperator =>
-      _expression.contains('+') ||
-      _expression.contains('-') ||
-      _expression.contains('×') ||
-      _expression.contains('÷') ||
-      _expression.contains('%');
+  bool get _hasOperator => CalculatorEvaluator.hasOperator(_expression);
 
   void _onKeyPress(String key) {
     HapticFeedback.selectionClick();
@@ -184,9 +108,6 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
               left.endsWith(' ÷ ')) {
             _expression = '${left.substring(0, left.length - 3)}$right';
             _rawCursorPos -= 3;
-          } else if (left.endsWith(' ')) {
-            _expression = '${left.substring(0, left.length - 1)}$right';
-            _rawCursorPos -= 1;
           } else {
             _expression = '${left.substring(0, left.length - 1)}$right';
             _rawCursorPos -= 1;
@@ -311,178 +232,6 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     }
   }
 
-  Widget _buildCursorBar() {
-    const accentCyan = Color(0xFF00E5FF);
-    return AnimatedOpacity(
-      opacity: _cursorVisible ? 1.0 : 0.0,
-      duration: const Duration(milliseconds: 80),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 2),
-        width: 2.5,
-        height: 38,
-        decoration: BoxDecoration(
-          color: accentCyan,
-          borderRadius: BorderRadius.circular(1.5),
-          boxShadow: [
-            BoxShadow(
-              color: accentCyan.withValues(alpha: 0.6),
-              blurRadius: 5,
-              spreadRadius: 0.5,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildExpressionWidget(Color textPrimary, {required bool isOverBudget}) {
-    const accentCyan = Color(0xFF00E5FF);
-    final numberColor = isOverBudget ? PirschColors.roseRed : textPrimary;
-
-    if (_expression.trim().isEmpty) {
-      return GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          HapticFeedback.selectionClick();
-          _resetCursorBlink();
-        },
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              '0',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 48,
-                fontWeight: FontWeight.w400,
-                color: numberColor,
-                letterSpacing: -0.5,
-              ),
-            ),
-            const SizedBox(width: 4),
-            _buildCursorBar(),
-          ],
-        ),
-      );
-    }
-
-    final children = <Widget>[];
-    final regex = RegExp(r'(\d+|[+\-×÷%]| +)');
-    final matches = regex.allMatches(_expression);
-    int rawIndex = 0;
-
-    void maybeInsertCursor() {
-      if (rawIndex == _rawCursorPos) {
-        children.add(_buildCursorBar());
-      }
-    }
-
-    maybeInsertCursor();
-
-    for (final m in matches) {
-      final token = m.group(0)!;
-      final tokenStart = rawIndex;
-
-      if (token == '+' || token == '-' || token == '×' || token == '÷' || token == '%') {
-        children.add(
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTapUp: (details) {
-              final isRight = details.localPosition.dx > 12;
-              _setCursorPos(isRight ? tokenStart + token.length : tokenStart);
-            },
-            child: Text(
-              token,
-              style: const TextStyle(
-                fontFamily: 'Inter',
-                color: accentCyan,
-                fontSize: 48,
-                fontWeight: FontWeight.w400,
-                letterSpacing: -0.5,
-              ),
-            ),
-          ),
-        );
-        rawIndex += token.length;
-        maybeInsertCursor();
-      } else if (token.trim().isEmpty) {
-        children.add(
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => _setCursorPos(tokenStart),
-            child: Text(
-              token,
-              style: const TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 48,
-                letterSpacing: -0.5,
-              ),
-            ),
-          ),
-        );
-        rawIndex += token.length;
-        maybeInsertCursor();
-      } else {
-        final val = int.tryParse(token);
-        final formattedNum = val != null
-            ? CurrencyFormatter.format(val).replaceAll('Rp ', '')
-            : token;
-
-        var numOffset = 0;
-        for (int i = 0; i < formattedNum.length; i++) {
-          final ch = formattedNum[i];
-          final isDot = ch == '.';
-          final currentRawPos = tokenStart + numOffset;
-
-          if (!isDot && currentRawPos == _rawCursorPos && children.isNotEmpty) {
-            children.add(_buildCursorBar());
-          }
-
-          children.add(
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTapUp: (details) {
-                if (isDot) {
-                  _setCursorPos(currentRawPos);
-                } else {
-                  final isRight = details.localPosition.dx > 14;
-                  _setCursorPos(isRight ? currentRawPos + 1 : currentRawPos);
-                }
-              },
-              child: Text(
-                ch,
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  color: numberColor,
-                  fontSize: 48,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: -0.5,
-                ),
-              ),
-            ),
-          );
-
-          if (!isDot) {
-            numOffset++;
-          }
-        }
-        rawIndex += token.length;
-        maybeInsertCursor();
-      }
-    }
-
-    if (_rawCursorPos >= _expression.length && !children.any((w) => w is AnimatedOpacity)) {
-      children.add(_buildCursorBar());
-    }
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: children,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -561,7 +310,6 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      // Clean UI Text (No Badge Container)
                       Text(
                         'Batas Hari Ini: ${CurrencyFormatter.formatCompact(todayLimit)}',
                         style: TextStyle(
@@ -572,175 +320,65 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                       ),
                     ],
                   ),
-              const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-              // Clean Calculator Display Matching Gambar 2
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => _setCursorPos(_expression.length),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                  alignment: Alignment.centerRight,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      // Top line: Formatted expression with warning color on nominal digits
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerRight,
-                        child: _buildExpressionWidget(textPrimary, isOverBudget: isOverBudget),
+                  // Clean Calculator Display
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => _setCursorPos(_expression.length),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      alignment: Alignment.centerRight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerRight,
+                            child: QuickLogExpressionDisplay(
+                              expression: _expression,
+                              rawCursorPos: _rawCursorPos,
+                              cursorVisible: _cursorVisible,
+                              isOverBudget: isOverBudget,
+                              textPrimary: textPrimary,
+                              onSetCursorPos: _setCursorPos,
+                              onResetCursorBlink: _resetCursorBlink,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            height: 30,
+                            child: _hasOperator && _currentTotal > 0
+                                ? Text(
+                                    CurrencyFormatter.format(_currentTotal).replaceAll('Rp ', ''),
+                                    style: TextStyle(
+                                      color: isOverBudget ? PirschColors.roseRed : textSecondary,
+                                      fontSize: 24,
+                                      fontWeight: isOverBudget ? FontWeight.w600 : FontWeight.w400,
+                                      letterSpacing: -0.5,
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 10),
-                      // Bottom line: Evaluated sub-result in subtle gray or red warning when over budget
-                      SizedBox(
-                        height: 30,
-                        child: _hasOperator && _currentTotal > 0
-                            ? Text(
-                                CurrencyFormatter.format(_currentTotal).replaceAll('Rp ', ''),
-                                style: TextStyle(
-                                  color: isOverBudget ? PirschColors.roseRed : textSecondary,
-                                  fontSize: 24,
-                                  fontWeight: isOverBudget ? FontWeight.w600 : FontWeight.w400,
-                                  letterSpacing: -0.5,
-                                ),
-                              )
-                            : const SizedBox.shrink(),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              // 4-Column Standard Calculator Keypad (×, ÷, -, +, =)
-              _buildKeypadGrid(btnBg: btnBg, textPrimary: textPrimary, isDark: isDark),
-            ],
-          ),
-        ),
-      ),
-    );
-      },
-    );
-  }
-
-  Widget _buildKeypadGrid({
-    required Color btnBg,
-    required Color textPrimary,
-    required bool isDark,
-  }) {
-    // 5 Rows x 4 Columns Standard Calculator Layout
-    final rows = [
-      // Row 1: C, ⌫, %, ÷
-      [
-        {'label': 'C', 'type': 'clear', 'color': PirschColors.roseRed},
-        {'label': '⌫', 'type': 'backspace', 'color': PirschColors.roseRed},
-        {'label': '%', 'type': 'operator', 'color': textPrimary},
-        {'label': '÷', 'type': 'operator', 'color': PirschColors.mintGreen},
-      ],
-      // Row 2: 7, 8, 9, ×
-      [
-        {'label': '7', 'type': 'digit', 'color': textPrimary},
-        {'label': '8', 'type': 'digit', 'color': textPrimary},
-        {'label': '9', 'type': 'digit', 'color': textPrimary},
-        {'label': '×', 'type': 'operator', 'color': PirschColors.mintGreen},
-      ],
-      // Row 3: 4, 5, 6, -
-      [
-        {'label': '4', 'type': 'digit', 'color': textPrimary},
-        {'label': '5', 'type': 'digit', 'color': textPrimary},
-        {'label': '6', 'type': 'digit', 'color': textPrimary},
-        {'label': '-', 'type': 'operator', 'color': PirschColors.mintGreen},
-      ],
-      // Row 4: 1, 2, 3, +
-      [
-        {'label': '1', 'type': 'digit', 'color': textPrimary},
-        {'label': '2', 'type': 'digit', 'color': textPrimary},
-        {'label': '3', 'type': 'digit', 'color': textPrimary},
-        {'label': '+', 'type': 'operator', 'color': PirschColors.mintGreen},
-      ],
-      // Row 5: 00, 0, 000, =
-      [
-        {'label': '00', 'type': 'action', 'color': textPrimary},
-        {'label': '0', 'type': 'digit', 'color': textPrimary},
-        {'label': '000', 'type': 'action', 'color': textPrimary},
-        {'label': '=', 'type': 'submit', 'color': Colors.white},
-      ],
-    ];
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final availableWidth = constraints.maxWidth;
-        final buttonSize = ((availableWidth - (3 * 12)) / 4).clamp(52.0, 70.0);
-
-        return Column(
-          children: rows.map((row) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: row.map((btn) {
-                  return _buildThumbButton(
-                    item: btn,
-                    size: buttonSize,
-                    btnBg: btnBg,
-                  );
-                }).toList(),
-              ),
-            );
-          }).toList(),
-        );
-      },
-    );
-  }
-
-  Widget _buildThumbButton({
-    required Map<String, dynamic> item,
-    required double size,
-    required Color btnBg,
-  }) {
-    final label = item['label'] as String;
-    final type = item['type'] as String;
-    final textColor = item['color'] as Color;
-
-    final isSubmit = type == 'submit';
-    final isOperator = type == 'operator';
-
-    Color circleBg = btnBg;
-    if (isSubmit) {
-      circleBg = const Color(0xFF00897B); // Vibrant Emerald Green
-    } else if (isOperator) {
-      circleBg = btnBg.withValues(alpha: 0.9);
-    }
-
-    return SizedBox(
-      width: size,
-      height: size,
-      child: Material(
-        color: circleBg,
-        shape: const CircleBorder(),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: () => _onKeyPress(label),
-          customBorder: const CircleBorder(),
-          splashColor: isSubmit ? Colors.white30 : PirschColors.mintGreen.withValues(alpha: 0.3),
-          child: Center(
-            child: type == 'backspace'
-                ? Icon(Icons.backspace_outlined, color: textColor, size: 22)
-                : Text(
-                    label,
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: isSubmit
-                          ? 32
-                          : (isOperator ? 24 : (type == 'action' ? 18 : 24)),
-                      fontWeight: (isSubmit || type == 'digit' || type == 'clear' || isOperator)
-                          ? FontWeight.w600
-                          : FontWeight.w500,
                     ),
                   ),
+                  const SizedBox(height: 10),
+
+                  // 4-Column Standard Calculator Keypad
+                  QuickLogKeypad(
+                    onKeyPress: _onKeyPress,
+                    btnBg: btnBg,
+                    textPrimary: textPrimary,
+                    isDark: isDark,
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
