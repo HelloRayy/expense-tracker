@@ -333,17 +333,20 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify 5 items shown initially
-    expect(find.text('5 dari 8'), findsOneWidget);
     expect(find.text('Kopi Kenangan'), findsOneWidget);
     expect(find.text('Bensin Motor'), findsOneWidget); // 5th item
     expect(find.text('Es Teh Manis'), findsNothing); // 6th item not shown
 
-    // Tap badge to expand
-    await tester.tap(find.text('5 dari 8'));
+    // Tap button to expand
+    await tester.ensureVisible(find.text('Lihat Semua (8 Transaksi)'));
+    await tester.tap(find.text('Lihat Semua (8 Transaksi)'));
     await tester.pumpAndSettle();
 
     // Now all 8 items shown
-    expect(find.text('8 Transaksi'), findsOneWidget);
+    expect(find.text('Es Teh Manis'), findsOneWidget);
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+    await tester.pumpAndSettle();
+    expect(find.text('Tampilkan Lebih Sedikit'), findsOneWidget);
   });
 
   testWidgets('Capture SettingsScreen real screenshot', (tester) async {

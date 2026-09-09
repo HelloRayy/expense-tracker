@@ -34,6 +34,18 @@
       html {
         scroll-behavior: smooth !important;
       }
+      header {
+        background: rgba(255, 255, 255, 0.9) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border-bottom: 1px solid var(--color-border);
+      }
+      .theme-dark header {
+        background: rgba(10, 10, 10, 0.9) !important;
+      }
+      section[id] {
+        scroll-margin-top: 90px;
+      }
       .lucide-icon {
         display: inline-flex;
         align-items: center;
@@ -640,281 +652,6 @@
     </div>
 </section>
 
-<section id="fitur" class="content">
-    <div class="section-content">
-        <div class="gradient-container" data-sal="slide-up" data-sal-duration="800">
-            <div class="gradient yellow left"></div>
-        </div>
-        
-        <div class="nummeration" data-sal="slide-up">
-            <div class="number">1</div>
-            <div class="text">0-Friction Logging</div>
-        </div>
-        
-        <h2 data-sal="slide-up" data-sal-delay="100">Catat Pengeluaran dalam &lt; 2 Detik</h2>
-        <p data-sal="slide-up" data-sal-delay="200">
-            Gak perlu pusing milih dropdown kategori atau ngisi form panjang. Cukup ketik nominal lewat numpad cepat dengan tombol preset favorit, selesai seketika.
-        </p>
-        
-        <div class="grid" data-sal="slide-up" data-sal-delay="300">
-            <div class="row two-one">
-                <div class="card">
-                    <div class="card-content">
-                        <h3>Numpad Custom &amp; Preset Instant</h3>
-                        <p>Dilengkapi tombol sekali sentuh: <strong>+5rb</strong>, <strong>+10rb</strong>, <strong>+20rb</strong>, <strong>+50rb</strong>, dan <strong>000</strong>. Nyatat cilok atau kopi susu gak pernah secepat ini.</p>
-                        
-                        <div class="card-preview-container">
-                            <div class="numpad-mock">
-                                <div style="font-size: 0.75rem; color: #888; margin-bottom: 4px; display: flex; justify-content: space-between;">
-                                    <span>Tambah Jajan</span>
-                                    <span>Es Kopi Susu</span>
-                                </div>
-                                <div class="numpad-display">Rp 20.000</div>
-                                <div class="numpad-presets">
-                                    <span class="numpad-preset-btn">+5rb</span>
-                                    <span class="numpad-preset-btn" style="background: #6ECE9D; color: #0A0A0A;">+10rb</span>
-                                    <span class="numpad-preset-btn">+20rb</span>
-                                    <span class="numpad-preset-btn">+50rb</span>
-                                </div>
-                                <div class="numpad-grid">
-                                    <div class="numpad-key">1</div><div class="numpad-key">2</div><div class="numpad-key">3</div>
-                                    <div class="numpad-key">4</div><div class="numpad-key">5</div><div class="numpad-key">6</div>
-                                    <div class="numpad-key">7</div><div class="numpad-key">8</div><div class="numpad-key">9</div>
-                                    <div class="numpad-key">000</div><div class="numpad-key">0</div><div class="numpad-key numpad-key-action">Simpan</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-content">
-                        <h3>Mental Accounting</h3>
-                        <p>Pisahkan Uang Pokok (sewa, tagihan, tabungan) dari Uang Jajan. Nikmati jajanmu tanpa rasa bersalah karena uang wajib sudah aman.</p>
-                        
-                        <div class="card-preview-container">
-                            <div class="mental-mock">
-                                <div class="mental-card mental-locked">
-                                    <div>
-                                        <strong style="display: block; font-size: 0.85rem;">Uang Pokok &amp; Tabungan</strong>
-                                        <small style="color: var(--color-secondary);">Terkunci aman</small>
-                                    </div>
-                                    <span style="font-weight: 700; font-family: 'DM Mono', monospace;">Rp 3.500.000</span>
-                                </div>
-                                <div class="mental-card mental-spendable">
-                                    <div>
-                                        <strong style="display: block; font-size: 0.85rem; color: #1b7a4d;">Uang Jajan Bebas</strong>
-                                        <small style="color: #2b8257;">Tersedia periode ini</small>
-                                    </div>
-                                    <span style="font-weight: 800; font-size: 1.1rem; color: #1b7a4d; font-family: 'DM Mono', monospace;">Rp 750.000</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row one-two">
-                <div class="card">
-                    <div class="card-content">
-                        <h3>Tanpa Login, Tanpa Akun</h3>
-                        <p>Buka aplikasi dan langsung gunakan. Kami tidak pernah meminta email, password, nomor HP, apalagi sinkronisasi rekening bank.</p>
-                        
-                        <div class="card-preview-container" style="text-align: center; padding: 24px 16px;">
-                            <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 50%; background: rgba(110, 206, 157, 0.15); color: #1b7a4d; margin-bottom: 12px;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="18" x2="23" y1="8" y2="13"/><line x1="23" x2="18" y1="8" y2="13"/>
-                                </svg>
-                            </div>
-                            <strong style="display: block; font-size: 0.95rem;">0 Data Personal Terkumpul</strong>
-                            <small style="color: var(--color-secondary);">Langsung pakai saat dibuka pertama kali</small>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card columns">
-                    <div class="card-content">
-                        <h3>100% Offline &amp; Tersimpan Lokal</h3>
-                        <p>Semua catatan tersimpan di database SQLite perangkat HP kamu. Tidak ada data yang dikirim ke server internet.</p>
-                        
-                        <div class="card-preview-container">
-                            <div style="display: flex; align-items: center; gap: 16px;">
-                                <div style="display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; background: rgba(110, 206, 157, 0.15); color: #1b7a4d;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
-                                    </svg>
-                                </div>
-                                <div style="font-size: 0.85rem; font-family: 'DM Mono', monospace; line-height: 1.5;">
-                                    <div><strong>data/jajan_database.db</strong></div>
-                                    <div style="color: var(--color-secondary);">Engine: SQLite • Enkripsi Lokal</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="widget" class="content">
-    <div class="section-content">
-        <div class="gradient-container" data-sal="slide-up" data-sal-duration="800">
-            <div class="gradient white right"></div>
-        </div>
-        
-        <div class="nummeration" data-sal="slide-up">
-            <div class="number">2</div>
-            <div class="text">Home Screen Widget</div>
-        </div>
-        
-        <h2 data-sal="slide-up" data-sal-delay="100">Sadar Saldo Tanpa Perlu Buka Aplikasi</h2>
-        <p data-sal="slide-up" data-sal-delay="200">
-            Cukup nyalakan layar HP, widget interaktif langsung memberi tahu sisa jatah jajanmu hari ini lengkap dengan indikator status warna dinamis.
-        </p>
-        
-        <div class="grid" data-sal="slide-up" data-sal-delay="300">
-            <div class="row two-one">
-                <div class="card">
-                    <div class="card-content">
-                        <h3>Widget 4x2 Home Screen Android</h3>
-                        <p>Tampilan widget modern dengan saldo jajan real-time, tanggal gajian berikutnya, dan batas aman belanja per hari.</p>
-                        
-                        <div class="card-preview-container">
-                            <div class="widget-4x2-mock">
-                                <div class="widget-header-row">
-                                    <span style="font-size: 0.8rem; font-weight: 600; color: #999;">Sisa Uang Jajan</span>
-                                    <span class="widget-status-badge">Aman Jajan</span>
-                                </div>
-                                <div class="widget-balance-val">Rp 340.000</div>
-                                <div class="widget-progress-track">
-                                    <div class="widget-progress-fill"></div>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #aaa;">
-                                    <span>Jatah: <strong>Rp 42.500 / hari</strong></span>
-                                    <span>Gajian: <strong>8 hari lagi</strong></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-content">
-                        <h3>Indikator Status Warna Adaptif</h3>
-                        <p>Status otomatis berubah sesuai sisa saldo harian:</p>
-                        
-                        <div class="card-preview-container" style="display: flex; flex-direction: column; gap: 10px;">
-                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-radius: 8px; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3);">
-                                <span><span class="status-indicator status-green"></span> <strong>Hijau</strong></span>
-                                <small style="color: #22c55e;">Aman jajan hari ini</small>
-                            </div>
-                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-radius: 8px; background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3);">
-                                <span><span class="status-indicator status-yellow"></span> <strong>Kuning</strong></span>
-                                <small style="color: #eab308;">Budget mulai menipis</small>
-                            </div>
-                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-radius: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);">
-                                <span><span class="status-indicator status-red"></span> <strong>Merah</strong></span>
-                                <small style="color: #ef4444;">Overbudget! Rem jajan</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row one-two">
-                <div class="card">
-                    <div class="card-content">
-                        <h3>1-Tap Quick-Log dari Widget</h3>
-                        <p>Ketuk tombol '+' pada widget di Home Screen untuk langsung memunculkan pop-up catat tanpa perlu masuk ke menu aplikasi.</p>
-                        <div class="card-preview-container" style="text-align: center; padding: 18px;">
-                            <span style="font-size: 0.85rem; font-weight: 600; color: #1b7a4d;">Sentuh &bull; Catat &bull; Selesai</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-content">
-                        <h3>Quick Settings Tile di Control Center</h3>
-                        <p>Tersedia tombol pintasan di bar notifikasi atas Android untuk mencatat jajan instan dari layar apa saja.</p>
-                        <div class="card-preview-container" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                            <span class="lucide-icon" style="color: #1b7a4d;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="1" x2="7" y1="14" y2="14"/><line x1="9" x2="15" y1="8" y2="8"/><line x1="17" x2="23" y1="16" y2="16"/>
-                                </svg>
-                            </span>
-                            <strong style="font-size: 0.9rem;">⚡ Catat Jajan Tile</strong>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="nudge" class="content">
-    <div class="section-content">
-        <div class="gradient-container" data-sal="slide-up" data-sal-duration="800">
-            <div class="gradient yellow left"></div>
-        </div>
-        
-        <div class="nummeration" data-sal="slide-up">
-            <div class="number">3</div>
-            <div class="text">Pre-Transaction Nudge</div>
-        </div>
-        
-        <h2 data-sal="slide-up" data-sal-delay="100">Pengingat Otomatis Saat Buka Shopee &amp; QRIS</h2>
-        <p data-sal="slide-up" data-sal-delay="200">
-            Kebanyakan orang menyesal setelah uangnya habis. Jajan Tracker memberi peringatan halus tepat sebelum checkout atau transaksi kasir terjadi.
-        </p>
-        
-        <div class="grid" data-sal="slide-up" data-sal-delay="300">
-            <div class="row one-one-one">
-                <div class="card">
-                    <div class="card-content">
-                        <h3>Deteksi Paket Shopee &amp; QRIS</h3>
-                        <p>Mendeteksi saat aplikasi Shopee dibuka atau tombol QRIS ditekan tanpa menguras baterai.</p>
-                        <div class="card-preview-container" style="text-align: center; padding: 20px 10px;">
-                            <span style="font-family: 'DM Mono', monospace; font-size: 0.8rem; background: rgba(0,0,0,0.08); padding: 4px 8px; border-radius: 6px;">com.shopee.id</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-content">
-                        <h3>Floating Chip Melayang 6 Detik</h3>
-                        <p>Banner transparan melayang lembut di layar, memberi tahu saldo sebelum checkout terjadi.</p>
-                        <div class="card-preview-container">
-                            <div class="floating-nudge-mock">
-                                <span class="nudge-indicator-dot"></span>
-                                <div style="font-size: 0.8rem; line-height: 1.3;">
-                                    <div style="font-weight: 700; color: #6ECE9D;">Sisa Uang Jajan: Rp 125.000</div>
-                                    <div style="color: #aaa; font-size: 0.72rem;">Sadar sebelum checkout!</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-content">
-                        <h3>Privasi &amp; Tanpa Rekam Ketikan</h3>
-                        <p>Izin Accessibility Service murni mendeteksi nama paket aplikasi. Tidak membaca ketikan keyboard atau chat.</p>
-                        <div class="card-preview-container" style="text-align: center; padding: 20px 10px;">
-                            <span class="badge-tag">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>
-                                </svg>
-                                <span>Zero Keystroke Logging</span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 <section id="download" class="content">
     <div class="section-content">
         <div class="gradient-container" data-sal="slide-up" data-sal-duration="800">
@@ -922,87 +659,149 @@
         </div>
         
         <div class="nummeration" data-sal="slide-up">
-            <div class="number">4</div>
+            <div class="number">1</div>
             <div class="text">Download Hub</div>
         </div>
         
-        <h2 data-sal="slide-up" data-sal-delay="100">Pasang Jajan Tracker di HP Android Kamu</h2>
+        <h2 data-sal="slide-up" data-sal-delay="100">Download Jajan Tracker untuk Android</h2>
         <p data-sal="slide-up" data-sal-delay="200">
-            Unduh file APK mandiri secara gratis. Ringan, bebas iklan selamanya, dan kode sumber terbuka di GitHub.
+            Unduh file APK mandiri secara gratis. 100% offline, bebas iklan selamanya, dan open-source.
         </p>
 
-        <!-- Heroic Split Download Card -->
-        <div class="download-hero-banner sal-animate" data-sal="slide-up" data-sal-delay="300">
-            <div>
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                    <span class="lucide-icon" style="color: #1b7a4d; background: rgba(110, 206, 157, 0.2); width: 42px; height: 42px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/>
-                        </svg>
-                    </span>
-                    <div>
-                        <h3 style="font-size: 1.8rem; margin: 0; line-height: 1.2;">Jajan Tracker v1.0.0</h3>
-                        <small style="color: var(--color-secondary);">Official Stable Release • Khusus Android</small>
+        <!-- Centered Download Hub Card (Obsidian & Zen Browser Style) -->
+        <div class="download-hub-card sal-animate" data-sal="slide-up" data-sal-delay="300">
+            <div class="download-hub-grid">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                        <span class="lucide-icon" style="color: #1b7a4d; background: rgba(110, 206, 157, 0.2); width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <h3 style="font-size: 1.8rem; margin: 0; line-height: 1.2;">Jajan Tracker v1.0.0</h3>
+                            <small style="color: var(--color-secondary);">Official Stable Release • Khusus Android</small>
+                        </div>
+                    </div>
+
+                    <div class="download-badges">
+                        <span class="badge-tag">
+                            <span class="lucide-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>
+                                </svg>
+                            </span>
+                            <span>Android 10+ (API 29+)</span>
+                        </span>
+                        <span class="badge-tag">
+                            <span class="lucide-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/>
+                                </svg>
+                            </span>
+                            <span>Universal (arm64 &amp; armv7)</span>
+                        </span>
+                        <span class="badge-tag">
+                            <span class="lucide-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>
+                                </svg>
+                            </span>
+                            <span>Bebas Iklan &amp; Pelacak</span>
+                        </span>
+                    </div>
+
+                    <div style="margin: 20px 0 12px 0;">
+                        <a href="https://github.com/HelloRayy/expense-tracker/releases/download/v1.0.0/app-release.apk" class="button" style="padding: 16px 28px; font-size: 1.05rem; font-weight: 700; width: 100%; justify-content: center; box-shadow: 0 6px 20px rgba(110,206,157,0.25);">
+                            <span class="lucide-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>
+                                </svg>
+                            </span>
+                            <span>Download APK Langsung (app-release.apk • ~25 MB)</span>
+                        </a>
+                    </div>
+
+                    <div class="checksum-box">
+                        <strong style="font-size: 0.85rem; display: block;">Integritas &amp; Verifikasi Checksum (SHA-256):</strong>
+                        <code class="checksum-code" id="shaCode">a8b9e17c8d234a9f12089cfa65b219e48b4c09d57a3e2189fb409581a02931bc</code>
+                        <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between;">
+                            <button class="checksum-copy-btn" onclick="copyChecksum()">
+                                <span class="lucide-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                    </svg>
+                                </span>
+                                <span id="copyBtnText">Salin SHA-256</span>
+                            </button>
+                            <span style="font-size: 0.75rem; color: var(--color-secondary);">Universal APK (arm64 &amp; arm7)</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="download-badges">
-                    <span class="badge-tag">
-                        <span class="lucide-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>
-                            </svg>
-                        </span>
-                        <span>Android 10+ (API 29+)</span>
-                    </span>
-                    <span class="badge-tag">
-                        <span class="lucide-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/>
-                            </svg>
-                        </span>
-                        <span>Ukuran: ~25 MB</span>
-                    </span>
-                    <span class="badge-tag">
-                        <span class="lucide-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>
-                            </svg>
-                        </span>
-                        <span>Bebas Iklan &amp; Pelacak</span>
-                    </span>
-                </div>
-
-                <div style="margin: 20px 0;">
-                    <a href="https://github.com/HelloRayy/expense-tracker/releases/download/v1.0.0/app-release.apk" class="button" style="padding: 16px 32px; font-size: 1.05rem; font-weight: 700;">
-                        <span class="lucide-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>
-                            </svg>
-                        </span>
-                        <span>Download APK Langsung (app-release.apk)</span>
+                <!-- Right Column: Desktop QR Code Bridge -->
+                <div class="qr-bridge-container">
+                    <div style="background: #ffffff; padding: 10px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); margin-bottom: 12px;">
+                        <svg width="130" height="130" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="130" height="130" rx="10" fill="#FFFFFF"/>
+                            <!-- Top Left Finder -->
+                            <rect x="12" y="12" width="32" height="32" rx="6" fill="#111111"/>
+                            <rect x="17" y="17" width="22" height="22" rx="3" fill="#FFFFFF"/>
+                            <rect x="22" y="22" width="12" height="12" rx="2" fill="#111111"/>
+                            <!-- Top Right Finder -->
+                            <rect x="86" y="12" width="32" height="32" rx="6" fill="#111111"/>
+                            <rect x="91" y="17" width="22" height="22" rx="3" fill="#FFFFFF"/>
+                            <rect x="96" y="22" width="12" height="12" rx="2" fill="#111111"/>
+                            <!-- Bottom Left Finder -->
+                            <rect x="12" y="86" width="32" height="32" rx="6" fill="#111111"/>
+                            <rect x="17" y="91" width="22" height="22" rx="3" fill="#FFFFFF"/>
+                            <rect x="22" y="96" width="12" height="12" rx="2" fill="#111111"/>
+                            <!-- Timing and Data Modules -->
+                            <rect x="52" y="16" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="62" y="16" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="72" y="16" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="52" y="26" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="72" y="26" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="52" y="36" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="62" y="36" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="16" y="52" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="26" y="52" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="36" y="52" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <!-- Center Download Badge -->
+                            <rect x="50" y="50" width="30" height="30" rx="7" fill="#6ECE9D"/>
+                            <path d="M65 57v12M59 64l6 6 6-6" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <rect x="88" y="52" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="98" y="52" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="108" y="52" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="16" y="62" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="36" y="62" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="88" y="62" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="108" y="62" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="16" y="72" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="26" y="72" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="88" y="72" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="98" y="72" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="52" y="88" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="62" y="88" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="72" y="88" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="88" y="88" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="108" y="88" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="52" y="98" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="72" y="98" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="98" y="98" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="52" y="108" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="62" y="108" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="88" y="108" width="6" height="6" rx="1.5" fill="#111111"/>
+                            <rect x="108" y="108" width="6" height="6" rx="1.5" fill="#111111"/>
+                        </svg>
+                    </div>
+                    <strong style="font-size: 0.95rem; display: block; margin-bottom: 4px;">Scan dengan Kamera HP</strong>
+                    <p style="font-size: 0.8rem; color: var(--color-secondary); margin: 0 0 10px 0; line-height: 1.4;">
+                        Buka kamera ponsel Anda untuk langsung download file APK ke Android tanpa kabel.
+                    </p>
+                    <a href="https://github.com/HelloRayy/expense-tracker/releases" target="_blank" rel="noreferrer" style="font-size: 0.8rem; text-decoration: underline; color: var(--color-primary);">
+                        Lihat GitHub Releases &rarr;
                     </a>
-                </div>
-
-                <p style="font-size: 0.85rem; color: var(--color-secondary); margin: 0;">
-                    Tersedia juga source code &amp; rilis di <a href="https://github.com/HelloRayy/expense-tracker/releases" target="_blank" rel="noreferrer" style="text-decoration: underline;">GitHub Releases</a>.
-                </p>
-            </div>
-
-            <!-- Right Column: Checksum & Verification -->
-            <div class="checksum-box">
-                <strong style="font-size: 0.85rem; display: block;">Integritas &amp; Verifikasi Checksum (SHA-256):</strong>
-                <code class="checksum-code" id="shaCode">a8b9e17c8d234a9f12089cfa65b219e48b4c09d57a3e2189fb409581a02931bc</code>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <button class="checksum-copy-btn" onclick="copyChecksum()">
-                        <span class="lucide-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-                            </svg>
-                        </span>
-                        <span id="copyBtnText">Salin SHA-256</span>
-                    </button>
-                    <span style="font-size: 0.75rem; color: var(--color-secondary);">Universal APK (arm64 &amp; arm7)</span>
                 </div>
             </div>
         </div>
@@ -1017,32 +816,252 @@
                 });
             }
         </script>
+    </div>
+</section>
 
-        <!-- Lower Section: 3-Step Sideloading Guide Cards -->
-        <h3 style="font-size: 1.4rem; margin: 30px 0 16px 0; text-align: center;">Panduan Pemasangan Mandiri (Sideloading)</h3>
-        <div class="sideload-grid">
-            <div class="sideload-card">
-                <div class="sideload-num-badge">1</div>
-                <strong style="font-size: 1.05rem;">Unduh File APK</strong>
-                <p style="font-size: 0.9rem; color: var(--color-secondary); margin: 0; line-height: 1.5;">
-                    Ketuk tombol download APK di atas. Jika browser menampilkan <em>"File mungkin berbahaya"</em>, pilih <strong>Tetap Unduh</strong> (ini peringatan standar Android untuk file di luar Google Play).
-                </p>
+<section id="panduan" class="content">
+    <div class="section-content">
+        <div class="gradient-container" data-sal="slide-up" data-sal-duration="800">
+            <div class="gradient yellow left"></div>
+        </div>
+        
+        <div class="nummeration" data-sal="slide-up">
+            <div class="number">2</div>
+            <div class="text">Instalasi Mandiri</div>
+        </div>
+        
+        <h2 data-sal="slide-up" data-sal-delay="100">3 Langkah Mudah Pasang APK di Android</h2>
+        <p data-sal="slide-up" data-sal-delay="200">
+            Sideloading di Android sangat cepat dan aman. Ikuti panduan singkat 3 langkah berikut:
+        </p>
+
+        <!-- Visual Sideloading 3-Steps Grid -->
+        <div class="steps-container sal-animate" data-sal="slide-up" data-sal-delay="300">
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-header">
+                        <span class="step-number">01</span>
+                        <strong style="font-size: 1.1rem;">Unduh File APK</strong>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--color-secondary); margin: 0; line-height: 1.55;">
+                        Ketuk tombol download di atas. Jika Google Chrome menampilkan peringatan <em>"File mungkin berbahaya"</em>, pilih <strong>Tetap Unduh</strong> (ini adalah peringatan umum Android untuk file mandiri).
+                    </p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-header">
+                        <span class="step-number">02</span>
+                        <strong style="font-size: 1.1rem;">Izinkan Sumber Ini</strong>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--color-secondary); margin: 0; line-height: 1.55;">
+                        Buka file <code>app-release.apk</code> yang baru diunduh. Pada pop-up proteksi Android, ketuk <strong>Setelan</strong> lalu aktifkan toggle <strong>Izinkan dari sumber ini</strong>.
+                    </p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-header">
+                        <span class="step-number">03</span>
+                        <strong style="font-size: 1.1rem;">Pasang &amp; Tambah Widget</strong>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--color-secondary); margin: 0; line-height: 1.55;">
+                        Pilih <strong>Install</strong>. Setelah selesai, buka aplikasi, tahan layar utama HP (Home Screen), pilih menu <strong>Widget</strong>, lalu pasang <strong>Jajan Tracker 4x2</strong>!
+                    </p>
+                </div>
             </div>
-            
-            <div class="sideload-card">
-                <div class="sideload-num-badge">2</div>
-                <strong style="font-size: 1.05rem;">Izinkan Sumber Ini</strong>
-                <p style="font-size: 0.9rem; color: var(--color-secondary); margin: 0; line-height: 1.5;">
-                    Buka file hasil unduhan. Jika muncul pop-up izin keamanan sistem, ketuk <strong>Setelan</strong> lalu aktifkan toggle <strong>Izinkan dari sumber ini</strong>.
+        </div>
+    </div>
+</section>
+
+<section id="fitur" class="content">
+    <div class="section-content">
+        <div class="gradient-container" data-sal="slide-up" data-sal-duration="800">
+            <div class="gradient white right"></div>
+        </div>
+        
+        <div class="nummeration" data-sal="slide-up">
+            <div class="number">3</div>
+            <div class="text">Fitur Unggulan</div>
+        </div>
+        
+        <h2 data-sal="slide-up" data-sal-delay="100">Dirancang Khusus untuk Pengendali Uang Jajan</h2>
+        <p data-sal="slide-up" data-sal-delay="200">
+            Bukan aplikasi akuntansi korporat yang membosankan. Jajan Tracker fokus pada kemudahan mencatat 0-friction, widget home screen adaptif, dan pengingat belanja tepat waktu.
+        </p>
+
+        <!-- Showcase 1: Home Screen Widget 4x2 Wide Card -->
+        <div class="showcase-card-wide sal-animate" data-sal="slide-up" data-sal-delay="300">
+            <div>
+                <span class="badge-tag" style="margin-bottom: 12px;">
+                    <span class="lucide-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>
+                        </svg>
+                    </span>
+                    <span>Fitur Unggulan #1</span>
+                </span>
+                <h3 style="font-size: 1.55rem; margin: 0 0 12px 0; line-height: 1.25;">Home Screen Widget 4x2: Sadar Saldo Tanpa Perlu Buka Aplikasi</h3>
+                <p style="font-size: 0.95rem; color: var(--color-secondary); line-height: 1.6; margin-bottom: 20px;">
+                    Cukup nyalakan layar ponselmu. Widget interaktif real-time ini memberi tahu sisa saldo jajan hari ini, batas aman belanja harian, dan hitungan mundur hari gajian. Dilengkapi tombol 1-Tap Quick-Log langsung dari layar depan tanpa perlu membuka menu aplikasi.
                 </p>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
+                        <span class="status-indicator status-green"></span>
+                        <span><strong>Hijau:</strong> Saldo aman, jatah jajan masih leluasa</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
+                        <span class="status-indicator status-yellow"></span>
+                        <span><strong>Kuning:</strong> Budget mulai menipis, berhati-hati</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
+                        <span class="status-indicator status-red"></span>
+                        <span><strong>Merah:</strong> Overbudget! Segera rem pengeluaran</span>
+                    </div>
+                </div>
             </div>
-            
-            <div class="sideload-card">
-                <div class="sideload-num-badge">3</div>
-                <strong style="font-size: 1.05rem;">Pasang &amp; Aktifkan Widget</strong>
-                <p style="font-size: 0.9rem; color: var(--color-secondary); margin: 0; line-height: 1.5;">
-                    Pilih <strong>Install</strong>. Setelah selesai, tahan layar utama HP, pilih menu <strong>Widget</strong> &gt; <strong>Jajan Tracker</strong>, lalu seret ke layar depan!
+
+            <!-- Widget Mockup Display -->
+            <div class="widget-4x2-mock" style="width: 100%; max-width: 360px;">
+                <div class="widget-header-row">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: #999;">Sisa Uang Jajan</span>
+                    <span class="widget-status-badge">Aman Jajan</span>
+                </div>
+                <div class="widget-balance-val">Rp 340.000</div>
+                <div class="widget-progress-track">
+                    <div class="widget-progress-fill"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #aaa; margin-bottom: 14px;">
+                    <span>Jatah: <strong>Rp 42.500 / hari</strong></span>
+                    <span>Gajian: <strong>8 hari lagi</strong></span>
+                </div>
+                <div style="display: flex; gap: 6px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">
+                    <span style="flex: 1; text-align: center; font-size: 0.75rem; padding: 4px; background: rgba(255,255,255,0.06); border-radius: 6px;">+5rb</span>
+                    <span style="flex: 1; text-align: center; font-size: 0.75rem; padding: 4px; background: rgba(110,206,157,0.2); color: #6ECE9D; border-radius: 6px; font-weight: 600;">+10rb</span>
+                    <span style="flex: 1; text-align: center; font-size: 0.75rem; padding: 4px; background: rgba(255,255,255,0.06); border-radius: 6px;">+20rb</span>
+                    <span style="flex: 1; text-align: center; font-size: 0.75rem; padding: 4px; background: rgba(255,255,255,0.06); border-radius: 6px;">+50rb</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Showcase 2: Split 2-Column Cards (ShopeePay Nudge & Mental Accounting) -->
+        <div class="showcase-split-grid sal-animate" data-sal="slide-up" data-sal-delay="400">
+            <!-- Card A: ShopeePay Nudge -->
+            <div class="showcase-card-half">
+                <div>
+                    <span class="badge-tag" style="margin-bottom: 12px;">
+                        <span class="lucide-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 10a4 4 0 0 1-8 0"/><path d="M3.103 6.034h17.794"/><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"/>
+                            </svg>
+                        </span>
+                        <span>Shopee &amp; QRIS Detection</span>
+                    </span>
+                    <h3 style="font-size: 1.35rem; margin: 0 0 10px 0; line-height: 1.3;">Pre-Transaction Nudge: Rem Belanja Sebelum Checkout</h3>
+                    <p style="font-size: 0.9rem; color: var(--color-secondary); line-height: 1.6; margin-bottom: 20px;">
+                        Mendeteksi saat aplikasi Shopee atau scanner QRIS dibuka. Floating chip transparan melayang lembut selama 6 detik untuk menyadarkan sisa uang jajan sebelum checkout terjadi.
+                    </p>
+                </div>
+                
+                <div class="card-preview-container" style="padding: 16px;">
+                    <div class="floating-nudge-mock">
+                        <span class="nudge-indicator-dot"></span>
+                        <div style="font-size: 0.8rem; line-height: 1.3;">
+                            <div style="font-weight: 700; color: #6ECE9D;">Sisa Uang Jajan: Rp 125.000</div>
+                            <div style="color: #aaa; font-size: 0.72rem;">Sadar sebelum checkout! (6s)</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 12px;">
+                        <small style="color: var(--color-secondary); font-size: 0.75rem;">
+                            🔒 Zero Keystroke Logging • Murni Deteksi Nama Paket
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card B: Mental Accounting -->
+            <div class="showcase-card-half">
+                <div>
+                    <span class="badge-tag" style="margin-bottom: 12px;">
+                        <span class="lucide-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>
+                            </svg>
+                        </span>
+                        <span>Amplop Virtual</span>
+                    </span>
+                    <h3 style="font-size: 1.35rem; margin: 0 0 10px 0; line-height: 1.3;">Mental Accounting: Bebas Jajan Tanpa Rasa Bersalah</h3>
+                    <p style="font-size: 0.9rem; color: var(--color-secondary); line-height: 1.6; margin-bottom: 20px;">
+                        Pisahkan Uang Pokok (sewa kos, tagihan, cicilan, tabungan) dari Uang Jajan harian secara tegas. Selama uang pokok terkunci aman, kamu bebas menikmati kopi dan camilan tanpa kepikiran.
+                    </p>
+                </div>
+                
+                <div class="card-preview-container" style="padding: 16px;">
+                    <div class="mental-mock">
+                        <div class="mental-card mental-locked">
+                            <div>
+                                <strong style="display: block; font-size: 0.85rem;">Uang Pokok &amp; Tabungan</strong>
+                                <small style="color: var(--color-secondary);">Terkunci aman</small>
+                            </div>
+                            <span style="font-weight: 700; font-family: 'DM Mono', monospace;">Rp 3.500.000</span>
+                        </div>
+                        <div class="mental-card mental-spendable">
+                            <div>
+                                <strong style="display: block; font-size: 0.85rem; color: #1b7a4d;">Uang Jajan Bebas</strong>
+                                <small style="color: #2b8257;">Tersedia periode ini</small>
+                            </div>
+                            <span style="font-weight: 800; font-size: 1.1rem; color: #1b7a4d; font-family: 'DM Mono', monospace;">Rp 750.000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Showcase 3: 100% Offline & SQLite Wide Card -->
+        <div class="showcase-card-wide sal-animate" data-sal="slide-up" data-sal-delay="500">
+            <div>
+                <span class="badge-tag" style="margin-bottom: 12px;">
+                    <span class="lucide-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
+                        </svg>
+                    </span>
+                    <span>100% Offline &amp; On-Device</span>
+                </span>
+                <h3 style="font-size: 1.55rem; margin: 0 0 12px 0; line-height: 1.25;">100% Offline &amp; Database SQLite di Ponsel Anda Sendiri</h3>
+                <p style="font-size: 0.95rem; color: var(--color-secondary); line-height: 1.6; margin-bottom: 20px;">
+                    Tanpa akun, tanpa email, dan tanpa koneksi internet. Izin <code>android.permission.INTERNET</code> dihapus total dari Android Manifest kami. Semua data catatan keuanganmu tersimpan aman dalam file database SQLite lokal di ponsel Anda tanpa risiko kebocoran privasi.
                 </p>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <span class="badge-tag">
+                        <span>🔒 0 Data Terkirim ke Cloud</span>
+                    </span>
+                    <span class="badge-tag">
+                        <span>⚡ Catat Numpad &lt; 2 Detik</span>
+                    </span>
+                    <span class="badge-tag">
+                        <span>📄 Lisensi Open-Source MIT</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Numpad Custom Display -->
+            <div class="numpad-mock" style="width: 100%; max-width: 280px;">
+                <div style="font-size: 0.75rem; color: #888; margin-bottom: 4px; display: flex; justify-content: space-between;">
+                    <span>Tambah Jajan</span>
+                    <span>Es Kopi Susu</span>
+                </div>
+                <div class="numpad-display">Rp 20.000</div>
+                <div class="numpad-presets">
+                    <span class="numpad-preset-btn">+5rb</span>
+                    <span class="numpad-preset-btn" style="background: #6ECE9D; color: #0A0A0A;">+10rb</span>
+                    <span class="numpad-preset-btn">+20rb</span>
+                    <span class="numpad-preset-btn">+50rb</span>
+                </div>
+                <div class="numpad-grid">
+                    <div class="numpad-key">1</div><div class="numpad-key">2</div><div class="numpad-key">3</div>
+                    <div class="numpad-key">4</div><div class="numpad-key">5</div><div class="numpad-key">6</div>
+                    <div class="numpad-key">7</div><div class="numpad-key">8</div><div class="numpad-key">9</div>
+                    <div class="numpad-key">000</div><div class="numpad-key">0</div><div class="numpad-key numpad-key-action">Simpan</div>
+                </div>
             </div>
         </div>
     </div>
@@ -1055,13 +1074,13 @@
         </div>
         
         <div class="nummeration" data-sal="slide-up">
-            <div class="number">5</div>
+            <div class="number">4</div>
             <div class="text">Bantuan &amp; Tanya Jawab</div>
         </div>
         
         <h2 data-sal="slide-up" data-sal-delay="100">Pertanyaan yang Sering Diajukan (FAQ)</h2>
         <p data-sal="slide-up" data-sal-delay="200">
-            Semua hal yang perlu kamu ketahui tentang keamanan, izin, dan update Jajan Tracker.
+            Semua hal yang perlu kamu ketahui tentang keamanan APK, izin aksesibilitas, dan update Jajan Tracker.
         </p>
 
         <!-- Interactive Accordion FAQ -->
@@ -1076,7 +1095,7 @@
                     </span>
                 </summary>
                 <div class="faq-answer">
-                    Sangat aman. Jajan Tracker adalah proyek open-source dengan lisensi MIT. Kode sumber kami 100% transparan dan dapat diaudit secara publik di GitHub. Aplikasi ini bahkan tidak meminta izin <code>android.permission.INTERNET</code> di AndroidManifest, sehingga secara teknis mustahil bagi aplikasi untuk mengirimkan data ke pihak ketiga.
+                    Sangat aman. Jajan Tracker adalah proyek open-source dengan lisensi MIT. Kode sumber kami 100% transparan dan dapat diaudit secara publik di GitHub. Aplikasi ini bahkan tidak meminta izin <code>android.permission.INTERNET</code> di AndroidManifest, sehingga secara teknis mustahil bagi aplikasi untuk mengirimkan data keuangan Anda ke pihak mana pun.
                 </div>
             </details>
 
@@ -1090,13 +1109,13 @@
                     </span>
                 </summary>
                 <div class="faq-answer">
-                    Izin <em>Accessibility Service</em> murni digunakan untuk mendeteksi kapan aplikasi Shopee atau scanner QRIS dibuka, sehingga sistem dapat memunculkan floating chip pengingat saldo selama 6 detik. Aplikasi sama sekali tidak membaca teks ketikan keyboard, password, ataupun chat pribadi.
+                    Izin <em>Accessibility Service</em> murni digunakan untuk mendeteksi kapan aplikasi Shopee atau scanner QRIS dibuka, sehingga sistem dapat memunculkan floating chip pengingat saldo selama 6 detik. Aplikasi sama sekali tidak membaca teks ketikan keyboard, password, ataupun riwayat chat pribadi Anda.
                 </div>
             </details>
 
             <details class="faq-item">
                 <summary class="faq-question">
-                    <span>Bagaimana cara update aplikasi ke versi baru tanpa kehilangan riwayat jajan?</span>
+                    <span>Bagaimana cara update aplikasi ke versi baru tanpa kehilangan data?</span>
                     <span class="lucide-icon faq-chevron">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m6 9 6 6 6-6"/>
@@ -1104,7 +1123,7 @@
                     </span>
                 </summary>
                 <div class="faq-answer">
-                    Kamu cukup mengunduh file APK versi terbaru dan menginstalnya langsung tanpa mencopot (uninstall) versi lama. Android akan otomatis menimpa file aplikasi, dan semua database SQLite lokal yang berisi catatan pengeluaranmu akan tetap utuh 100%.
+                    Anda cukup mengunduh file APK versi terbaru dan menginstalnya langsung tanpa mencopot (uninstall) versi lama. Android akan otomatis memperbarui aplikasi, dan semua database SQLite lokal yang berisi catatan pengeluaran Anda akan tetap utuh 100%.
                 </div>
             </details>
 

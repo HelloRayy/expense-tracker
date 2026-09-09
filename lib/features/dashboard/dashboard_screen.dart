@@ -223,60 +223,13 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                           const SizedBox(height: 24),
 
                           // Recent Transactions Header
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'Transaksi Terbaru',
-                                  style: TextStyle(
-                                    color: textPrimary,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              if (expenses.isNotEmpty)
-                                Material(
-                                  color: Colors.transparent,
-                                  child: InkWell(
-                                    onTap: expenses.length > 5
-                                        ? () {
-                                            setState(() {
-                                              _showAllTransactions = !_showAllTransactions;
-                                            });
-                                          }
-                                        : null,
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: elevatedColor,
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(color: borderColor),
-                                      ),
-                                      child: Text(
-                                        expenses.length > 5 && !_showAllTransactions
-                                            ? '5 dari ${expenses.length}'
-                                            : '${expenses.length} Transaksi',
-                                        style: TextStyle(
-                                          color: expenses.length > 5
-                                              ? PirschColors.mintGreen
-                                              : textSecondary,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
+                          Text(
+                            'Transaksi Terbaru',
+                            style: TextStyle(
+                              color: textPrimary,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                           const SizedBox(height: 12),
 
