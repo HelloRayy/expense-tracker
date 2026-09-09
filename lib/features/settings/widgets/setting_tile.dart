@@ -8,7 +8,8 @@ class SettingTile extends StatelessWidget {
   final Color? iconColor;
   final String title;
   final String subtitle;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
+  final Widget? trailing;
   final Color textPrimary;
   final Color textSecondary;
   final bool isDark;
@@ -20,7 +21,8 @@ class SettingTile extends StatelessWidget {
     this.iconColor,
     required this.title,
     required this.subtitle,
-    required this.onTap,
+    this.onTap,
+    this.trailing,
     required this.textPrimary,
     required this.textSecondary,
     required this.isDark,
@@ -76,11 +78,14 @@ class SettingTile extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    size: 20,
-                    color: textSecondary.withValues(alpha: 0.6),
-                  ),
+                  if (trailing != null)
+                    trailing!
+                  else
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      size: 20,
+                      color: textSecondary.withValues(alpha: 0.6),
+                    ),
                 ],
               ),
             ),

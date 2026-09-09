@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'core/constants/app_colors.dart';
 import 'core/services/native_bridge.dart';
+import 'core/theme/theme_controller.dart';
 import 'features/budget/repository/budget_repository.dart';
 import 'features/dashboard/dashboard_screen.dart';
 import 'features/quick_log/quick_log_dialog.dart';
@@ -11,6 +12,7 @@ import 'features/quick_log/quick_log_dialog.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('id_ID', null);
+  await ThemeController.instance.init();
 
   if (!kIsWeb) {
     // Dark translucent system status bar
@@ -84,38 +86,43 @@ class _JajanAppState extends State<JajanApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: _navigatorKey,
-      title: 'Jajan Tracker',
-      debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.system,
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: PirschColors.lightBg,
-        primaryColor: PirschColors.accessibleGreen,
-        colorScheme: const ColorScheme.light(
-          primary: PirschColors.accessibleGreen,
-          secondary: PirschColors.accessibleAmber,
-          surface: PirschColors.lightCard,
-          error: PirschColors.accessibleCrimson,
-        ),
-        fontFamily: 'Inter',
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: PirschColors.darkBg,
-        primaryColor: PirschColors.mintGreen,
-        colorScheme: const ColorScheme.dark(
-          primary: PirschColors.mintGreen,
-          secondary: PirschColors.warmYellow,
-          surface: PirschColors.darkCard,
-          error: PirschColors.roseRed,
-        ),
-        fontFamily: 'Inter',
-      ),
-      home: DashboardScreen(repository: widget.repository),
+    return ListenableBuilder(
+      listenable: ThemeController.instance,
+      builder: (context, _) {
+        return MaterialApp(
+          navigatorKey: _navigatorKey,
+          title: 'Jajan Tracker',
+          debugShowCheckedModeBanner: false,
+          themeMode: ThemeController.instance.themeMode,
+          theme: ThemeData(
+            useMaterial3: true,
+            brightness: Brightness.light,
+            scaffoldBackgroundColor: PirschColors.lightBg,
+            primaryColor: PirschColors.accessibleGreen,
+            colorScheme: const ColorScheme.light(
+              primary: PirschColors.accessibleGreen,
+              secondary: PirschColors.accessibleAmber,
+              surface: PirschColors.lightCard,
+              error: PirschColors.accessibleCrimson,
+            ),
+            fontFamily: 'Inter',
+          ),
+          darkTheme: ThemeData(
+            useMaterial3: true,
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: PirschColors.darkBg,
+            primaryColor: PirschColors.mintGreen,
+            colorScheme: const ColorScheme.dark(
+              primary: PirschColors.mintGreen,
+              secondary: PirschColors.warmYellow,
+              surface: PirschColors.darkCard,
+              error: PirschColors.roseRed,
+            ),
+            fontFamily: 'Inter',
+          ),
+          home: DashboardScreen(repository: widget.repository),
+        );
+      },
     );
   }
 }

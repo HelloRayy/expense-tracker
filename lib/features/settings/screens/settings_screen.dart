@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/theme/theme_controller.dart';
 import '../../budget/repository/budget_repository.dart';
 import '../widgets/setting_tile.dart';
 import 'budget_settings_detail_screen.dart';
@@ -151,80 +152,105 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return ListenableBuilder(
+      listenable: ThemeController.instance,
+      builder: (context, _) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final bgColor = PirschColors.bg(isDark);
-    final textPrimary = PirschColors.textPrimary(isDark);
-    final textSecondary = PirschColors.textSecondary(isDark);
+        final bgColor = PirschColors.bg(isDark);
+        final textPrimary = PirschColors.textPrimary(isDark);
+        final textSecondary = PirschColors.textSecondary(isDark);
 
-    return Scaffold(
-      backgroundColor: bgColor,
-      body: SafeArea(
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            // Top App Bar
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                child: Row(
-                  children: [
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () => Navigator.of(context).pop(),
-                        borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.arrow_back_rounded,
-                            color: textPrimary,
-                            size: 24,
+        return Scaffold(
+          backgroundColor: bgColor,
+          body: SafeArea(
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                // Top App Bar
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    child: Row(
+                      children: [
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => Navigator.of(context).pop(),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              child: Icon(
+                                Icons.arrow_back_rounded,
+                                color: textPrimary,
+                                size: 24,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Large Title
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-                child: Text(
-                  'Settings',
-                  style: TextStyle(
-                    color: textPrimary,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.5,
                   ),
                 ),
-              ),
-            ),
 
-            // Section 1: General
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'General',
+                // Large Title
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                    child: Text(
+                      'Settings',
                       style: TextStyle(
                         color: textPrimary,
-                        fontSize: 16,
+                        fontSize: 28,
                         fontWeight: FontWeight.w800,
-                        letterSpacing: -0.2,
+                        letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    SettingTile(
-                      icon: Icons.account_balance_wallet_outlined,
-                      title: 'Atur Budget Mingguan',
+                  ),
+                ),
+
+                // Section 1: General
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'General',
+                          style: TextStyle(
+                            color: textPrimary,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.2,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        SettingTile(
+                          icon: isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                          title: 'Mode Gelap',
+                          subtitle: isDark ? 'Tema gelap aktif' : 'Tema terang aktif',
+                          onTap: () {
+                            ThemeController.instance.toggleDarkMode(!isDark);
+                          },
+                          trailing: Switch.adaptive(
+                            value: isDark,
+                            activeThumbColor: PirschColors.mintGreen,
+                            activeTrackColor: PirschColors.mintGreen.withValues(alpha: 0.35),
+                            inactiveThumbColor: isDark ? const Color(0xFFA3A3A3) : const Color(0xFF666666),
+                            inactiveTrackColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE5E2D9),
+                            onChanged: (val) {
+                              ThemeController.instance.toggleDarkMode(val);
+                            },
+                          ),
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                          isDark: isDark,
+                          showDivider: true,
+                        ),
+                        SettingTile(
+                          icon: Icons.account_balance_wallet_outlined,
+                          title: 'Atur Budget Mingguan',
                       subtitle: 'Uang mingguan, target tabungan & kuota',
                       onTap: () {
                         Navigator.of(context).push(
@@ -312,6 +338,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ],
         ),
       ),
+    );
+      },
     );
   }
 }
