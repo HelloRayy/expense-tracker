@@ -74,6 +74,9 @@ class TestBudgetRepo extends ChangeNotifier implements BudgetRepository {
   Future<void> deleteExpense(int id) async {}
 
   @override
+  Future<void> resetAllExpenses() async {}
+
+  @override
   Future<void> updateBudget({
     int? weeklyIncome,
     int? weeklySavingsTarget,

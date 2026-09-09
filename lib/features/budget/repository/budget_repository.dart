@@ -67,6 +67,32 @@ class BudgetRepository extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
+    if (kIsWeb) {
+      _budget ??= BudgetModel.createDefault(income: 150000, savings: 50000);
+      if (_expenses.isEmpty) {
+        _expenses = [
+          ExpenseModel(
+            id: 1,
+            amount: 15000,
+            note: 'Kopi Kenangan',
+            createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+          ),
+          ExpenseModel(
+            id: 2,
+            amount: 25000,
+            note: 'Nasi Padang',
+            createdAt: DateTime.now().subtract(const Duration(hours: 5)),
+          ),
+        ];
+        _totalSpent = 40000;
+        _spentToday = 40000;
+        _spentUntilYesterday = 0;
+      }
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
+
     try {
       _budget = await _db.getBudget();
 
@@ -104,6 +130,19 @@ class BudgetRepository extends ChangeNotifier {
   }
 
   Future<void> addExpense(int amount, {String note = 'Jajan'}) async {
+    if (kIsWeb) {
+      final expense = ExpenseModel(
+        id: DateTime.now().millisecondsSinceEpoch,
+        amount: amount,
+        note: note,
+        createdAt: DateTime.now(),
+      );
+      _expenses.insert(0, expense);
+      _totalSpent += amount;
+      _spentToday += amount;
+      notifyListeners();
+      return;
+    }
     final expense = ExpenseModel(
       amount: amount,
       note: note,
@@ -114,7 +153,29 @@ class BudgetRepository extends ChangeNotifier {
   }
 
   Future<void> deleteExpense(int id) async {
+    if (kIsWeb) {
+      final item = _expenses.firstWhere((e) => e.id == id, orElse: () => ExpenseModel(amount: 0, note: '', createdAt: DateTime.now()));
+      _totalSpent -= item.amount;
+      _spentToday -= item.amount;
+      _expenses.removeWhere((e) => e.id == id);
+      notifyListeners();
+      return;
+    }
     await _db.deleteExpense(id);
+    await loadData();
+  }
+
+  Future<void> resetAllExpenses() async {
+    if (kIsWeb) {
+      _expenses.clear();
+      _totalSpent = 0;
+      _spentToday = 0;
+      _spentUntilYesterday = 0;
+      notifyListeners();
+      return;
+    }
+    final db = await _db.database;
+    await db.delete('expenses');
     await loadData();
   }
 
@@ -134,12 +195,17 @@ class BudgetRepository extends ChangeNotifier {
       startDate: BudgetModel.getMondayOfWeek(now),
       endDate: BudgetModel.getSundayOfWeek(now),
     );
+    if (kIsWeb) {
+      _budget = newBudget;
+      notifyListeners();
+      return;
+    }
     await _db.updateBudget(newBudget);
     await loadData();
   }
 
   Future<void> _syncNative() async {
-    if (_budget == null) return;
+    if (kIsWeb || _budget == null) return;
     // In native floating widget/overlay:
     // daily_safe represents today's remaining jajan allowance
     await _nativeBridge.syncBalanceToNative(

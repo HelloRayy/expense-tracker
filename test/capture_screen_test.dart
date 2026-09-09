@@ -11,6 +11,8 @@ import 'package:jajan_tracker/features/budget/models/expense_model.dart';
 import 'package:jajan_tracker/features/budget/repository/budget_repository.dart';
 import 'package:jajan_tracker/features/dashboard/dashboard_screen.dart';
 import 'package:jajan_tracker/features/quick_log/quick_log_dialog.dart';
+import 'package:jajan_tracker/features/settings/screens/budget_settings_detail_screen.dart';
+import 'package:jajan_tracker/features/settings/screens/settings_screen.dart';
 
 class MockBudgetRepo extends ChangeNotifier implements BudgetRepository {
   @override
@@ -78,6 +80,9 @@ class MockBudgetRepo extends ChangeNotifier implements BudgetRepository {
 
   @override
   Future<void> deleteExpense(int id) async {}
+
+  @override
+  Future<void> resetAllExpenses() async {}
 
   @override
   Future<void> updateBudget({
@@ -326,5 +331,157 @@ void main() {
 
     // Now all 8 items shown
     expect(find.text('8 Transaksi'), findsOneWidget);
+  });
+
+  testWidgets('Capture SettingsScreen real screenshot', (tester) async {
+    tester.view.physicalSize = const Size(1179, 2556);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final GlobalKey boundaryKey = GlobalKey();
+    final repo = MockBudgetRepo();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Inter',
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: PirschColors.darkBg,
+        ),
+        home: RepaintBoundary(
+          key: boundaryKey,
+          child: SettingsScreen(repository: repo),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final ui.Image image = await boundary.toImage(pixelRatio: 2.0);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final bytes = byteData!.buffer.asUint8List();
+
+      final outPath = '/home/rayhan/.gemini/antigravity/brain/c3cf172f-5299-4a70-bc5d-1e40b03dd06d/actual_settings_screen.png';
+      File(outPath).writeAsBytesSync(bytes);
+      print('SETTINGS SCREEN SAVED: $outPath');
+    });
+  });
+
+  testWidgets('Capture BudgetSettingsDetailScreen real screenshot', (tester) async {
+    tester.view.physicalSize = const Size(1179, 2556);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final GlobalKey boundaryKey = GlobalKey();
+    final repo = MockBudgetRepo();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Inter',
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: PirschColors.darkBg,
+        ),
+        home: RepaintBoundary(
+          key: boundaryKey,
+          child: BudgetSettingsDetailScreen(repository: repo),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final ui.Image image = await boundary.toImage(pixelRatio: 2.0);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final bytes = byteData!.buffer.asUint8List();
+
+      final outPath = '/home/rayhan/.gemini/antigravity/brain/c3cf172f-5299-4a70-bc5d-1e40b03dd06d/actual_budget_settings_detail.png';
+      File(outPath).writeAsBytesSync(bytes);
+      print('BUDGET SETTINGS DETAIL SAVED: $outPath');
+    });
+  });
+
+  testWidgets('Capture SettingsScreen Light Mode real screenshot', (tester) async {
+    tester.view.physicalSize = const Size(1179, 2556);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final GlobalKey boundaryKey = GlobalKey();
+    final repo = MockBudgetRepo();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Inter',
+          brightness: Brightness.light,
+          scaffoldBackgroundColor: PirschColors.lightBg,
+        ),
+        home: RepaintBoundary(
+          key: boundaryKey,
+          child: SettingsScreen(repository: repo),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final ui.Image image = await boundary.toImage(pixelRatio: 2.0);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final bytes = byteData!.buffer.asUint8List();
+
+      final outPath = '/home/rayhan/.gemini/antigravity/brain/c3cf172f-5299-4a70-bc5d-1e40b03dd06d/actual_settings_screen_light.png';
+      File(outPath).writeAsBytesSync(bytes);
+      print('SETTINGS SCREEN LIGHT SAVED: $outPath');
+    });
+  });
+
+  testWidgets('Capture BudgetSettingsDetailScreen Light Mode real screenshot', (tester) async {
+    tester.view.physicalSize = const Size(1179, 2556);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final GlobalKey boundaryKey = GlobalKey();
+    final repo = MockBudgetRepo();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Inter',
+          brightness: Brightness.light,
+          scaffoldBackgroundColor: PirschColors.lightBg,
+        ),
+        home: RepaintBoundary(
+          key: boundaryKey,
+          child: BudgetSettingsDetailScreen(repository: repo),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final ui.Image image = await boundary.toImage(pixelRatio: 2.0);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final bytes = byteData!.buffer.asUint8List();
+
+      final outPath = '/home/rayhan/.gemini/antigravity/brain/c3cf172f-5299-4a70-bc5d-1e40b03dd06d/actual_budget_settings_detail_light.png';
+      File(outPath).writeAsBytesSync(bytes);
+      print('BUDGET SETTINGS DETAIL LIGHT SAVED: $outPath');
+    });
   });
 }

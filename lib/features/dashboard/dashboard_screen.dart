@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
-import '../budget/dialogs/edit_budget_dialog.dart';
 import '../budget/models/expense_model.dart';
 import '../budget/repository/budget_repository.dart';
 import '../quick_log/quick_log_dialog.dart';
+import '../settings/screens/budget_settings_detail_screen.dart';
+import '../settings/screens/settings_screen.dart';
 import '../settings/shopee_settings_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -345,13 +346,14 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         const SizedBox(width: 8),
 
         // Shopee Watcher Button
+        // Settings Button
         Material(
           color: Colors.transparent,
           child: InkWell(
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => ShopeeSettingsScreen(repository: widget.repository),
+                  builder: (_) => SettingsScreen(repository: widget.repository),
                 ),
               );
             },
@@ -365,7 +367,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 border: Border.all(color: borderColor),
               ),
               alignment: Alignment.center,
-              child: Icon(Icons.storefront_rounded, color: textPrimary, size: 18),
+              child: Icon(Icons.tune_rounded, color: textPrimary, size: 18),
             ),
           ),
         ),
@@ -416,7 +418,15 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                     ),
                     const SizedBox(height: 3),
                     InkWell(
-                      onTap: () => EditBudgetDialog.show(context, widget.repository),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => BudgetSettingsDetailScreen(
+                              repository: widget.repository,
+                            ),
+                          ),
+                        );
+                      },
                       borderRadius: BorderRadius.circular(6),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -460,7 +470,15 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: () => EditBudgetDialog.show(context, widget.repository),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => SettingsScreen(
+                          repository: widget.repository,
+                        ),
+                      ),
+                    );
+                  },
                   borderRadius: BorderRadius.circular(16),
                   child: Container(
                     padding: const EdgeInsets.all(4),
@@ -583,7 +601,11 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
     if (isUnset) {
       message = 'Yuk atur budget mingguanmu!';
       buttonLabel = 'Atur budget';
-      buttonAction = () => EditBudgetDialog.show(context, widget.repository);
+      buttonAction = () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => BudgetSettingsDetailScreen(repository: widget.repository),
+        ),
+      );
     } else if (isOverBudget) {
       message = 'Batas jajan habis, tahan jajan dulu!';
       buttonLabel = 'Catat sekarang';
@@ -1061,12 +1083,16 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             },
           ),
 
-          // Nav 5: Settings / Edit Budget
+          // Nav 5: Settings
           IconButton(
-            tooltip: 'Pengaturan Budget',
+            tooltip: 'Pengaturan',
             icon: Icon(Icons.tune_rounded, color: textSecondary, size: 24),
             onPressed: () {
-              EditBudgetDialog.show(context, widget.repository);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => SettingsScreen(repository: widget.repository),
+                ),
+              );
             },
           ),
         ],
