@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --color-pirsch-dark: #0A0A0A;
+  --color-pirsch-card: #141414;
+  --color-pirsch-card-hover: #1A1A1A;
+  --color-pirsch-mint: #6ECE9D;
+  --color-pirsch-rose: #E87B7B;
+  --color-pirsch-amber: #F59E0B;
+}
+
+:root {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background-color: #0A0A0A;
+  color: #EBEBEB;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
