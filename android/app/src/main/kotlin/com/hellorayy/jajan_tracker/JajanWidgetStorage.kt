@@ -4,7 +4,6 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 object JajanWidgetStorage {
@@ -64,12 +63,21 @@ object JajanWidgetStorage {
                 userName = rawUserName.toString().trim()
             }
 
-            val rawAllowance = all["flutter.daily_allowance"] ?: all["daily_allowance"] ?: all["flutter.daily_safe"] ?: all["daily_safe"]
+            // Prioritize remaining_today / daily_safe so it matches the Dashboard Hero Card exactly
+            val rawAllowance = all["flutter.remaining_today"]
+                ?: all["remaining_today"]
+                ?: all["flutter.daily_safe"]
+                ?: all["daily_safe"]
+                ?: all["flutter.daily_allowance"]
+                ?: all["daily_allowance"]
             if (rawAllowance is Number) {
                 dailyAllowance = rawAllowance.toLong()
             }
 
-            val rawIncome = all["flutter.weekly_income"] ?: all["weekly_income"] ?: all["flutter.total_budget"] ?: all["total_budget"]
+            val rawIncome = all["flutter.weekly_income"]
+                ?: all["weekly_income"]
+                ?: all["flutter.total_budget"]
+                ?: all["total_budget"]
             if (rawIncome is Number) {
                 weeklyIncome = rawIncome.toLong()
             }
@@ -84,7 +92,10 @@ object JajanWidgetStorage {
                 remainingBalance = rawRemaining.toLong()
             }
 
-            val rawDailySafe = all["flutter.daily_safe"] ?: all["daily_safe"]
+            val rawDailySafe = all["flutter.remaining_today"]
+                ?: all["remaining_today"]
+                ?: all["flutter.daily_safe"]
+                ?: all["daily_safe"]
             if (rawDailySafe is Number) {
                 dailySafe = rawDailySafe.toLong()
             }
@@ -195,7 +206,7 @@ object JajanWidgetStorage {
 
                 val widgetData = WidgetData(
                     userName = defaultUserName,
-                    dailyAllowance = dailyAllowance,
+                    dailyAllowance = remainingToday, // Exactly matches dashboard hero display (Sisa Jajan Hari Ini)
                     weeklyIncome = weeklyIncome,
                     totalSpent = totalSpent,
                     remainingBalance = remainingBalance,
@@ -206,10 +217,11 @@ object JajanWidgetStorage {
                 val toSave = mapOf(
                     "user_name" to defaultUserName,
                     "daily_allowance" to dailyAllowance,
+                    "remaining_today" to remainingToday,
+                    "daily_safe" to remainingToday,
                     "weekly_income" to weeklyIncome,
                     "total_spent" to totalSpent,
-                    "remaining_balance" to remainingBalance,
-                    "daily_safe" to remainingToday
+                    "remaining_balance" to remainingBalance
                 )
                 saveWidgetData(context, toSave)
 
