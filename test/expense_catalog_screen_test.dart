@@ -84,6 +84,13 @@ class MockBudgetRepo extends ChangeNotifier implements BudgetRepository {
     int? totalBudget,
     int? paydayDay,
   }) async {}
+
+  @override
+  Future<void> batchAssignCategory({
+    required List<int> assignIds,
+    required String targetCategoryId,
+    required List<int> unassignIds,
+  }) async {}
 }
 
 void main() {

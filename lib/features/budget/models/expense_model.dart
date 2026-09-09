@@ -4,12 +4,14 @@ class ExpenseModel {
   final int? id;
   final int amount;
   final String note;
+  final String? categoryId;
   final DateTime createdAt;
 
   ExpenseModel({
     this.id,
     required this.amount,
     this.note = 'Jajan',
+    this.categoryId,
     required this.createdAt,
   });
 
@@ -42,6 +44,7 @@ class ExpenseModel {
       if (id != null) 'id': id,
       'amount': amount,
       'note': note.trim().isEmpty ? 'Jajan' : note.trim(),
+      'category_id': categoryId,
       'created_at': createdAt.toIso8601String(),
     };
   }
@@ -51,8 +54,26 @@ class ExpenseModel {
       id: map['id'] as int?,
       amount: map['amount'] as int? ?? 0,
       note: map['note'] as String? ?? 'Jajan',
+      categoryId: map['category_id'] as String?,
       createdAt: DateTime.tryParse(map['created_at'] as String? ?? '') ??
           DateTime.now(),
+    );
+  }
+
+  ExpenseModel copyWith({
+    int? id,
+    int? amount,
+    String? note,
+    String? categoryId,
+    bool clearCategory = false,
+    DateTime? createdAt,
+  }) {
+    return ExpenseModel(
+      id: id ?? this.id,
+      amount: amount ?? this.amount,
+      note: note ?? this.note,
+      categoryId: clearCategory ? null : (categoryId ?? this.categoryId),
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }

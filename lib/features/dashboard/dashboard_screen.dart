@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../budget/repository/budget_repository.dart';
+import '../categories/screens/category_assignment_screen.dart';
 import '../expense_catalog/screens/expense_catalog_screen.dart';
 import '../quick_log/quick_log_dialog.dart';
 import '../settings/screens/budget_settings_detail_screen.dart';
@@ -85,6 +86,17 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         builder: (_) => ExpenseCatalogScreen(
           repository: widget.repository,
           initialCategory: category,
+        ),
+      ),
+    );
+  }
+
+  void _openCategoryAssignment(String category) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CategoryAssignmentScreen(
+          repository: widget.repository,
+          selectedCategoryId: category,
         ),
       ),
     );
@@ -195,7 +207,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             borderColor: borderColor,
                             textPrimary: textPrimary,
                             textSecondary: textSecondary,
-                            onSelectCategory: _openExpenseCatalog,
+                            onSelectCategory: _openCategoryAssignment,
                           ),
                           const SizedBox(height: 24),
 

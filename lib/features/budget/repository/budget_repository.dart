@@ -179,6 +179,33 @@ class BudgetRepository extends ChangeNotifier {
     await loadData();
   }
 
+  /// Batch assign category to transactions and unassign deselected ones.
+  Future<void> batchAssignCategory({
+    required List<int> assignIds,
+    required String targetCategoryId,
+    required List<int> unassignIds,
+  }) async {
+    if (kIsWeb) {
+      for (int i = 0; i < _expenses.length; i++) {
+        final exp = _expenses[i];
+        if (exp.id != null && assignIds.contains(exp.id)) {
+          _expenses[i] = exp.copyWith(categoryId: targetCategoryId);
+        } else if (exp.id != null && unassignIds.contains(exp.id)) {
+          _expenses[i] = exp.copyWith(clearCategory: true);
+        }
+      }
+      notifyListeners();
+      return;
+    }
+
+    await _db.batchUpdateExpenseCategories(
+      assignIds: assignIds,
+      targetCategoryId: targetCategoryId,
+      unassignIds: unassignIds,
+    );
+    await loadData();
+  }
+
   Future<void> updateBudget({
     int? weeklyIncome,
     int? weeklySavingsTarget,

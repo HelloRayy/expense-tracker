@@ -22,7 +22,7 @@ class DbHelper {
 
     return await openDatabase(
       path,
-      version: 4,
+      version: 5,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE IF NOT EXISTS budget (
@@ -55,12 +55,16 @@ class DbHelper {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             amount INTEGER NOT NULL,
             note TEXT NOT NULL,
+            category_id TEXT DEFAULT NULL,
             created_at TEXT NOT NULL
           )
         ''');
 
         await db.execute('''
           CREATE INDEX IF NOT EXISTS idx_expenses_created_at ON expenses (created_at DESC)
+        ''');
+        await db.execute('''
+          CREATE INDEX IF NOT EXISTS idx_expenses_category_id ON expenses (category_id)
         ''');
 
         // Insert default initial weekly budget (Rp 0 income, Rp 0 savings target)
@@ -103,6 +107,14 @@ class DbHelper {
             await db.execute('ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
           } catch (_) {}
         }
+        if (oldVersion < 5) {
+          try {
+            await db.execute('ALTER TABLE expenses ADD COLUMN category_id TEXT DEFAULT NULL');
+          } catch (_) {}
+          try {
+            await db.execute('CREATE INDEX IF NOT EXISTS idx_expenses_category_id ON expenses (category_id)');
+          } catch (_) {}
+        }
       },
       onOpen: (db) async {
         try {
@@ -116,6 +128,12 @@ class DbHelper {
         } catch (_) {}
         try {
           await db.execute('ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
+        } catch (_) {}
+        try {
+          await db.execute('ALTER TABLE expenses ADD COLUMN category_id TEXT DEFAULT NULL');
+        } catch (_) {}
+        try {
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_expenses_category_id ON expenses (category_id)');
         } catch (_) {}
       },
     );
@@ -213,5 +231,44 @@ class DbHelper {
     final todayStart = DateTime(now.year, now.month, now.day);
     final todayEnd = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
     return await getTotalSpentForPeriod(todayStart, todayEnd);
+  }
+
+  /// Atomic batch assignment of categories to multiple expenses.
+  Future<void> batchUpdateExpenseCategories({
+    required List<int> assignIds,
+    required String targetCategoryId,
+    required List<int> unassignIds,
+  }) async {
+    final db = await database;
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+      for (final id in assignIds) {
+        batch.update(
+          'expenses',
+          {'category_id': targetCategoryId},
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+      }
+      for (final id in unassignIds) {
+        batch.update(
+          'expenses',
+          {'category_id': null},
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+      }
+      await batch.commit(noResult: true);
+    });
+  }
+
+  /// Retrieves all recorded expenses without period restrictions.
+  Future<List<ExpenseModel>> getAllExpenses() async {
+    final db = await database;
+    final res = await db.query(
+      'expenses',
+      orderBy: 'created_at DESC',
+    );
+    return res.map((m) => ExpenseModel.fromMap(m)).toList();
   }
 }

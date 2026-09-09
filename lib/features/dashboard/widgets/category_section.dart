@@ -31,23 +31,22 @@ class CategorySection extends StatelessWidget {
     int shoppingTotal = 0;
 
     for (final exp in expenses) {
-      final note = exp.note.toLowerCase();
-      if (note.contains('kopi') || note.contains('coffee') || note.contains('minum') || note.contains('jus')) {
-        coffeeTotal += exp.amount;
-      } else if (note.contains('makan') || note.contains('lunch') || note.contains('dinner') || note.contains('nasi') || note.contains('mie')) {
+      if (exp.categoryId == 'Makanan') {
         foodTotal += exp.amount;
-      } else if (note.contains('ojek') || note.contains('gojek') || note.contains('grab') || note.contains('bensin') || note.contains('parkir')) {
+      } else if (exp.categoryId == 'Kopi' || exp.categoryId == 'Kopi & Minum') {
+        coffeeTotal += exp.amount;
+      } else if (exp.categoryId == 'Transport') {
         transportTotal += exp.amount;
-      } else {
+      } else if (exp.categoryId == 'Belanja' || exp.categoryId == 'Belanja/QRIS') {
         shoppingTotal += exp.amount;
       }
     }
 
     final categories = [
       {'icon': Icons.restaurant_rounded, 'color': PirschColors.coralOrange, 'title': 'Makanan', 'total': foodTotal, 'category': 'Makanan'},
-      {'icon': Icons.local_cafe_rounded, 'color': PirschColors.mintGreen, 'title': 'Kopi & Minum', 'total': coffeeTotal, 'category': 'Kopi'},
+      {'icon': Icons.local_cafe_rounded, 'color': PirschColors.mintGreen, 'title': 'Kopi & Minum', 'total': coffeeTotal, 'category': 'Kopi & Minum'},
       {'icon': Icons.directions_car_rounded, 'color': const Color(0xFF60A5FA), 'title': 'Transport', 'total': transportTotal, 'category': 'Transport'},
-      {'icon': Icons.shopping_bag_rounded, 'color': PirschColors.warmYellow, 'title': 'Belanja/QRIS', 'total': shoppingTotal, 'category': 'Belanja'},
+      {'icon': Icons.shopping_bag_rounded, 'color': PirschColors.warmYellow, 'title': 'Belanja/QRIS', 'total': shoppingTotal, 'category': 'Belanja/QRIS'},
     ];
 
     return Column(
