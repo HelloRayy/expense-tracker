@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/app_colors.dart';
 
 /// Secondary Nudge & Action Card for Dashboard.
-/// Displays contextual reminders and a pill action button (e.g., 'Atur budget' or 'Catat sekarang').
+/// Tappable contextual card with leading status icon and compact action indicator.
 class NudgeBanner extends StatelessWidget {
   final int weeklyIncome;
   final int dailyAllowance;
@@ -30,30 +31,34 @@ class NudgeBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isUnset = weeklyIncome <= 0;
     final String message;
-    final String buttonLabel;
     final VoidCallback buttonAction;
+    final IconData statusIcon;
+    final Color statusColor;
 
     if (isUnset) {
-      message = 'Yuk atur budget mingguanmu!';
-      buttonLabel = 'Atur budget';
+      message = 'Atur budget mingguanmu';
       buttonAction = onConfigureBudget;
+      statusIcon = Icons.tune_rounded;
+      statusColor = PirschColors.yellow(isDark);
     } else if (isOverBudget) {
-      message = 'Batas jajan habis, tahan jajan dulu!';
-      buttonLabel = 'Catat sekarang';
+      message = 'Batas budget terlampaui';
       buttonAction = onQuickLog;
+      statusIcon = Icons.warning_amber_rounded;
+      statusColor = PirschColors.red(isDark);
     } else if (dailyAllowance < 20000) {
-      message = 'Jatah menipis, catat pengeluaran!';
-      buttonLabel = 'Catat sekarang';
+      message = 'Jatah harian menipis';
       buttonAction = onQuickLog;
+      statusIcon = Icons.trending_down_rounded;
+      statusColor = PirschColors.yellow(isDark);
     } else {
-      message = 'Ada jajan yang belum dicatat?';
-      buttonLabel = 'Catat sekarang';
+      message = 'Ada pengeluaran baru?';
       buttonAction = onQuickLog;
+      statusIcon = Icons.add_circle_outline_rounded;
+      statusColor = PirschColors.green(isDark);
     }
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(20),
@@ -66,45 +71,55 @@ class NudgeBanner extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                message,
-                style: TextStyle(
-                  color: textPrimary,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: buttonAction,
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Icon(
+                  statusIcon,
+                  size: 18,
+                  color: statusColor,
                 ),
-                maxLines: 1,
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Material(
-            color: isDark ? Colors.white : Colors.black,
-            borderRadius: BorderRadius.circular(20),
-            child: InkWell(
-              onTap: buttonAction,
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                child: Text(
-                  buttonLabel,
-                  style: TextStyle(
-                    color: isDark ? Colors.black : Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    message,
+                    style: TextStyle(
+                      color: textPrimary,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ),
+                const SizedBox(width: 8),
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.05),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 14,
+                    color: textPrimary.withValues(alpha: 0.7),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

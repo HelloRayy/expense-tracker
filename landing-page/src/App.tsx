@@ -5,6 +5,7 @@ import { Smartphone, ArrowDown, ArrowUp, Zap, Shield, Check, Download } from 'lu
 export default function App() {
   const [weeklyIncome, setWeeklyIncome] = useState<number>(1500000)
   const [totalSpent, setTotalSpent] = useState<number>(205000)
+  const [activeCard, setActiveCard] = useState<string>('personal')
   const savings = Math.round(weeklyIncome * 0.3)
   const spendable = Math.max(0, weeklyIncome - savings)
   // Assuming 5 days left in week (Wednesday to Sunday)
@@ -21,8 +22,8 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#EBEBEB] selection:bg-[#6ECE9D]/30 selection:text-[#6ECE9D]">
       {/* Navigation */}
-      <nav className="border-b border-white/[0.08] backdrop-blur-md sticky top-0 z-50 bg-[#0A0A0A]/80">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <nav className="border-b border-white/[0.08] backdrop-blur-md sticky top-0 z-50 bg-transparent">
+        <div className="max-w-6xl mx-auto px-6 h-[72px] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-[#141414] border border-white/10 flex items-center justify-center font-bold text-[#6ECE9D]">
               J
@@ -233,6 +234,156 @@ export default function App() {
             <p className="text-sm text-[#A3A3A3] leading-relaxed">
               Semua data transaksi tersimpan aman di SQLite internal HP kamu. Tidak ada backend server, tidak ada tracking.
             </p>
+          </div>
+        </section>
+
+        {/* Raycast Get Your Time Back Section */}
+        <section className="mt-32 pt-16 border-t border-white/[0.08] relative overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-[440px_1fr] gap-[85px] text-[#ffffff] text-base leading-normal items-center">
+            {/* Left Column */}
+            <div className="flex flex-col items-start justify-center gap-12 p-6 leading-normal max-w-[320px]">
+              <div className="h-fit leading-normal">
+                <h2 className="text-xl font-medium text-white tracking-[0.2px] leading-[26px]">Bukan hanya hemat uang.</h2>
+                <p className="text-[#6a6b6c] text-xl font-medium tracking-[0.2px] leading-[26px]">Tapi merasa tidak pernah menyia-nyiakannya.</p>
+              </div>
+              <div className="flex items-center gap-[10px]">
+                <a
+                  href="https://github.com/HelloRayy/expense-tracker/releases/download/v1.0.0/app-release.apk"
+                  className="flex items-center justify-center gap-2 py-2 px-3.5 bg-[#e6e6e6] text-[#2f3031] text-sm font-medium rounded-lg shadow-[rgba(0,_0,_0,_0.5)_0px_0px_0px_2px,_rgba(255,_255,_255,_0.19)_0px_0px_14px_0px,_rgba(0,_0,_0,_0.2)_0px_-1px_0.4px_0px_inset,_rgb(255,_255,_255)_0px_1px_0.4px_0px_inset] h-[36px] leading-normal transition-all duration-150 hover:bg-[#d6d6d6] active:scale-[0.98]"
+                >
+                  <Download size={15} />
+                  <span className="leading-normal">Download</span>
+                </a>
+                <a
+                  href="https://github.com/HelloRayy/expense-tracker"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center gap-2 py-2 px-3.5 bg-[#ffffff0a] border border-[#ffffff2e] text-white text-sm font-medium rounded-lg h-[36px] leading-normal transition-all duration-150 hover:bg-white/10 active:scale-[0.98]"
+                >
+                  <svg className="w-[15px] h-[15px] fill-current" viewBox="0 0 24 24">
+                    <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                  </svg>
+                  <span className="leading-normal">GitHub</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Right Column: Keyboard canvas preview */}
+            <div className="relative overflow-hidden [mask-image:radial-gradient(95%_70%_at_17.02%_47.84%,rgb(217,217,217)_16.79%,rgba(217,217,217,0)_83.76%)]">
+              <div className="flex flex-col gap-3 leading-tight transition-all">
+                <div className="flex gap-3 h-[110px] leading-tight transition-all overflow-hidden font-mono text-sm opacity-20">
+                  {['esc', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12'].map((key) => (
+                    <div key={key} className="w-[110px] h-[110px] rounded-[11px] bg-[#121212] border border-white/10 p-3 flex items-start justify-start text-xs font-semibold">
+                      {key}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-3 h-[110px] leading-tight transition-all overflow-hidden font-mono text-sm opacity-20">
+                  {['± §', '! 1', '@ 2', '# 3', '$ 4', '% 5', '^ 6', '& 7', '* 8', '( 9', ') 0', '_ -', '+ =', 'delete'].map((key) => (
+                    <div key={key} className="w-[110px] h-[110px] rounded-[11px] bg-[#121212] border border-white/10 p-3 flex items-start justify-start text-xs font-semibold">
+                      {key}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-3 h-[110px] leading-tight transition-all overflow-hidden text-sm">
+                  {/* Fast Card */}
+                  <div
+                    onClick={() => setActiveCard('fast')}
+                    className={`cursor-pointer grid py-[14.5px] px-[15px] text-[#ffffff] text-2xl font-medium rounded-[11px] h-[110px] w-[178px] leading-tight transition-all ${
+                      activeCard === 'fast'
+                        ? 'opacity-100 bg-[#222222] shadow-[rgba(0,_0,_0,_0.4)_0px_1.5px_0.5px_2.5px,_rgb(0,_0,_0)_0px_0px_0.5px_1px,_rgba(0,_0,_0,_0.25)_0px_2px_1px_1px_inset,_rgba(255,_255,_255,_0.2)_0px_1px_1px_1px_inset,_rgba(0,_0,_0,_0)_0px_0px_0px_0px_inset]'
+                        : 'opacity-70 bg-[#141414] hover:opacity-95'
+                    }`}
+                  >
+                    <div className="flex items-start h-[40.5px] w-full leading-tight transition-all">
+                      <Zap size={20} className="text-white" />
+                    </div>
+                    <span className="text-[#9c9c9d] text-base leading-tight transition-all">
+                      <strong className="text-[#ffffff] font-bold leading-tight transition-all">Fast.</strong> Think in milliseconds.
+                    </span>
+                  </div>
+
+                  {/* Ergonomic Card */}
+                  <div
+                    onClick={() => setActiveCard('ergo')}
+                    className={`cursor-pointer grid py-[14.5px] px-[15px] text-[#ffffff] text-2xl font-medium rounded-[11px] h-[110px] w-[208px] leading-tight transition-all ${
+                      activeCard === 'ergo'
+                        ? 'opacity-100 bg-[#222222] shadow-[rgba(0,_0,_0,_0.4)_0px_1.5px_0.5px_2.5px,_rgb(0,_0,_0)_0px_0px_0.5px_1px,_rgba(0,_0,_0,_0.25)_0px_2px_1px_1px_inset,_rgba(255,_255,_255,_0.2)_0px_1px_1px_1px_inset,_rgba(0,_0,_0,_0)_0px_0px_0px_0px_inset]'
+                        : 'opacity-70 bg-[#141414] hover:opacity-95'
+                    }`}
+                  >
+                    <div className="flex items-start h-[40.5px] w-full leading-tight transition-all">
+                      <Smartphone size={20} className="text-white" />
+                    </div>
+                    <span className="text-[#9c9c9d] text-base leading-tight transition-all">
+                      <strong className="text-[#ffffff] font-bold leading-tight transition-all">Ergonomic.</strong> Keyboard First.
+                    </span>
+                  </div>
+
+                  {['E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{ [', '} ]', '| \\'].map((key) => (
+                    <div key={key} className="w-[110px] h-[110px] rounded-[11px] bg-[#121212] border border-white/10 p-3 flex items-center justify-center text-lg font-semibold opacity-20">
+                      {key}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex gap-3 h-[110px] leading-tight transition-all overflow-hidden text-sm">
+                  {/* Personal Card */}
+                  <div
+                    onClick={() => setActiveCard('personal')}
+                    className={`cursor-pointer grid py-[14.5px] px-[15px] text-[#ffffff] text-2xl font-medium rounded-[11px] h-[110px] w-[208px] leading-tight transition-all ${
+                      activeCard === 'personal'
+                        ? 'opacity-100 bg-[#222222] shadow-[rgba(0,_0,_0,_0.4)_0px_1.5px_0.5px_2.5px,_rgb(0,_0,_0)_0px_0px_0.5px_1px,_rgba(0,_0,_0,_0.25)_0px_2px_1px_1px_inset,_rgba(255,_255,_255,_0.2)_0px_1px_1px_1px_inset,_rgba(0,_0,_0,_0)_0px_0px_0px_0px_inset]'
+                        : 'opacity-70 bg-[#141414] hover:opacity-95'
+                    }`}
+                  >
+                    <div className="flex items-start h-[40.5px] w-full leading-tight transition-all">
+                      <Shield size={20} className="text-white" />
+                    </div>
+                    <span className="text-[#9c9c9d] text-base leading-tight transition-all">
+                      <strong className="text-[#ffffff] font-bold leading-tight transition-all">Personal.</strong> Your tools, your way.
+                    </span>
+                  </div>
+
+                  {/* Reliable Card */}
+                  <div
+                    onClick={() => setActiveCard('reliable')}
+                    className={`cursor-pointer grid py-[14.5px] px-[15px] text-[#ffffff] text-2xl font-medium rounded-[11px] h-[110px] w-[178px] leading-tight transition-all ${
+                      activeCard === 'reliable'
+                        ? 'opacity-100 bg-[#222222] shadow-[rgba(0,_0,_0,_0.4)_0px_1.5px_0.5px_2.5px,_rgb(0,_0,_0)_0px_0px_0.5px_1px,_rgba(0,_0,_0,_0.25)_0px_2px_1px_1px_inset,_rgba(255,_255,_255,_0.2)_0px_1px_1px_1px_inset,_rgba(0,_0,_0,_0)_0px_0px_0px_0px_inset]'
+                        : 'opacity-70 bg-[#141414] hover:opacity-95'
+                    }`}
+                  >
+                    <div className="flex items-start h-[40.5px] w-full leading-tight transition-all">
+                      <Check size={20} className="text-white" />
+                    </div>
+                    <span className="text-[#9c9c9d] text-base leading-tight transition-all">
+                      <strong className="text-[#ffffff] font-bold leading-tight transition-all">Reliable.</strong> 99.8% crash-free rate.
+                    </span>
+                  </div>
+
+                  {['S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ': ;', '" \''].map((key) => (
+                    <div key={key} className="w-[110px] h-[110px] rounded-[11px] bg-[#121212] border border-white/10 p-3 flex items-center justify-center text-lg font-semibold opacity-20">
+                      {key}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-3 h-[110px] leading-tight transition-all overflow-hidden font-mono text-sm opacity-20">
+                  {['~ `', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '< ,', '> .', '? /'].map((key) => (
+                    <div key={key} className="w-[110px] h-[110px] rounded-[11px] bg-[#121212] border border-white/10 p-3 flex items-center justify-center text-lg font-semibold">
+                      {key}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-3 h-[110px] leading-tight transition-all overflow-hidden font-mono text-xs opacity-20">
+                  {['fn', 'control', 'option', 'command', 'space', 'command', 'option'].map((key) => (
+                    <div key={key} className="h-[110px] px-6 rounded-[11px] bg-[#121212] border border-white/10 flex items-center justify-center font-medium">
+                      {key}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </main>

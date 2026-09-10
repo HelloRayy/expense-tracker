@@ -35,10 +35,10 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
     final savings = current?.weeklySavingsTarget ?? 0;
 
     _incomeController = TextEditingController(
-      text: income > 0 ? income.toString() : '',
+      text: income > 0 ? CurrencyFormatter.formatNumber(income) : '',
     );
     _savingsController = TextEditingController(
-      text: savings > 0 ? savings.toString() : '',
+      text: savings > 0 ? CurrencyFormatter.formatNumber(savings) : '',
     );
   }
 
@@ -343,6 +343,9 @@ class _BudgetSettingsDetailScreenState extends State<BudgetSettingsDetailScreen>
                   child: TextField(
                     controller: controller,
                     keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      ThousandsSeparatorInputFormatter(),
+                    ],
                     onChanged: (_) => setState(() => _errorMessage = null),
                     style: TextStyle(
                       color: textPrimary,
