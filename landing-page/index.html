@@ -1059,6 +1059,10 @@
 .p-\[24px_0px\] { padding: 24px 0px; }
 .p-\[55px_15px_0px_15px\] { padding: 55px 15px 0px; }
 .p-\[8px_12px\] { padding: 8px 12px; }
+.p-\[8px_14px\] { padding: 8px 14px; }
+.p-\[8px_16px\] { padding: 8px 16px; }
+.h-\[38px\] { height: 38px; }
+.w-\[430px\] { width: 430px; }
 .text-left { text-align: left; }
 .text-center { text-align: center; }
 .text-right { text-align: right; }
@@ -1070,8 +1074,13 @@
 .text-\[20px\]\/\[normal\] { font-size: 20px; line-height: normal; }
 .text-\[23\.75px\]\/\[36px\] { font-size: 23.75px; line-height: 36px; }
 .text-\[24px\]\/\[36px\] { font-size: 24px; line-height: 36px; }
+.text-\[28px\]\/\[36px\] { font-size: 28px; line-height: 36px; }
 .text-\[32px\]\/\[48px\] { font-size: 32px; line-height: 48px; }
 .font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.hover\:bg-white\/10:hover { background-color: rgba(255, 255, 255, 0.1); }
+.hover\:bg-\[\#d6d6d6\]:hover { background-color: #d6d6d6; }
+.active\:scale-\[0\.98\]:active { transform: scale(0.98); }
 .tracking-\[0\.2px\] { letter-spacing: 0.2px; }
 .text-\[\#2f3031\] { --tw-text-opacity: 1; color: rgb(47 48 49 / var(--tw-text-opacity, 1)); }
 .text-\[\#6a6b6c\] { --tw-text-opacity: 1; color: rgb(106 107 108 / var(--tw-text-opacity, 1)); }
@@ -3334,30 +3343,30 @@
     <div class="section-content" style="max-width: 100%; padding: 0;">
 <div
       data-pencil-id="K84jx"
-      data-pencil-name="Feature Showcase Reel"
-      class="box-border w-full max-w-[1441.67px] mx-auto h-fit flex flex-col gap-[36px] p-[80px_0px] justify-start items-center bg-[#0a0a0c] overflow-hidden rounded-[24px]"
+      data-pencil-name="section-card"
+      class="box-border w-full max-w-[1441.67px] mx-auto h-fit flex flex-col items-center justify-start gap-9 py-20 px-0 bg-[#0a0a0c] text-white text-base rounded-3xl leading-normal overflow-hidden"
     >
       <div
         data-pencil-id="T62CvV"
         data-pencil-name="Top Bar"
-        class="box-border w-full max-w-[1200px] px-6 lg:px-0 h-fit shrink-0 flex flex-wrap gap-4 justify-between items-center"
+        class="box-border w-full max-w-[1200px] px-6 lg:px-0 h-fit shrink-0 flex flex-wrap gap-4 justify-between items-center leading-normal"
       >
         <div
           data-pencil-id="ODIRz"
           data-pencil-name="Title Group"
-          class="box-border w-auto max-w-[480px] shrink-0 h-fit flex flex-col gap-[6px] justify-start items-start"
+          class="box-border w-auto max-w-[520px] shrink-0 h-fit flex flex-col items-start justify-start gap-1.5 leading-normal"
         >
           <div
             data-pencil-id="pleHN"
             data-pencil-name="Title"
-            class="text-[26px]/[normal] box-border w-full text-[#ffffff] font-[Inter,system-ui,sans-serif] font-semibold tracking-[-0.5px] text-left"
+            class="text-2xl md:text-3xl font-semibold tracking-[-0.5px] text-white w-full text-left"
           >
             Ada fitur cerdas untuk setiap rupiahmu.
           </div>
           <div
             data-pencil-id="e42Bbj"
             data-pencil-name="Subtitle"
-            class="text-[15px]/[21px] box-border w-full text-[#8f9099] font-[Inter,system-ui,sans-serif] font-normal text-left"
+            class="text-[15px]/[21px] text-[#8f9099] leading-snug w-full text-left font-normal"
           >
             Kelola dan amankan uang jajan harian tanpa ribet buka aplikasi.
           </div>
@@ -3365,12 +3374,12 @@
         <div
           data-pencil-id="sSj8V"
           data-pencil-name="Category Pills"
-          class="box-border w-fit max-w-full shrink-0 h-fit flex flex-row gap-[8px] p-[6px_8px] justify-start items-center overflow-x-auto [scrollbar-width:none] [background-image:linear-gradient(-94.263deg,_#111214_19.299%,_#0c0d0f_67.739%)] bg-no-repeat bg-[length:100%_100%] [border:1.5px_solid_#ffffff00] rounded-[32px]"
+          class="box-border w-fit max-w-full shrink-0 h-[52.8px] flex flex-row items-center justify-start gap-2 py-1.5 px-2 rounded-[32px] border border-white/0 [background-image:linear-gradient(-94.263deg,_#111214_19.299%,_#0c0d0f_67.739%)] bg-no-repeat bg-[length:100%_100%] overflow-x-auto [scrollbar-width:none] leading-normal"
         >
           <div
             data-pencil-id="SnHfm"
             data-pencil-name="Active Pill"
-            class="showcase-pill cursor-pointer active box-border w-fit shrink-0 h-fit [box-shadow:0px_4px_10px_0px_#00000066] flex flex-row gap-0 p-[10px_18px] justify-center items-center [background-image:radial-gradient(ellipse_55%_90%_at_50%_10%,_#5a5a5a_0%,_#1a1a1a_100%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff2e] rounded-[24px]"
+            class="showcase-pill cursor-pointer active box-border flex items-center justify-center py-2.5 px-[18px] rounded-3xl border border-white/18 shadow-[rgba(0,_0,_0,_0.4)_0px_4px_10px_0px] [background-image:radial-gradient(ellipse_55%_90%_at_50%_10%,_#5a5a5a_0%,_#1a1a1a_100%)] bg-no-repeat bg-[length:100%_100%] h-[38.7px] min-w-[120px] leading-normal text-white text-sm font-medium tracking-[0.2px] whitespace-nowrap transition-all"
             onclick="scrollShowcase(0, this)"
           >
             <div
@@ -3384,7 +3393,7 @@
           <div
             data-pencil-id="j6zjbh"
             data-pencil-name="Pill - Widget Cepat"
-            class="showcase-pill cursor-pointer box-border w-fit shrink-0 h-fit flex flex-row gap-0 p-[10px_14px] justify-center items-center rounded-[24px] transition-all hover:bg-white/5"
+            class="showcase-pill cursor-pointer box-border flex items-center justify-center py-2.5 px-3.5 rounded-3xl h-[36.7px] min-w-[120px] leading-normal text-[#8e9095] hover:text-white hover:bg-white/5 text-sm font-medium tracking-[0.2px] whitespace-nowrap transition-all border border-transparent"
             onclick="scrollShowcase(0, this)"
           >
             <div
@@ -3398,8 +3407,8 @@
           <div
             data-pencil-id="iGkXG"
             data-pencil-name="Pill - Smart Nudge"
-            class="showcase-pill cursor-pointer box-border w-fit shrink-0 h-fit flex flex-row gap-0 p-[10px_14px] justify-center items-center rounded-[24px] transition-all hover:bg-white/5"
-            onclick="scrollShowcase(364, this)"
+            class="showcase-pill cursor-pointer box-border flex items-center justify-center py-2.5 px-3.5 rounded-3xl h-[36.7px] min-w-[118px] leading-normal text-[#8e9095] hover:text-white hover:bg-white/5 text-sm font-medium tracking-[0.2px] whitespace-nowrap transition-all border border-transparent"
+            onclick="scrollShowcase(384, this)"
           >
             <div
               data-pencil-id="j3rJZ"
@@ -3412,8 +3421,8 @@
           <div
             data-pencil-id="CUII2"
             data-pencil-name="Pill - Amplop Mental"
-            class="showcase-pill cursor-pointer box-border w-fit shrink-0 h-fit flex flex-row gap-0 p-[10px_14px] justify-center items-center rounded-[24px] transition-all hover:bg-white/5"
-            onclick="scrollShowcase(728, this)"
+            class="showcase-pill cursor-pointer box-border flex items-center justify-center py-2.5 px-3.5 rounded-3xl h-[36.7px] min-w-[130px] leading-normal text-[#8e9095] hover:text-white hover:bg-white/5 text-sm font-medium tracking-[0.2px] whitespace-nowrap transition-all border border-transparent"
+            onclick="scrollShowcase(768, this)"
           >
             <div
               data-pencil-id="HNFgf"
@@ -3426,8 +3435,8 @@
           <div
             data-pencil-id="MTjne"
             data-pencil-name="Pill - Privasi SQLite"
-            class="showcase-pill cursor-pointer box-border w-fit shrink-0 h-fit flex flex-row gap-0 p-[10px_14px] justify-center items-center rounded-[24px] transition-all hover:bg-white/5"
-            onclick="scrollShowcase(728, this)"
+            class="showcase-pill cursor-pointer box-border flex items-center justify-center py-2.5 px-3.5 rounded-3xl h-[36.7px] min-w-[122px] leading-normal text-[#8e9095] hover:text-white hover:bg-white/5 text-sm font-medium tracking-[0.2px] whitespace-nowrap transition-all border border-transparent"
+            onclick="scrollShowcase(768, this)"
           >
             <div
               data-pencil-id="aZoHm"
@@ -3442,17 +3451,19 @@
       <div
         data-pencil-id="n9PyPM"
         data-pencil-name="Reel Carousel Container"
-        id="showcaseTrack" class="box-border w-full h-fit shrink-0 flex flex-row gap-[24px] p-[0px_60px_20px_60px] justify-start items-start overflow-x-auto [scrollbar-width:none]"
+        id="showcaseTrack"
+        class="box-border w-full h-fit shrink-0 flex items-start justify-start gap-6 p-[0px_24px_24px_24px] md:p-[0px_60px_24px_60px] lg:p-[0px_120px_24px_120px] overflow-x-auto [scrollbar-width:none] leading-normal scroll-smooth"
       >
         <div
           data-pencil-id="JVmNU"
-          id="card-widget-4x2" data-pencil-name="Card - Widget 4x2"
-          class="box-border w-[340px] shrink-0 h-[520px] [box-shadow:0px_12px_32px_0px_#070d4f40] flex flex-col gap-0 justify-between items-start [background-image:linear-gradient(-149.514deg,_#1c225ecc_24.71%,_#06081be6_75.29%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff1f] rounded-[22px] overflow-hidden"
+          id="card-widget-4x2"
+          data-pencil-name="Card - Widget 4x2"
+          class="box-border w-[360px] shrink-0 h-[536px] flex flex-col items-start justify-between rounded-[22px] border border-[#ffffff/12] shadow-[rgba(7,_13,_79,_0.25)_0px_12px_32px_0px] [background-image:linear-gradient(-148.837deg,_#20235b_21.129%,_#0d1033_46.391%,_#070921_75.262%)] bg-no-repeat bg-[length:100%_100%] overflow-hidden leading-normal transition-transform duration-300 hover:scale-[1.01]"
         >
           <div
             data-pencil-id="I2gFk"
             data-pencil-name="Card Header"
-            class="box-border w-full h-fit shrink-0 flex flex-col gap-[14px] p-[24px_24px_0px_24px] justify-start items-start"
+            class="box-border w-full h-fit shrink-0 flex flex-col items-start justify-start gap-3.5 pt-6 px-6 leading-normal"
           >
             <div
               data-pencil-id="RLCB6"
@@ -3467,12 +3478,12 @@
                 <div
                   data-pencil-id="yLmnD"
                   data-pencil-name="App Icon"
-                  class="box-border w-[44px] shrink-0 h-[44px] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(-135deg,_#1e2238_14.645%,_#111322_85.355%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff24] rounded-[12px]"
+                  class="box-border w-[52px] shrink-0 h-[52px] [box-shadow:0px_1.2px_2.4px_0px_#00000047] flex flex-row gap-0 justify-center items-center bg-[#ffffff08] [border:1px_solid_#ffffff1f] rounded-[12px]"
                 >
                   <div
                     data-pencil-id="scflc"
                     data-pencil-name="Linear Orb"
-                    class="box-border w-[28px] shrink-0 h-[28px] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(-135deg,_#818cf8_14.645%,_#4f46e5_85.355%)] bg-no-repeat bg-[length:100%_100%] rounded-[14px]"
+                    class="box-border w-[30px] shrink-0 h-[30px] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(-135deg,_#818cf8_14.645%,_#4f46e5_85.355%)] bg-no-repeat bg-[length:100%_100%] rounded-[15px]"
                   >
                     <svg
                       data-pencil-id="n7aMcf"
@@ -3515,7 +3526,7 @@
               <div
                 data-pencil-id="csR9r"
                 data-pencil-name="Action Button"
-                class="box-border w-[36px] shrink-0 h-[36px] [box-shadow:0px_1px_0px_0px_#ffffff14] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(180deg,_#ffffff0a_0%,_#ffffff1a_100%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff30] rounded-[8px]"
+                class="box-border w-[36px] shrink-0 h-[36px] [box-shadow:0px_1px_0px_0px_#ffffff0d] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(180deg,_#ffffff08_0%,_#ffffff1a_100%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff40] rounded-[8px]"
               >
                 <svg
                   data-pencil-id="bKRwL"
@@ -3525,11 +3536,11 @@
                   viewBox="0 0 13.99993896484375 14"
                   preserveAspectRatio="xMidYMid meet"
                   xmlns="http://www.w3.org/2000/svg"
-                  class="box-border w-[18px] shrink-0 h-[18px]"
+                  class="box-border w-[16px] shrink-0 h-[16px]"
                 >
                   <path
                     d="M5.09619 2.93945q-0.25293 0.08545-0.37939 0.30762-0.04102 0.08545-0.04102 0.25293 0 0.16748 0.04102 0.25293 0.04443 0.08203 1.62353 1.66455l1.58252 1.58252-1.58252 1.58252q-1.5791 1.58252-1.62353 1.66797-0.04102 0.08203-0.04102 0.23584 0 0.15381 0.03418 0.23926 0.0376 0.08203 0.1333 0.18115 0.09912 0.0957 0.18115 0.1333 0.08545 0.03418 0.23926 0.03418 0.15381 0 0.24268-0.04785 0.09229-0.05127 1.90381-1.8628 1.81494-1.81494 1.86279-1.9038 0.05127-0.09229 0.05127-0.25977 0-0.16748-0.04443-0.24951-0.04102-0.08545-1.85938-1.90723l-1.44238-1.42871q-0.33496-0.33496-0.46143-0.41699-0.09912-0.07178-0.19824-0.07178l-0.04102 0q-0.14014 0-0.18115 0.01367z"
-                    fill="#e2e8f0"
+                    fill="#e6e6e6"
                   ></path>
                 </svg>
               </div>
@@ -3537,20 +3548,20 @@
             <div
               data-pencil-id="f1eYS"
               data-pencil-name="Description"
-              class="text-[14px]/[20px] box-border w-full text-[#e2e8f0] font-[Inter,system-ui,sans-serif] font-medium text-left"
+              class="text-[15px]/[24px] box-border w-full text-[#ffffffd9] font-[Inter,system-ui,sans-serif] font-medium text-left"
             >
               Create, search and modify your issues without leaving your keyboard.
             </div>
             <div
               data-pencil-id="VyMjP"
               data-pencil-name="Divider"
-              class="box-border w-full h-[1px] shrink-0 flex flex-row gap-0 justify-start items-start bg-[#ffffff14]"
+              class="box-border w-full h-[1px] shrink-0 flex flex-row gap-0 justify-start items-start bg-[#ffffff0d]"
             ></div>
           </div>
           <div
             data-pencil-id="wNEmx"
             data-pencil-name="Visual Preview"
-            class="box-border w-full h-[300px] shrink-0 flex flex-col gap-0 justify-center items-center overflow-hidden relative"
+            class="box-border w-full h-[360px] shrink-0 flex flex-col gap-0 justify-center items-center overflow-hidden relative"
           >
             <div
               data-pencil-id="Jp54z"
@@ -3600,7 +3611,7 @@
             <div
               data-pencil-id="ECrU4"
               data-pencil-name="Linear Planet Wireframe"
-              class="box-border w-[300px] h-[290px] absolute left-[20px] top-0 [z-index:9]"
+              class="box-border w-[300px] h-[290px] absolute left-[30px] top-[15px] [z-index:9]"
             >
               <div
                 data-pencil-id="dh8Zk"
@@ -3626,7 +3637,7 @@
             <div
               data-pencil-id="RnWQ7"
               data-pencil-name="Linear Status Dock"
-              class="box-border w-[310px] h-[56px] absolute left-[15px] top-[224px] flex flex-row gap-[16px] justify-center items-center [z-index:10]"
+              class="box-border w-[310px] h-[56px] absolute left-[25px] top-[260px] flex flex-row gap-[16px] justify-center items-center [z-index:10]"
             >
               <div
                 data-pencil-id="kQnay"
@@ -3691,13 +3702,14 @@
         </div>
         <div
           data-pencil-id="UaI2H"
-          id="card-smart-nudge" data-pencil-name="Card - Smart Nudge"
-          class="box-border w-[340px] shrink-0 h-[520px] flex flex-col gap-0 justify-between items-start [background-image:linear-gradient(-151.249deg,_#10233b_13.325%,_#0a1324_50%,_#060a14_86.675%)] bg-no-repeat bg-[length:100%_100%] [border:1.2px_solid_#38bdf833] rounded-[22px] overflow-hidden"
+          id="card-smart-nudge"
+          data-pencil-name="Card - Smart Nudge"
+          class="box-border w-[360px] shrink-0 h-[536px] flex flex-col items-start justify-between rounded-[22px] border border-[#38bdf8/20] [background-image:linear-gradient(-151.249deg,_#10233b_13.325%,_#0a1324_50%,_#060a14_86.675%)] bg-no-repeat bg-[length:100%_100%] overflow-hidden leading-normal transition-transform duration-300 hover:scale-[1.01]"
         >
           <div
             data-pencil-id="Z6vcr"
             data-pencil-name="Card Header"
-            class="box-border w-full h-fit shrink-0 flex flex-col gap-[14px] p-[24px_24px_0px_24px] justify-start items-start"
+            class="box-border w-full h-fit shrink-0 flex flex-col items-start justify-start gap-3.5 pt-6 px-6 leading-normal"
           >
             <div
               data-pencil-id="QJiEC"
@@ -3712,7 +3724,7 @@
                 <div
                   data-pencil-id="RSS8r"
                   data-pencil-name="App Icon"
-                  class="box-border w-[44px] shrink-0 h-[44px] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(-135deg,_#0284c7_14.645%,_#0369a1_85.355%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff33] rounded-[12px]"
+                  class="box-border w-[52px] shrink-0 h-[52px] [box-shadow:0px_1.2px_2.4px_0px_#00000047] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(-135deg,_#0284c7_14.645%,_#0369a1_85.355%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff33] rounded-[12px]"
                 >
                   <svg
                     data-pencil-id="rWBGN"
@@ -3738,14 +3750,14 @@
                   <div
                     data-pencil-id="zVbgx"
                     data-pencil-name="App Name"
-                    class="text-[16px]/[normal] box-border text-[#ffffff] font-[Inter,system-ui,sans-serif] font-semibold text-left [white-space:nowrap]"
+                    class="text-[18px]/[normal] box-border text-[#ffffff] font-[Inter,system-ui,sans-serif] font-semibold text-left [white-space:nowrap]"
                   >
                     Smart Nudge
                   </div>
                   <div
                     data-pencil-id="Cvtcq"
                     data-pencil-name="Author"
-                    class="text-[12px]/[normal] box-border text-[#38bdf8] font-[Inter,system-ui,sans-serif] font-normal text-left [white-space:nowrap]"
+                    class="text-[12px]/[normal] box-border text-[#38bdf8] font-[Inter,system-ui,sans-serif] font-medium text-left [white-space:nowrap]"
                   >
                     Shopee &amp; QRIS Radar
                   </div>
@@ -3754,12 +3766,12 @@
               <div
                 data-pencil-id="CSz1d"
                 data-pencil-name="Action Button"
-                class="box-border w-[32px] shrink-0 h-[32px] flex flex-row gap-0 justify-center items-center bg-[#ffffff12] [border:1px_solid_#ffffff24] rounded-[8px]"
+                class="box-border w-[36px] shrink-0 h-[36px] [box-shadow:0px_1px_0px_0px_#ffffff0d] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(180deg,_#ffffff08_0%,_#ffffff1a_100%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff40] rounded-[8px]"
               >
                 <svg
                   data-pencil-id="f5deC"
                   data-pencil-name="Chevron"
-                  data-icon-name="arrow-up-right"
+                  data-icon-name="chevron-right"
                   data-icon-set="lucide"
                   viewBox="0 0 13.99993896484375 14"
                   preserveAspectRatio="xMidYMid meet"
@@ -3767,8 +3779,8 @@
                   class="box-border w-[16px] shrink-0 h-[16px]"
                 >
                   <path
-                    d="M3.94775 3.51367q-0.14014 0.04102-0.25976 0.15381-0.11963 0.11279-0.16065 0.25293-0.05469 0.19482 0.02735 0.39307 0.08545 0.19482 0.25293 0.29394 0.08545 0.02734 0.19482 0.04102 0.1709 0.01367 0.65967 0.02734l3.83496 0-2.45068 2.45068q-1.65088 1.65088-2.05762 2.07129-0.40332 0.42041-0.43408 0.4751-0.10938 0.23926-0.01367 0.46485 0.09912 0.22217 0.32128 0.32128 0.22559 0.0957 0.46485-0.01367 0.05469-0.03076 0.4751-0.43408 0.42041-0.40674 2.07129-2.05762l2.45068-2.45068 0 2.21143q0 2.2251 0.02734 2.31054 0.02734 0.18115 0.15381 0.29395 0.19824 0.19482 0.46143 0.17431 0.2666-0.02051 0.42041-0.24609l0.02734-0.02734q0.04443-0.05469 0.05811-0.18116 0.01367-0.15381 0.02734-0.68701l0-5.37646-0.04102-0.09571q-0.02734-0.11279-0.12646-0.21191-0.09912-0.09912-0.21192-0.12646l-0.0957-0.04102-3.01123 0q-2.99414 0-3.06592 0.01367z"
-                    fill="#ffffff"
+                    d="M5.09619 2.93945q-0.25293 0.08545-0.37939 0.30762-0.04102 0.08545-0.04102 0.25293 0 0.16748 0.04102 0.25293 0.04443 0.08203 1.62353 1.66455l1.58252 1.58252-1.58252 1.58252q-1.5791 1.58252-1.62353 1.66797-0.04102 0.08203-0.04102 0.23584 0 0.15381 0.03418 0.23926 0.0376 0.08203 0.1333 0.18115 0.09912 0.0957 0.18115 0.1333 0.08545 0.03418 0.23926 0.03418 0.15381 0 0.24268-0.04785 0.09229-0.05127 1.90381-1.8628 1.81494-1.81494 1.86279-1.9038 0.05127-0.09229 0.05127-0.25977 0-0.16748-0.04443-0.24951-0.04102-0.08545-1.85938-1.90723l-1.44238-1.42871q-0.33496-0.33496-0.46143-0.41699-0.09912-0.07178-0.19824-0.07178l-0.04102 0q-0.14014 0-0.18115 0.01367z"
+                    fill="#e6e6e6"
                   ></path>
                 </svg>
               </div>
@@ -3776,7 +3788,7 @@
             <div
               data-pencil-id="EdDGv"
               data-pencil-name="Description"
-              class="text-[13px]/[19px] box-border w-full text-[#a5a8b3] font-[Inter,system-ui,sans-serif] font-normal text-left"
+              class="text-[15px]/[24px] box-border w-full text-[#ffffffd9] font-[Inter,system-ui,sans-serif] font-medium text-left"
             >
               Floating chip otomatis melayang lembut selama 6 detik saat membuka Shopee, Tokopedia,
               atau scanner QRIS.
@@ -3784,13 +3796,13 @@
             <div
               data-pencil-id="jPqTL"
               data-pencil-name="Divider"
-              class="box-border w-full h-[1px] shrink-0 flex flex-row gap-0 justify-start items-start bg-[#ffffff14]"
+              class="box-border w-full h-[1px] shrink-0 flex flex-row gap-0 justify-start items-start bg-[#ffffff0d]"
             ></div>
           </div>
           <div
             data-pencil-id="M97Gmw"
             data-pencil-name="Visual Preview"
-            class="box-border w-full h-[300px] shrink-0 flex flex-col gap-0 p-[0px_20px_24px_20px] justify-center items-center"
+            class="box-border w-full h-[360px] shrink-0 flex flex-col items-center justify-center pb-6 px-5 leading-normal"
           >
             <div
               data-pencil-id="GQgwU"
@@ -3902,13 +3914,14 @@
         </div>
         <div
           data-pencil-id="neAhB"
-          id="card-amplop-mental" data-pencil-name="Card - Amplop Mental"
-          class="box-border w-[340px] shrink-0 h-[520px] flex flex-col gap-0 justify-between items-start [background-image:linear-gradient(-151.249deg,_#2d200e_13.325%,_#1a1207_50%,_#0d0903_86.675%)] bg-no-repeat bg-[length:100%_100%] [border:1.2px_solid_#fbbf2433] rounded-[22px] overflow-hidden"
+          id="card-amplop-mental"
+          data-pencil-name="Card - Amplop Mental"
+          class="box-border w-[360px] shrink-0 h-[536px] flex flex-col items-start justify-between rounded-[22px] border border-[#fbbf24/20] [background-image:linear-gradient(-151.249deg,_#2d200e_13.325%,_#1a1207_50%,_#0d0903_86.675%)] bg-no-repeat bg-[length:100%_100%] overflow-hidden leading-normal transition-transform duration-300 hover:scale-[1.01]"
         >
           <div
             data-pencil-id="x4Yvz"
             data-pencil-name="Card Header"
-            class="box-border w-full h-fit shrink-0 flex flex-col gap-[14px] p-[24px_24px_0px_24px] justify-start items-start"
+            class="box-border w-full h-fit shrink-0 flex flex-col items-start justify-start gap-3.5 pt-6 px-6 leading-normal"
           >
             <div
               data-pencil-id="avzBY"
@@ -3923,7 +3936,7 @@
                 <div
                   data-pencil-id="rQrkJ"
                   data-pencil-name="App Icon"
-                  class="box-border w-[44px] shrink-0 h-[44px] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(-135deg,_#d97706_14.645%,_#b45309_85.355%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff33] rounded-[12px]"
+                  class="box-border w-[52px] shrink-0 h-[52px] [box-shadow:0px_1.2px_2.4px_0px_#00000047] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(-135deg,_#d97706_14.645%,_#b45309_85.355%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff33] rounded-[12px]"
                 >
                   <svg
                     data-pencil-id="e0gkRQ"
@@ -3949,14 +3962,14 @@
                   <div
                     data-pencil-id="gUvJD"
                     data-pencil-name="App Name"
-                    class="text-[16px]/[normal] box-border text-[#ffffff] font-[Inter,system-ui,sans-serif] font-semibold text-left [white-space:nowrap]"
+                    class="text-[18px]/[normal] box-border text-[#ffffff] font-[Inter,system-ui,sans-serif] font-semibold text-left [white-space:nowrap]"
                   >
                     Amplop Mental
                   </div>
                   <div
                     data-pencil-id="RjcIS"
                     data-pencil-name="Author"
-                    class="text-[12px]/[normal] box-border text-[#fbbf24] font-[Inter,system-ui,sans-serif] font-normal text-left [white-space:nowrap]"
+                    class="text-[12px]/[normal] box-border text-[#fbbf24] font-[Inter,system-ui,sans-serif] font-medium text-left [white-space:nowrap]"
                   >
                     Strict Budget Separation
                   </div>
@@ -3965,12 +3978,12 @@
               <div
                 data-pencil-id="hZVJC"
                 data-pencil-name="Action Button"
-                class="box-border w-[32px] shrink-0 h-[32px] flex flex-row gap-0 justify-center items-center bg-[#ffffff12] [border:1px_solid_#ffffff24] rounded-[8px]"
+                class="box-border w-[36px] shrink-0 h-[36px] [box-shadow:0px_1px_0px_0px_#ffffff0d] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(180deg,_#ffffff08_0%,_#ffffff1a_100%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff40] rounded-[8px]"
               >
                 <svg
                   data-pencil-id="Gf22n"
                   data-pencil-name="Chevron"
-                  data-icon-name="arrow-up-right"
+                  data-icon-name="chevron-right"
                   data-icon-set="lucide"
                   viewBox="0 0 13.99993896484375 14"
                   preserveAspectRatio="xMidYMid meet"
@@ -3978,8 +3991,8 @@
                   class="box-border w-[16px] shrink-0 h-[16px]"
                 >
                   <path
-                    d="M3.94775 3.51367q-0.14014 0.04102-0.25976 0.15381-0.11963 0.11279-0.16065 0.25293-0.05469 0.19482 0.02735 0.39307 0.08545 0.19482 0.25293 0.29394 0.08545 0.02734 0.19482 0.04102 0.1709 0.01367 0.65967 0.02734l3.83496 0-2.45068 2.45068q-1.65088 1.65088-2.05762 2.07129-0.40332 0.42041-0.43408 0.4751-0.10938 0.23926-0.01367 0.46485 0.09912 0.22217 0.32128 0.32128 0.22559 0.0957 0.46485-0.01367 0.05469-0.03076 0.4751-0.43408 0.42041-0.40674 2.07129-2.05762l2.45068-2.45068 0 2.21143q0 2.2251 0.02734 2.31054 0.02734 0.18115 0.15381 0.29395 0.19824 0.19482 0.46143 0.17431 0.2666-0.02051 0.42041-0.24609l0.02734-0.02734q0.04443-0.05469 0.05811-0.18116 0.01367-0.15381 0.02734-0.68701l0-5.37646-0.04102-0.09571q-0.02734-0.11279-0.12646-0.21191-0.09912-0.09912-0.21192-0.12646l-0.0957-0.04102-3.01123 0q-2.99414 0-3.06592 0.01367z"
-                    fill="#ffffff"
+                    d="M5.09619 2.93945q-0.25293 0.08545-0.37939 0.30762-0.04102 0.08545-0.04102 0.25293 0 0.16748 0.04102 0.25293 0.04443 0.08203 1.62353 1.66455l1.58252 1.58252-1.58252 1.58252q-1.5791 1.58252-1.62353 1.66797-0.04102 0.08203-0.04102 0.23584 0 0.15381 0.03418 0.23926 0.0376 0.08203 0.1333 0.18115 0.09912 0.0957 0.18115 0.1333 0.08545 0.03418 0.23926 0.03418 0.15381 0 0.24268-0.04785 0.09229-0.05127 1.90381-1.8628 1.81494-1.81494 1.86279-1.9038 0.05127-0.09229 0.05127-0.25977 0-0.16748-0.04443-0.24951-0.04102-0.08545-1.85938-1.90723l-1.44238-1.42871q-0.33496-0.33496-0.46143-0.41699-0.09912-0.07178-0.19824-0.07178l-0.04102 0q-0.14014 0-0.18115 0.01367z"
+                    fill="#e6e6e6"
                   ></path>
                 </svg>
               </div>
@@ -3987,20 +4000,20 @@
             <div
               data-pencil-id="UEw91"
               data-pencil-name="Description"
-              class="text-[13px]/[19px] box-border w-full text-[#a5a8b3] font-[Inter,system-ui,sans-serif] font-normal text-left"
+              class="text-[15px]/[24px] box-border w-full text-[#ffffffd9] font-[Inter,system-ui,sans-serif] font-medium text-left"
             >
               Pisahkan Uang Pokok (kos, tagihan, cicilan) dari Uang Jajan bebas tanpa rasa bersalah.
             </div>
             <div
               data-pencil-id="OWvY3"
               data-pencil-name="Divider"
-              class="box-border w-full h-[1px] shrink-0 flex flex-row gap-0 justify-start items-start bg-[#ffffff14]"
+              class="box-border w-full h-[1px] shrink-0 flex flex-row gap-0 justify-start items-start bg-[#ffffff0d]"
             ></div>
           </div>
           <div
             data-pencil-id="x296X"
             data-pencil-name="Visual Preview"
-            class="box-border w-full h-[300px] shrink-0 flex flex-col gap-0 p-[0px_20px_24px_20px] justify-center items-center"
+            class="box-border w-full h-[360px] shrink-0 flex flex-col items-center justify-center pb-6 px-5 leading-normal"
           >
             <div
               data-pencil-id="dKrQB"
@@ -4119,6 +4132,87 @@
           </div>
         </div>
       </div>
+      <!-- Showcase Reel Bottom Bar (from pen.dev section-card) -->
+      <div
+        data-pencil-name="Showcase Reel Bottom Bar"
+        class="box-border w-full max-w-[1200px] px-6 lg:px-0 h-fit shrink-0 flex flex-row gap-0 pt-3 justify-between items-center"
+      >
+        <a
+          href="#fitur"
+          data-pencil-name="Browse Link"
+          class="box-border w-fit shrink-0 h-fit flex flex-row gap-1.5 justify-start items-center text-[#9c9c9d] hover:text-white transition-colors group cursor-pointer"
+        >
+          <span
+            data-pencil-name="Browse Text"
+            class="text-sm box-border font-medium tracking-[0.3px] text-left whitespace-nowrap"
+          >
+            Browse thousands more
+          </span>
+          <svg
+            data-pencil-name="Arrow Icon"
+            data-icon-name="arrow-right"
+            data-icon-set="lucide"
+            viewBox="0 0 14 14"
+            preserveAspectRatio="xMidYMid meet"
+            xmlns="http://www.w3.org/2000/svg"
+            class="box-border w-4 shrink-0 h-4 transition-transform duration-200 group-hover:translate-x-1"
+          >
+            <path
+              d="M6.90088 2.35156q-0.18115 0.02734-0.32129 0.16748-0.11279 0.11279-0.14697 0.28028-0.03418 0.16748 0.02051 0.32129 0.02734 0.08545 0.25976 0.3247 0.23242 0.23584 1.36377 1.37061 1.58252 1.58252 1.58252 1.59619 0 0.01367-3.45557 0.01367l-3.44531 0-0.08545 0.04102q-0.22217 0.11279-0.30078 0.33838-0.0752 0.22217 0.00684 0.43408 0.05811 0.0957 0.14013 0.18115 0.08545 0.08203 0.16748 0.11963 0.08545 0.03418 0.53321 0.03418l3.01123 0q3.42822 0 3.42822 0.01367 0 0.01367-1.58252 1.59619-1.13135 1.13477-1.36377 1.37402-0.23242 0.23584-0.25976 0.3213-0.05469 0.15381-0.02051 0.32128 0.03418 0.16748 0.14697 0.28028 0.18115 0.18115 0.42041 0.18115l0.04102 0q0.11279 0 0.19824-0.05469 0.14014-0.09912 0.51611-0.46484l1.68164-1.67822q2.1123-2.10205 2.15332-2.18409 0.07178-0.12646 0.07178-0.28027 0-0.15381-0.07178-0.28027-0.04102-0.08203-2.1499-2.18067-2.10547-2.10205-2.17725-2.13623-0.06836-0.0376-0.23584-0.06494-0.04102 0-0.12646 0.01367z"
+              fill="currentColor"
+            ></path>
+          </svg>
+        </a>
+        <div
+          data-pencil-name="Pagination"
+          class="box-border w-fit shrink-0 h-fit flex flex-row gap-3 justify-start items-center"
+        >
+          <button
+            type="button"
+            onclick="scrollShowcaseStep(-1)"
+            data-pencil-name="Previous Button"
+            aria-label="Previous card"
+            class="box-border w-[58px] shrink-0 h-[58px] [box-shadow:0px_1px_0px_0px_#ffffff1a] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(-137deg,_#111214_18.161%,_#0c0d0f_68.396%)] bg-no-repeat bg-[length:100%_100%] [border:1.5px_solid_#ffffff0f] rounded-[29px] hover:border-white/20 transition-all cursor-pointer text-[#6a6b6c] hover:text-white active:scale-95"
+          >
+            <svg
+              data-pencil-name="Prev Icon"
+              data-icon-name="chevron-left"
+              data-icon-set="lucide"
+              viewBox="0 0 14 14"
+              preserveAspectRatio="xMidYMid meet"
+              xmlns="http://www.w3.org/2000/svg"
+              class="box-border w-4 shrink-0 h-4"
+            >
+              <path
+                d="M8.59619 2.93945q-0.08545 0.02734-0.19482 0.1128-0.14014 0.12646-0.53321 0.51611l-1.28857 1.2749q-1.81836 1.82178-1.86279 1.90723-0.04102 0.08203-0.04102 0.24951 0 0.16748 0.04785 0.25977 0.05127 0.08887 1.8628 1.9038 1.81494 1.81152 1.9038 1.8628 0.09229 0.04785 0.2461 0.04785 0.15381 0 0.23584-0.03418 0.08545-0.0376 0.18115-0.1333 0.09912-0.09912 0.1333-0.18115 0.0376-0.08545 0.0376-0.23926 0-0.15381-0.04443-0.23584-0.04102-0.08545-1.62012-1.66797l-1.58252-1.58252 1.58252-1.58252q1.5791-1.58252 1.62012-1.66455 0.04443-0.08545 0.04443-0.23926 0-0.15381-0.0376-0.23584-0.03418-0.08545-0.11621-0.18457-0.16748-0.15381-0.39307-0.16748-0.14014 0-0.18115 0.01367z"
+                fill="currentColor"
+              ></path>
+            </svg>
+          </button>
+          <button
+            type="button"
+            onclick="scrollShowcaseStep(1)"
+            data-pencil-name="Next Button"
+            aria-label="Next card"
+            class="box-border w-[58px] shrink-0 h-[58px] [box-shadow:0px_1px_0px_0px_#ffffff1a] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(-137deg,_#111214_18.161%,_#0c0d0f_68.396%)] bg-no-repeat bg-[length:100%_100%] [border:1.5px_solid_#ffffff0f] rounded-[29px] hover:border-white/20 transition-all cursor-pointer text-white active:scale-95"
+          >
+            <svg
+              data-pencil-name="Next Icon"
+              data-icon-name="chevron-right"
+              data-icon-set="lucide"
+              viewBox="0 0 14 14"
+              preserveAspectRatio="xMidYMid meet"
+              xmlns="http://www.w3.org/2000/svg"
+              class="box-border w-4 shrink-0 h-4"
+            >
+              <path
+                d="M5.09619 2.93945q-0.25293 0.08545-0.37939 0.30762-0.04102 0.08545-0.04102 0.25293 0 0.16748 0.04102 0.25293 0.04443 0.08203 1.62353 1.66455l1.58252 1.58252-1.58252 1.58252q-1.5791 1.58252-1.62353 1.66797-0.04102 0.08203-0.04102 0.23584 0 0.15381 0.03418 0.23926 0.0376 0.08203 0.1333 0.18115 0.09912 0.0957 0.18115 0.1333 0.08545 0.03418 0.23926 0.03418 0.15381 0 0.24268-0.04785 0.09229-0.05127 1.90381-1.8628 1.81494-1.81494 1.86279-1.9038 0.05127-0.09229 0.05127-0.25977 0-0.16748-0.04443-0.24951-0.04102-0.08545-1.85938-1.90723l-1.44238-1.42871q-0.33496-0.33496-0.46143-0.41699-0.09912-0.07178-0.19824-0.07178l-0.04102 0q-0.14014 0-0.18115 0.01367z"
+                fill="currentColor"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
 
         <script>
@@ -4126,16 +4220,26 @@
                 const track = document.getElementById("showcaseTrack");
                 if (track) track.scrollTo({ left: pos, behavior: "smooth" });
                 document.querySelectorAll(".showcase-pill").forEach(p => {
-                    p.classList.remove("active", "[box-shadow:0px_4px_10px_0px_#00000066]", "[border:1px_solid_#ffffff2e]");
+                    p.classList.remove("active", "shadow-[rgba(0,_0,_0,_0.4)_0px_4px_10px_0px]", "border-white/18");
+                    p.classList.add("border-transparent");
                     p.style.backgroundImage = "none";
                     const label = p.querySelector('[data-pencil-name="Label"]');
                     if (label) label.style.color = "#8e9095";
                 });
                 if (btn) {
-                    btn.classList.add("active", "[box-shadow:0px_4px_10px_0px_#00000066]", "[border:1px_solid_#ffffff2e]");
+                    btn.classList.add("active", "shadow-[rgba(0,_0,_0,_0.4)_0px_4px_10px_0px]", "border-white/18");
+                    btn.classList.remove("border-transparent");
                     btn.style.backgroundImage = "radial-gradient(ellipse 55% 90% at 50% 10%, #5a5a5a 0%, #1a1a1a 100%)";
                     const label = btn.querySelector('[data-pencil-name="Label"]');
                     if (label) label.style.color = "#ffffff";
+                }
+            }
+
+            function scrollShowcaseStep(dir) {
+                const track = document.getElementById("showcaseTrack");
+                if (track) {
+                    const step = 384; // 360px card + 24px gap
+                    track.scrollBy({ left: dir * step, behavior: "smooth" });
                 }
             }
         </script>
