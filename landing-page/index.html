@@ -904,6 +904,289 @@
       .index-module__h8MSgW__key.featured-key:hover .index-module__h8MSgW__alt svg {
         color: #ffffff;
       }
+    
+      /* === RAYCAST SECTION 2: EXTENSION HIGHLIGHT & CATEGORIES 1:1 TOKENS === */
+      .raycast-section-card {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 1440px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 36px;
+        padding: 80px 0;
+        background-color: #0a0a0c;
+        color: #ffffff;
+        border-radius: 24px;
+        overflow: hidden;
+        position: relative;
+      }
+      .raycast-top-bar {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 1204px;
+        padding: 0 24px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+      }
+      .raycast-title-group h2 {
+        font-size: 28px;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+        color: #ffffff;
+        line-height: 1.2;
+        margin: 0 0 6px 0;
+      }
+      .raycast-title-group p {
+        font-size: 16px;
+        color: #8f9099;
+        margin: 0;
+        line-height: 1.4;
+      }
+      .raycast-categories-container {
+        max-width: 100%;
+        padding: 0;
+        display: flex;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .raycast-categories-container::-webkit-scrollbar {
+        display: none;
+      }
+      .raycast-categories {
+        height: 63px;
+        padding: 8px 12px;
+        background: linear-gradient(137deg, rgb(17, 18, 20) 4.87%, rgb(12, 13, 15) 75.88%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 31px;
+        box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 0px 0px inset;
+        display: flex;
+        align-items: center;
+        position: relative;
+        gap: 4px;
+      }
+      .raycast-active-backdrop {
+        position: absolute;
+        top: 8px;
+        left: 0;
+        height: 46px;
+        border-radius: 36px;
+        background: radial-gradient(51.07% 92.4% at 51% 7.61%, rgb(90, 90, 90) 0%, rgb(26, 26, 26) 100%);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.15) inset;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        pointer-events: none;
+        z-index: 0;
+      }
+      .raycast-category-pill {
+        position: relative;
+        z-index: 1;
+        height: 46px;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.2px;
+        color: rgb(106, 107, 108);
+        cursor: pointer;
+        white-space: nowrap;
+        transition: color 0.2s ease;
+        user-select: none;
+        border-radius: 36px;
+      }
+      .raycast-category-pill.active {
+        color: #ffffff;
+      }
+      .raycast-category-pill:hover:not(.active) {
+        color: #ffffff;
+      }
+      .raycast-reel-container {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 40px 0;
+        margin: -40px 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+        scroll-behavior: smooth;
+        scroll-snap-type: x mandatory;
+      }
+      .raycast-reel-container::-webkit-scrollbar {
+        display: none;
+      }
+      .raycast-reel-track {
+        box-sizing: border-box;
+        display: inline-flex;
+        flex-direction: row;
+        gap: 56px;
+        padding: 0 24px;
+        margin: 0;
+      }
+      @media (min-width: 1250px) {
+        .raycast-reel-track {
+          padding-left: calc((100vw - 1204px) / 2);
+          padding-right: calc((100vw - 1204px) / 2);
+        }
+      }
+      .raycast-card {
+        box-sizing: border-box;
+        width: 360px;
+        height: 536px;
+        flex-shrink: 0;
+        border-radius: 20px;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        overflow: hidden;
+        position: relative;
+        scroll-snap-align: start;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .raycast-card:hover {
+        transform: translateY(-2px);
+      }
+      .raycast-card-1 {
+        background: linear-gradient(138deg, rgba(32, 35, 91, 0.70) 22%, rgba(7, 9, 33, 0.70) 82%);
+        box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 0px 0px inset, rgba(7, 13, 79, 0.05) 0px 0px 20px 3px, rgba(7, 13, 79, 0.05) 0px 0px 40px 20px, rgba(255, 255, 255, 0.06) 0px 0px 0px 1px inset;
+      }
+      .raycast-card-2 {
+        background: radial-gradient(94.21% 78.40% at 50% 29.91%, rgba(43, 94, 180, 0.70), rgba(13, 16, 35, 0.42));
+        box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 0px 0px inset, rgba(7, 13, 79, 0.10) 0px 0px 20px 3px, rgba(85, 0, 98, 0.10) 0px 0px 40px 20px, rgba(255, 255, 255, 0.06) 0px 0px 0px 1px inset;
+      }
+      .raycast-card-3 {
+        background: radial-gradient(30% 40% at 52% 36.91%, rgba(180, 83, 9, 0.85), rgba(69, 26, 3, 0.85));
+        box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 0px 0px inset, rgba(245, 158, 11, 0.08) 0px 0px 20px 3px, rgba(245, 158, 11, 0.05) 0px 0px 40px 20px, rgba(255, 255, 255, 0.06) 0px 0px 0px 1px inset;
+      }
+      .raycast-card-4 {
+        background: radial-gradient(86.88% 75.47% at 50% 24.53%, rgba(82, 48, 145, 0.70), rgba(26, 11, 51, 0.40));
+        box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 0px 0px inset, rgba(51, 3, 129, 0.09) 0px 4px 24px 0px, rgba(255, 255, 255, 0.06) 0px 0px 0px 1px inset;
+      }
+      .raycast-card-header {
+        padding: 24px 24px 0 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .raycast-header-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+      .raycast-icon-wrap {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        box-shadow: rgba(0, 0, 0, 0.28) 0px 1.189px 2.377px 0px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .raycast-title-box {
+        display: flex;
+        flex-direction: column;
+        margin-left: 14px;
+        flex-grow: 1;
+      }
+      .raycast-card-title {
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 20.7px;
+        color: #ffffff;
+      }
+      .raycast-card-subtitle {
+        font-size: 12px;
+        font-weight: 500;
+        margin-top: 3px;
+      }
+      .raycast-action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.1) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.05) inset;
+        color: #e6e6e6;
+        transition: all 0.2s ease;
+      }
+      .raycast-card:hover .raycast-action-btn {
+        border-color: rgba(255, 255, 255, 0.5);
+        box-shadow: rgba(255, 255, 255, 0.05) 0px 1px inset, rgba(255, 255, 255, 0.5) 0px 0px 0px 1px;
+      }
+      .raycast-card-desc {
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 25.6px;
+        color: #ffffff;
+        width: 312px;
+        margin: 0;
+      }
+      .raycast-card-divider {
+        width: 100%;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .raycast-card-stage {
+        width: 360px;
+        height: 360px;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .raycast-bottom-bar {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 1204px;
+        padding: 0 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .raycast-browse-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 15px;
+        font-weight: 500;
+        color: #9c9c9d;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+      .raycast-browse-link:hover {
+        color: #ffffff;
+      }
+      .raycast-nav-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 22px;
+        background: linear-gradient(137deg, rgb(17, 18, 20) 4.87%, rgb(12, 13, 15) 75.88%);
+        border: 1.5px solid rgba(255, 255, 255, 0.08);
+        box-shadow: rgba(255, 255, 255, 0.1) 0px 1px inset;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6a6b6c;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .raycast-nav-btn:hover {
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.2);
+        box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px inset, rgba(154, 170, 255, 0.05) 0px 2px 40px 10px;
+      }
+
     </style>
     <style id="pen-dev-styles">
 .absolute { position: absolute; }
@@ -3339,911 +3622,288 @@
 </section>
 
 <!-- Raycast Section 2: Extensions Carousel Track (Gambar 2) -->
+<!-- Raycast Section 2: ExtensionHighlight Reel & Categories Capsule (1:1 Clone) -->
 <section id="fitur" class="content" style="padding-top: 24px;">
     <div class="section-content" style="max-width: 100%; padding: 0;">
-<div
-      data-pencil-id="K84jx"
-      data-pencil-name="section-card"
-      class="box-border w-full max-w-[1441.67px] mx-auto h-fit flex flex-col items-center justify-start gap-9 py-20 px-0 bg-[#0a0a0c] text-white text-base rounded-3xl leading-normal overflow-hidden"
-    >
-      <div
-        data-pencil-id="T62CvV"
-        data-pencil-name="Top Bar"
-        class="box-border w-full max-w-[1200px] px-6 lg:px-0 h-fit shrink-0 flex flex-wrap gap-4 justify-between items-center leading-normal"
-      >
-        <div
-          data-pencil-id="ODIRz"
-          data-pencil-name="Title Group"
-          class="box-border w-auto max-w-[520px] shrink-0 h-fit flex flex-col items-start justify-start gap-1.5 leading-normal"
-        >
-          <div
-            data-pencil-id="pleHN"
-            data-pencil-name="Title"
-            class="text-2xl md:text-3xl font-semibold tracking-[-0.5px] text-white w-full text-left"
-          >
-            Ada fitur cerdas untuk setiap rupiahmu.
-          </div>
-          <div
-            data-pencil-id="e42Bbj"
-            data-pencil-name="Subtitle"
-            class="text-[15px]/[21px] text-[#8f9099] leading-snug w-full text-left font-normal"
-          >
-            Kelola dan amankan uang jajan harian tanpa ribet buka aplikasi.
-          </div>
-        </div>
-        <div
-          data-pencil-id="sSj8V"
-          data-pencil-name="Category Pills"
-          class="box-border w-fit max-w-full shrink-0 h-[52.8px] flex flex-row items-center justify-start gap-2 py-1.5 px-2 rounded-[32px] border border-white/0 [background-image:linear-gradient(-94.263deg,_#111214_19.299%,_#0c0d0f_67.739%)] bg-no-repeat bg-[length:100%_100%] overflow-x-auto [scrollbar-width:none] leading-normal"
-        >
-          <div
-            data-pencil-id="SnHfm"
-            data-pencil-name="Active Pill"
-            class="showcase-pill cursor-pointer active box-border flex items-center justify-center py-2.5 px-[18px] rounded-3xl border border-white/18 shadow-[rgba(0,_0,_0,_0.4)_0px_4px_10px_0px] [background-image:radial-gradient(ellipse_55%_90%_at_50%_10%,_#5a5a5a_0%,_#1a1a1a_100%)] bg-no-repeat bg-[length:100%_100%] h-[38.7px] min-w-[120px] leading-normal text-white text-sm font-medium tracking-[0.2px] whitespace-nowrap transition-all"
-            onclick="scrollShowcase(0, this)"
-          >
-            <div
-              data-pencil-id="yPUMB"
-              data-pencil-name="Label"
-              class="text-[14px]/[normal] box-border text-[#ffffff] font-[Inter,system-ui,sans-serif] font-medium tracking-[0.2px] text-left [white-space:nowrap]"
-            >
-              Semua Fitur
-            </div>
-          </div>
-          <div
-            data-pencil-id="j6zjbh"
-            data-pencil-name="Pill - Widget Cepat"
-            class="showcase-pill cursor-pointer box-border flex items-center justify-center py-2.5 px-3.5 rounded-3xl h-[36.7px] min-w-[120px] leading-normal text-[#8e9095] hover:text-white hover:bg-white/5 text-sm font-medium tracking-[0.2px] whitespace-nowrap transition-all border border-transparent"
-            onclick="scrollShowcase(0, this)"
-          >
-            <div
-              data-pencil-id="afyGh"
-              data-pencil-name="Label"
-              class="text-[14px]/[normal] box-border text-[#8e9095] font-[Inter,system-ui,sans-serif] font-medium tracking-[0.2px] text-left [white-space:nowrap]"
-            >
-              Widget Cepat
-            </div>
-          </div>
-          <div
-            data-pencil-id="iGkXG"
-            data-pencil-name="Pill - Smart Nudge"
-            class="showcase-pill cursor-pointer box-border flex items-center justify-center py-2.5 px-3.5 rounded-3xl h-[36.7px] min-w-[118px] leading-normal text-[#8e9095] hover:text-white hover:bg-white/5 text-sm font-medium tracking-[0.2px] whitespace-nowrap transition-all border border-transparent"
-            onclick="scrollShowcase(384, this)"
-          >
-            <div
-              data-pencil-id="j3rJZ"
-              data-pencil-name="Label"
-              class="text-[14px]/[normal] box-border text-[#8e9095] font-[Inter,system-ui,sans-serif] font-medium tracking-[0.2px] text-left [white-space:nowrap]"
-            >
-              Smart Nudge
-            </div>
-          </div>
-          <div
-            data-pencil-id="CUII2"
-            data-pencil-name="Pill - Amplop Mental"
-            class="showcase-pill cursor-pointer box-border flex items-center justify-center py-2.5 px-3.5 rounded-3xl h-[36.7px] min-w-[130px] leading-normal text-[#8e9095] hover:text-white hover:bg-white/5 text-sm font-medium tracking-[0.2px] whitespace-nowrap transition-all border border-transparent"
-            onclick="scrollShowcase(768, this)"
-          >
-            <div
-              data-pencil-id="HNFgf"
-              data-pencil-name="Label"
-              class="text-[14px]/[normal] box-border text-[#8e9095] font-[Inter,system-ui,sans-serif] font-medium tracking-[0.2px] text-left [white-space:nowrap]"
-            >
-              Amplop Mental
-            </div>
-          </div>
-          <div
-            data-pencil-id="MTjne"
-            data-pencil-name="Pill - Privasi SQLite"
-            class="showcase-pill cursor-pointer box-border flex items-center justify-center py-2.5 px-3.5 rounded-3xl h-[36.7px] min-w-[122px] leading-normal text-[#8e9095] hover:text-white hover:bg-white/5 text-sm font-medium tracking-[0.2px] whitespace-nowrap transition-all border border-transparent"
-            onclick="scrollShowcase(768, this)"
-          >
-            <div
-              data-pencil-id="aZoHm"
-              data-pencil-name="Label"
-              class="text-[14px]/[normal] box-border text-[#8e9095] font-[Inter,system-ui,sans-serif] font-medium tracking-[0.2px] text-left [white-space:nowrap]"
-            >
-              Privasi SQLite
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        data-pencil-id="n9PyPM"
-        data-pencil-name="Reel Carousel Container"
-        id="showcaseTrack"
-        class="box-border w-full h-fit shrink-0 flex items-start justify-start gap-6 p-[0px_24px_24px_24px] md:p-[0px_60px_24px_60px] lg:p-[0px_120px_24px_120px] overflow-x-auto [scrollbar-width:none] leading-normal scroll-smooth"
-      >
-        <div
-          data-pencil-id="JVmNU"
-          id="card-widget-4x2"
-          data-pencil-name="Card - Widget 4x2"
-          class="box-border w-[360px] shrink-0 h-[536px] flex flex-col items-start justify-between rounded-[22px] border border-[#ffffff/12] shadow-[rgba(7,_13,_79,_0.25)_0px_12px_32px_0px] [background-image:linear-gradient(-148.837deg,_#20235b_21.129%,_#0d1033_46.391%,_#070921_75.262%)] bg-no-repeat bg-[length:100%_100%] overflow-hidden leading-normal transition-transform duration-300 hover:scale-[1.01]"
-        >
-          <div
-            data-pencil-id="I2gFk"
-            data-pencil-name="Card Header"
-            class="box-border w-full h-fit shrink-0 flex flex-col items-start justify-start gap-3.5 pt-6 px-6 leading-normal"
-          >
-            <div
-              data-pencil-id="RLCB6"
-              data-pencil-name="Top Row"
-              class="box-border w-full h-fit shrink-0 flex flex-row gap-0 justify-between items-center"
-            >
-              <div
-                data-pencil-id="wYWgk"
-                data-pencil-name="Icon and Title"
-                class="box-border w-fit shrink-0 h-fit flex flex-row gap-[12px] justify-start items-center"
-              >
-                <div
-                  data-pencil-id="yLmnD"
-                  data-pencil-name="App Icon"
-                  class="box-border w-[52px] shrink-0 h-[52px] [box-shadow:0px_1.2px_2.4px_0px_#00000047] flex flex-row gap-0 justify-center items-center bg-[#ffffff08] [border:1px_solid_#ffffff1f] rounded-[12px]"
-                >
-                  <div
-                    data-pencil-id="scflc"
-                    data-pencil-name="Linear Orb"
-                    class="box-border w-[30px] shrink-0 h-[30px] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(-135deg,_#818cf8_14.645%,_#4f46e5_85.355%)] bg-no-repeat bg-[length:100%_100%] rounded-[15px]"
-                  >
-                    <svg
-                      data-pencil-id="n7aMcf"
-                      data-pencil-name="Symbol"
-                      data-icon-name="layers"
-                      data-icon-set="lucide"
-                      viewBox="0 0 13.99993896484375 14"
-                      preserveAspectRatio="xMidYMid meet"
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="box-border w-[16px] shrink-0 h-[16px]"
-                    >
-                      <path
-                        d="M6.84619 0.60156q-0.2666 0.01367-0.50586 0.1128-0.13672 0.05469-2.57373 1.16894-2.43701 1.11426-2.55664 1.16895-0.11963 0.05469-0.25976 0.19482-0.13672 0.14014-0.2085 0.25293-0.23926 0.43408-0.09912 0.91943 0.14014 0.48193 0.57422 0.69043 0.15381 0.08545 2.625 1.20655 2.47119 1.11768 2.57031 1.15869 0.2666 0.09912 0.56738 0.10595 0.30078 0.00684 0.58106-0.09228 0.08203-0.02734 2.52588-1.13135 2.44385-1.10742 2.66601-1.22021 0.2666-0.12646 0.40674-0.32129 0.2666-0.33496 0.2666-0.73487 0-0.3999-0.2666-0.73486-0.14014-0.18115-0.37598-0.29394l-2.5498-1.17579-2.57373-1.1621q-0.22559-0.09912-0.45117-0.1128l-0.16748-0.01367q-0.05469 0-0.19483 0.01367z m0.32129 1.17578q0.05811 0.02734 2.48486 1.12793 2.43018 1.09717 2.55664 1.16895 0.02734 0.01367-0.36572 0.19824-0.38965 0.18115-2.1123 0.96387-2.53613 1.14844-2.63526 1.16894-0.0957 0.02051-0.20166-0.00683-0.10254-0.02734-2.61816-1.16895-2.51221-1.1416-2.49854-1.15527 0.01367-0.01367 2.4917-1.1416 2.47803-1.12793 2.56348-1.15528 0.16748-0.05469 0.33496 0z m-6.18652 4.67579q-0.16748 0.05811-0.2666 0.18457-0.12646 0.16748-0.12647 0.37597 0 0.32129 0.16748 0.59473 0.16748 0.27344 0.44775 0.42724 0.18457 0.08545 2.66944 1.21338 2.48486 1.12451 2.58056 1.15186 0.54688 0.18457 1.09375 0.01367 0.06836-0.02734 2.51905-1.13135 2.45068-1.10742 2.68652-1.23388 0.31104-0.14014 0.48535-0.42041 0.17432-0.28027 0.17432-0.61524 0-0.14014-0.04102-0.25293-0.09912-0.19482-0.29394-0.29394-0.08545-0.04102-0.21875-0.04102-0.1333 0-0.229 0.02735-0.14014 0.05811-0.2461 0.1914-0.10596 0.12988-0.1333 0.27002l0 0.09912-2.50537 1.13477q-2.4917 1.12109-2.56348 1.14844-0.18115 0.06836-0.37597 0-0.08545-0.02734-2.56348-1.16211l-2.47803-1.1211-0.02734-0.11279q-0.04102-0.22217-0.20508-0.34863-0.16064-0.12646-0.36914-0.12647-0.11279 0-0.18115 0.02735z m0.0957 2.89843q-0.12305 0.01367-0.24268 0.09912-0.11963 0.08203-0.1914 0.19483-0.08203 0.18115-0.04102 0.42041 0.02734 0.2085 0.10254 0.36572 0.07861 0.15381 0.23242 0.30762 0.15381 0.15381 0.31104 0.22217 0.37598 0.19824 2.77539 1.2749 2.40283 1.07666 2.48828 1.104 0.55713 0.1709 1.11768-0.04101 0.15381-0.05469 2.65918-1.20313 2.50879-1.14844 2.57714-1.18945 0.21191-0.12647 0.35889-0.34864 0.14697-0.22558 0.18115-0.47851 0.03418-0.25293-0.0581-0.42725-0.08887-0.17432-0.27002-0.25976-0.09912-0.04102-0.22559-0.04785-0.12646-0.00684-0.20849 0.0205-0.15381 0.05811-0.25977 0.19141-0.10596 0.12988-0.1333 0.28369l-0.01367 0.08545-2.4917 1.13477q-2.4917 1.13476-2.57715 1.16211-0.16748 0.05469-0.3623-0.01368-0.09912-0.04443-2.57715-1.1621l-2.47803-1.13477 0-0.04102q0-0.05811-0.04443-0.16064-0.04102-0.10596-0.08203-0.14697-0.2085-0.2666-0.54688-0.21192z"
-                        fill="#ffffff"
-                      ></path>
-                    </svg>
-                  </div>
+        <div class="raycast-section-card">
+            <!-- Top Bar: Title & Categories Capsule Pill Bar -->
+            <div class="raycast-top-bar">
+                <div class="raycast-title-group">
+                    <h2>Ada fitur cerdas untuk setiap rupiahmu.</h2>
+                    <p>Kelola dan amankan uang jajan harian tanpa ribet buka aplikasi.</p>
                 </div>
-                <div
-                  data-pencil-id="na7Wl"
-                  data-pencil-name="Titles"
-                  class="box-border w-fit shrink-0 h-fit flex flex-col gap-[2px] justify-start items-start"
-                >
-                  <div
-                    data-pencil-id="YHljY"
-                    data-pencil-name="App Name"
-                    class="text-[18px]/[normal] box-border text-[#ffffff] font-[Inter,system-ui,sans-serif] font-semibold text-left [white-space:nowrap]"
-                  >
-                    Linear
-                  </div>
-                  <div
-                    data-pencil-id="d5Co0"
-                    data-pencil-name="Author"
-                    class="text-[12px]/[normal] box-border text-[#818cf8] font-[Inter,system-ui,sans-serif] font-medium text-left [white-space:nowrap]"
-                  >
-                    Linear App Integration
-                  </div>
-                </div>
-              </div>
-              <div
-                data-pencil-id="csR9r"
-                data-pencil-name="Action Button"
-                class="box-border w-[36px] shrink-0 h-[36px] [box-shadow:0px_1px_0px_0px_#ffffff0d] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(180deg,_#ffffff08_0%,_#ffffff1a_100%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff40] rounded-[8px]"
-              >
-                <svg
-                  data-pencil-id="bKRwL"
-                  data-pencil-name="Chevron"
-                  data-icon-name="chevron-right"
-                  data-icon-set="lucide"
-                  viewBox="0 0 13.99993896484375 14"
-                  preserveAspectRatio="xMidYMid meet"
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="box-border w-[16px] shrink-0 h-[16px]"
-                >
-                  <path
-                    d="M5.09619 2.93945q-0.25293 0.08545-0.37939 0.30762-0.04102 0.08545-0.04102 0.25293 0 0.16748 0.04102 0.25293 0.04443 0.08203 1.62353 1.66455l1.58252 1.58252-1.58252 1.58252q-1.5791 1.58252-1.62353 1.66797-0.04102 0.08203-0.04102 0.23584 0 0.15381 0.03418 0.23926 0.0376 0.08203 0.1333 0.18115 0.09912 0.0957 0.18115 0.1333 0.08545 0.03418 0.23926 0.03418 0.15381 0 0.24268-0.04785 0.09229-0.05127 1.90381-1.8628 1.81494-1.81494 1.86279-1.9038 0.05127-0.09229 0.05127-0.25977 0-0.16748-0.04443-0.24951-0.04102-0.08545-1.85938-1.90723l-1.44238-1.42871q-0.33496-0.33496-0.46143-0.41699-0.09912-0.07178-0.19824-0.07178l-0.04102 0q-0.14014 0-0.18115 0.01367z"
-                    fill="#e6e6e6"
-                  ></path>
-                </svg>
-              </div>
-            </div>
-            <div
-              data-pencil-id="f1eYS"
-              data-pencil-name="Description"
-              class="text-[15px]/[24px] box-border w-full text-[#ffffffd9] font-[Inter,system-ui,sans-serif] font-medium text-left"
-            >
-              Create, search and modify your issues without leaving your keyboard.
-            </div>
-            <div
-              data-pencil-id="VyMjP"
-              data-pencil-name="Divider"
-              class="box-border w-full h-[1px] shrink-0 flex flex-row gap-0 justify-start items-start bg-[#ffffff0d]"
-            ></div>
-          </div>
-          <div
-            data-pencil-id="wNEmx"
-            data-pencil-name="Visual Preview"
-            class="box-border w-full h-[360px] shrink-0 flex flex-col gap-0 justify-center items-center overflow-hidden relative"
-          >
-            <div
-              data-pencil-id="Jp54z"
-              data-pencil-name="Star"
-              class="box-border w-[2px] h-[2px] absolute left-[32px] top-[24px] bg-[#ffffff66] rounded-full [z-index:0]"
-            ></div>
-            <div
-              data-pencil-id="kI0El"
-              data-pencil-name="Star"
-              class="box-border w-[1.5px] h-[1.5px] absolute left-[80px] top-[48px] bg-[#ffffff33] rounded-full [z-index:1]"
-            ></div>
-            <div
-              data-pencil-id="Nd5ET"
-              data-pencil-name="Star"
-              class="box-border w-[2px] h-[2px] absolute left-[195px] top-[18px] bg-[#ffffff4d] rounded-full [z-index:2]"
-            ></div>
-            <div
-              data-pencil-id="c9mPA"
-              data-pencil-name="Star"
-              class="box-border w-[1.5px] h-[1.5px] absolute left-[275px] top-[42px] bg-[#ffffff33] rounded-full [z-index:3]"
-            ></div>
-            <div
-              data-pencil-id="Yfei7"
-              data-pencil-name="Star"
-              class="box-border w-[1.5px] h-[1.5px] absolute left-[155px] top-[65px] bg-[#ffffff26] rounded-full [z-index:4]"
-            ></div>
-            <div
-              data-pencil-id="ClqWB"
-              data-pencil-name="Star"
-              class="box-border w-[2px] h-[2px] absolute left-[260px] top-[105px] bg-[#ffffff40] rounded-full [z-index:5]"
-            ></div>
-            <div
-              data-pencil-id="sV5cS"
-              data-pencil-name="Star"
-              class="box-border w-[1.5px] h-[1.5px] absolute left-[40px] top-[115px] bg-[#ffffff33] rounded-full [z-index:6]"
-            ></div>
-            <div
-              data-pencil-id="IkXke"
-              data-pencil-name="Star"
-              class="box-border w-[1.5px] h-[1.5px] absolute left-[290px] top-[180px] bg-[#ffffff26] rounded-full [z-index:7]"
-            ></div>
-            <div
-              data-pencil-id="ms8Sa"
-              data-pencil-name="Star"
-              class="box-border w-[1.5px] h-[1.5px] absolute left-[25px] top-[175px] bg-[#ffffff33] rounded-full [z-index:8]"
-            ></div>
-            <div
-              data-pencil-id="ECrU4"
-              data-pencil-name="Linear Planet Wireframe"
-              class="box-border w-[300px] h-[290px] absolute left-[30px] top-[15px] [z-index:9]"
-            >
-              <div
-                data-pencil-id="dh8Zk"
-                data-pencil-name="Planet Horizon Arc"
-                class="box-border w-[270px] h-[270px] absolute left-[15px] top-[10px] [outline:1.6px_solid_#ffffff80] [outline-offset:-0.8px] rounded-full [z-index:0]"
-              ></div>
-              <div
-                data-pencil-id="UZXLI"
-                data-pencil-name="Diagonal Slash 1"
-                class="box-border w-[140px] h-[18px] [transform:rotate(40deg)] [transform-origin:top_left] absolute left-[12px] top-[108px] bg-[#ffffff0a] [outline:1.5px_solid_#ffffff70] [outline-offset:-0.75px] rounded-[9px] [z-index:1]"
-              ></div>
-              <div
-                data-pencil-id="HEOxD"
-                data-pencil-name="Diagonal Slash 2"
-                class="box-border w-[130px] h-[18px] [transform:rotate(40deg)] [transform-origin:top_left] absolute left-[2px] top-[142px] bg-[#ffffff0a] [outline:1.5px_solid_#ffffff55] [outline-offset:-0.75px] rounded-[9px] [z-index:2]"
-              ></div>
-              <div
-                data-pencil-id="rt8Bf"
-                data-pencil-name="Diagonal Slash 3"
-                class="box-border w-[110px] h-[18px] [transform:rotate(40deg)] [transform-origin:top_left] absolute left-[-8px] top-[176px] bg-[#ffffff0a] [outline:1.5px_solid_#ffffff3d] [outline-offset:-0.75px] rounded-[9px] [z-index:3]"
-              ></div>
-            </div>
-            <div
-              data-pencil-id="RnWQ7"
-              data-pencil-name="Linear Status Dock"
-              class="box-border w-[310px] h-[56px] absolute left-[25px] top-[260px] flex flex-row gap-[16px] justify-center items-center [z-index:10]"
-            >
-              <div
-                data-pencil-id="kQnay"
-                data-pencil-name="Status - Backlog"
-                class="box-border w-[44px] shrink-0 h-[44px] flex flex-row gap-0 justify-center items-center rounded-[22px]"
-              >
-                <svg
-                  data-pencil-id="UKw4i"
-                  data-pencil-name="Dashed Circle"
-                  data-icon-name="circle-dashed"
-                  data-icon-set="lucide"
-                  viewBox="0 0 13.99993896484375 14"
-                  preserveAspectRatio="xMidYMid meet"
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="box-border w-[38px] shrink-0 h-[38px]"
-                >
-                  <path
-                    d="M6.66504 0.60156q-0.33838 0.01367-0.63916 0.05811-0.30078 0.04102-0.39649 0.0957-0.1709 0.08545-0.26318 0.25977-0.08887 0.17432-0.04785 0.35547 0.05811 0.29395 0.32471 0.42041 0.08203 0.05811 0.19482 0.0581 0.11279 0 0.32813-0.02734 0.21875-0.03076 0.42724-0.05811 0.58789-0.04102 1.26123 0.05469 0.19482 0.03076 0.30762 0.03076 0.11279 0 0.19482-0.0581 0.32471-0.15381 0.32471-0.51612 0.01367-0.16748-0.07178-0.30761-0.08545-0.14014-0.22558-0.2085-0.13672-0.07178-0.61524-0.12988-0.0957-0.01367-0.44775-0.03418-0.34863-0.02051-0.37598-0.02051l-0.28027 0.02734z m-3.09668 1.0083q-0.19482 0.07178-0.64941 0.45118-0.45459 0.37598-0.77588 0.75195-0.12646 0.14014-0.28711 0.36572-0.16064 0.22217-0.20508 0.30078-0.04102 0.0752-0.05469 0.18799-0.01367 0.11279 0.01367 0.21191 0.04102 0.18115 0.20166 0.30762 0.16406 0.12646 0.34522 0.12647 0.30762 0 0.51611-0.28028 0.33838-0.46484 0.61524-0.74853 0.28027-0.28711 0.74511-0.61182 0.15381-0.10938 0.22217-0.229 0.07178-0.11963 0.07178-0.28711 0-0.29395-0.2461-0.46826-0.24609-0.17773-0.51269-0.07862z m6.51123 0.01368q-0.19482 0.07178-0.28027 0.22558-0.06836 0.08203-0.08203 0.14697-0.01367 0.06152-0.01368 0.16065 0 0.30762 0.23584 0.48877l0.22559 0.16748q0.62891 0.46143 1.13135 1.17578 0.09912 0.14014 0.16748 0.20508 0.07178 0.06152 0.1709 0.08886 0.33496 0.12646 0.61523-0.12304 0.12646-0.12646 0.16064-0.31446 0.03418-0.19141-0.04785-0.35888-0.04443-0.07178-0.21191-0.30078-0.16748-0.23242-0.29395-0.37256-0.44775-0.51611-1.02197-0.9502-0.22217-0.16748-0.31445-0.20849-0.08887-0.04443-0.22901-0.05127-0.14014-0.00684-0.21191 0.02051z m-8.90381 3.69482q-0.12646 0.03076-0.24609 0.11621-0.11621 0.08203-0.17432 0.18115-0.08203 0.18115-0.14014 0.72119-0.05469 0.53662-0.02734 0.98438 0.04102 0.57422 0.11279 0.89551 0.08203 0.35205 0.43409 0.44775 0.18115 0.05811 0.37597-0.03076 0.19824-0.09229 0.28028-0.27686 0.05811-0.10938 0.0581-0.20849 0-0.09912-0.03076-0.29395-0.12305-0.85449 0-1.70898 0.03076-0.19482 0.03076-0.29395 0-0.09912-0.0581-0.19482-0.06836-0.18115-0.25293-0.27344-0.18115-0.09229-0.36231-0.06494z m11.45362 0q-0.31104 0.05811-0.43409 0.33838-0.04443 0.0957-0.04443 0.19482 0 0.09912 0.02734 0.31787 0.03076 0.21533 0.05811 0.42383 0.04102 0.58789-0.05469 1.26123-0.03076 0.19482-0.03076 0.29395 0 0.09912 0.0581 0.20849 0.08203 0.18457 0.27686 0.27686 0.19824 0.08887 0.37939 0.03076 0.35205-0.0957 0.43409-0.44775 0.07178-0.32129 0.11279-0.89551 0.02734-0.44775-0.03076-0.98438-0.05469-0.54004-0.14014-0.70752-0.08203-0.1709-0.26318-0.25293-0.18115-0.08545-0.34863-0.0581z m-10.62647 4.36816q-0.09912 0.04443-0.21191 0.12989-0.10938 0.08203-0.14014 0.15039-0.14014 0.28027-0.01367 0.54687 0.04443 0.08545 0.22558 0.32129 0.56055 0.7417 1.30225 1.30225 0.23584 0.18115 0.31787 0.22558 0.08545 0.04102 0.24609 0.04102 0.16406 0 0.2461-0.05469 0.14014-0.07178 0.229-0.19824 0.09229-0.12646 0.09229-0.28028 0.01709-0.19482-0.06153-0.31445-0.0752-0.11963-0.32812-0.31445-0.37939-0.29395-0.65283-0.57422-0.27344-0.28027-0.58106-0.70068-0.08203-0.10938-0.14697-0.16407-0.06152-0.05811-0.14697-0.08544-0.08203-0.03076-0.20166-0.0376-0.11963-0.00684-0.17432 0.00683z m9.67285 0.03077q-0.12647 0.02734-0.21191 0.10595-0.08203 0.0752-0.18116 0.21533-0.48877 0.66992-1.11767 1.14844-0.25293 0.18115-0.32471 0.24609-0.06836 0.06152-0.10937 0.14356-0.07178 0.1709-0.04444 0.35205 0.03076 0.18115 0.15381 0.31445 0.12646 0.1333 0.30762 0.16749 0.18457 0.03418 0.35205-0.04786 0.08545-0.02734 0.31445-0.20166 0.23242-0.17774 0.37256-0.3042 0.51611-0.44775 0.9502-1.02197 0.18115-0.23584 0.22216-0.31787 0.04443-0.08545 0.04444-0.24609 0-0.16406-0.04102-0.2461-0.09912-0.18457-0.28027-0.2666-0.08545-0.05469-0.22559-0.05469-0.14014 0-0.18115 0.01368z m-5.93701 2.44726q-0.10938 0.03076-0.21533 0.11621-0.10596 0.08203-0.14698 0.17774-0.14014 0.25293-0.01367 0.51269 0.12646 0.25977 0.42041 0.33154 0.29395 0.06836 0.7417 0.09571 0.44775 0.02734 0.79639 0.01367 0.57422-0.04101 0.89551-0.11279 0.21191-0.05469 0.34521-0.2085 0.1333-0.15381 0.11963-0.36572 0-0.3623-0.32471-0.51612-0.08203-0.0581-0.21533-0.0581-0.1333 0-0.41357 0.04443-0.16748 0.02734-0.29395 0.03418-0.12646 0.00684-0.44775 0.00684-0.46143 0-0.71436-0.04102-0.43408-0.07178-0.5332-0.03076z"
-                    fill="#ffffffd9"
-                  ></path>
-                </svg>
-              </div>
-              <div
-                data-pencil-id="rZV9X"
-                data-pencil-name="Status - Todo"
-                class="box-border w-[44px] shrink-0 h-[44px] [box-shadow:0px_0px_14px_0px_#ffffffb3] flex flex-row gap-0 justify-center items-center [outline:3.5px_solid_#ffffff] [outline-offset:-1.75px] rounded-[22px]"
-              ></div>
-              <div
-                data-pencil-id="OqcuA"
-                data-pencil-name="Status - In Progress"
-                class="box-border w-[44px] shrink-0 h-[44px] [box-shadow:0px_0px_16px_0px_#f59e0bb3] flex flex-row gap-0 justify-center items-center [outline:3.5px_solid_#f59e0b] [outline-offset:-1.75px] rounded-[22px]"
-              >
-                <div
-                  data-pencil-id="e0wnnu"
-                  data-pencil-name="Half Moon"
-                  class="box-border w-[30px] shrink-0 h-[30px] bg-[#f59e0b] [clip-path:path('M15_30_C23.284_30_30_23.284_30_15_C30_6.716_23.284_0_15_0_L15_15_L15_30_Z')]"
-                ></div>
-              </div>
-              <div
-                data-pencil-id="fFpNI"
-                data-pencil-name="Status - Done"
-                class="box-border w-[44px] shrink-0 h-[44px] [box-shadow:0px_0px_18px_0px_#707bfbcc] flex flex-row gap-0 justify-center items-center bg-[#707bfb] rounded-[22px]"
-              >
-                <svg
-                  data-pencil-id="KPg1V"
-                  data-pencil-name="Checkmark"
-                  data-icon-name="check"
-                  data-icon-set="lucide"
-                  viewBox="0 0 13.99993896484375 14"
-                  preserveAspectRatio="xMidYMid meet"
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="box-border w-[26px] shrink-0 h-[26px]"
-                >
-                  <path
-                    d="M11.48096 2.95313q-0.07178 0.01367-0.12989 0.0581-0.05469 0.04102-3.07617 3.06592l-3.0249 3.00781-1.28857-1.28857q-1.28857-1.28516-1.38086-1.32618-0.08887-0.04443-0.22217-0.04443-0.1333 0-0.23242 0.0376-0.0957 0.03418-0.18799 0.11279-0.08887 0.0752-0.1333 0.1709-0.02734 0.07178-0.03418 0.11279-0.00684 0.04102-0.00684 0.14014l0 0.04102q-0.01367 0.11279 0.04102 0.19824 0.07178 0.10938 0.36572 0.40332 0.19482 0.21191 0.96729 0.98096l1.49707 1.48339q0.28027 0.2666 0.38964 0.33838 0.07178 0.05469 0.18457 0.04102l0.09571 0.01367q0.07178 0 0.14013-0.02734 0.08545-0.07178 0.32129-0.28711 0.23926-0.21875 0.79981-0.76221l2.2832-2.2832q2.08496-2.09863 2.7002-2.71387 0.61524-0.61865 0.64599-0.68701 0.04102-0.08545 0.04102-0.23926 0-0.09912-0.00684-0.14014-0.00684-0.04102-0.03418-0.11279-0.04443-0.08203-0.13672-0.16406-0.08887-0.08545-0.18115-0.11963-0.08887-0.0376-0.20849-0.0376-0.11963 0-0.18799 0.02734z"
-                    fill="#ffffff"
-                  ></path>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          data-pencil-id="UaI2H"
-          id="card-smart-nudge"
-          data-pencil-name="Card - Smart Nudge"
-          class="box-border w-[360px] shrink-0 h-[536px] flex flex-col items-start justify-between rounded-[22px] border border-[#38bdf8/20] [background-image:linear-gradient(-151.249deg,_#10233b_13.325%,_#0a1324_50%,_#060a14_86.675%)] bg-no-repeat bg-[length:100%_100%] overflow-hidden leading-normal transition-transform duration-300 hover:scale-[1.01]"
-        >
-          <div
-            data-pencil-id="Z6vcr"
-            data-pencil-name="Card Header"
-            class="box-border w-full h-fit shrink-0 flex flex-col items-start justify-start gap-3.5 pt-6 px-6 leading-normal"
-          >
-            <div
-              data-pencil-id="QJiEC"
-              data-pencil-name="Top Row"
-              class="box-border w-full h-fit shrink-0 flex flex-row gap-0 justify-between items-center"
-            >
-              <div
-                data-pencil-id="Hm38E"
-                data-pencil-name="Icon and Title"
-                class="box-border w-fit shrink-0 h-fit flex flex-row gap-[12px] justify-start items-center"
-              >
-                <div
-                  data-pencil-id="RSS8r"
-                  data-pencil-name="App Icon"
-                  class="box-border w-[52px] shrink-0 h-[52px] [box-shadow:0px_1.2px_2.4px_0px_#00000047] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(-135deg,_#0284c7_14.645%,_#0369a1_85.355%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff33] rounded-[12px]"
-                >
-                  <svg
-                    data-pencil-id="rWBGN"
-                    data-pencil-name="Icon"
-                    data-icon-name="bell-ring"
-                    data-icon-set="lucide"
-                    viewBox="0 0 13.99993896484375 14"
-                    preserveAspectRatio="xMidYMid meet"
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="box-border w-[22px] shrink-0 h-[22px]"
-                  >
-                    <path
-                      d="M2.21143 0.60156q-0.15381 0.02734-0.2461 0.1128-0.08887 0.08203-0.25635 0.34863-0.51953 0.77246-0.78613 1.57226-0.26318 0.79639-0.33496 1.6919-0.01367 0.33496 0.01367 0.48193 0.02734 0.14697 0.15381 0.25977 0.19824 0.19482 0.46143 0.17431 0.2666-0.02051 0.42041-0.24609 0.11279-0.15381 0.11279-0.3623 0-0.39307 0.08203-0.8545 0.08545-0.46143 0.22559-0.85449 0.08545-0.22217 0.25976-0.57764 0.17432-0.35889 0.31446-0.5708l0.19482-0.29394q0.04443-0.06836 0.07178-0.18115 0.05469-0.19482-0.0376-0.37598-0.08887-0.18457-0.27002-0.27344-0.18115-0.09229-0.39307-0.05127l0.01368 0z m4.54931 0q-0.62891 0.02734-1.22363 0.25293-0.59473 0.22217-1.0835 0.62891-0.63232 0.50586-1.03222 1.22705-0.39648 0.72119-0.48194 1.51758-0.01367 0.16748-0.03418 0.70068-0.02051 0.52979-0.0581 0.86817-0.03418 0.33496-0.12988 0.68359-0.09912 0.43408-0.28028 0.78613-0.14014 0.30762-0.29394 0.51953-0.15381 0.2085-0.50586 0.58448-0.22217 0.25293-0.30762 0.38623-0.08203 0.1333-0.12647 0.31445-0.04102 0.14014-0.02734 0.32471 0.01367 0.18115 0.05469 0.30761 0.1709 0.46143 0.60498 0.66993l0.04101 0.02734q0.09912 0.0581 0.28028 0.07178 0.23584 0.01367 1.04931 0.02734l7.5879 0q0.81348-0.01367 1.04931-0.02734 0.18115-0.01367 0.28027-0.07178l0.04102-0.02734q0.43408-0.2085 0.60498-0.66993 0.04102-0.12646 0.05469-0.30761 0.01367-0.18457-0.02735-0.32471-0.04443-0.18115-0.12988-0.32129-0.08203-0.14014-0.3042-0.37939-0.35205-0.37598-0.50586-0.58448-0.15381-0.21191-0.29394-0.51953-0.16748-0.33496-0.2666-0.69726-0.0957-0.36572-0.14014-0.72803-0.04102-0.36572-0.06836-0.9126-0.01367-0.72803-0.08545-1.04932-0.2085-1.08008-0.93652-1.9038-0.72803-0.82715-1.76367-1.1792-0.7417-0.23584-1.54151-0.19483z m4.80225-0.01367q-0.23584 0.04102-0.37598 0.25977-0.14014 0.21533-0.08545 0.45459 0.02734 0.11279 0.07178 0.18115l0.19482 0.29394q0.14014 0.21191 0.31446 0.5708 0.17432 0.35547 0.25976 0.57764 0.14014 0.39307 0.22217 0.85449 0.08545 0.46143 0.08545 0.8545 0 0.2085 0.11279 0.3623 0.15381 0.22559 0.417 0.24609 0.2666 0.02051 0.46484-0.17431 0.12646-0.11279 0.15381-0.25977 0.02734-0.14697 0.01367-0.48193-0.07178-0.89551-0.34521-1.6919-0.27002-0.7998-0.77588-1.57226-0.16748-0.2666-0.26661-0.34863-0.0957-0.08545-0.24951-0.1128l-0.11279-0.02734-0.09912 0.02734 0-0.01367z m-4.11524 1.20313q0.46143 0.07178 0.88184 0.28369 0.42041 0.2085 0.7417 0.55713 0.46143 0.46143 0.67334 1.06298 0.0957 0.25293 0.12988 0.49219 0.0376 0.23584 0.05127 0.7417 0.01367 0.58789 0.06836 1.01514 0.05811 0.42725 0.15723 0.84765 0.16748 0.68359 0.46826 1.2168 0.30078 0.5332 0.84766 1.12109l0.19482 0.19483-9.32422 0 0.19482-0.19483q0.54688-0.58789 0.84766-1.12109 0.30078-0.5332 0.46826-1.2168 0.09912-0.42041 0.15381-0.84765 0.05811-0.42725 0.07861-1.01514 0.02051-0.58789 0.06836-0.875 0.05127-0.28711 0.21192-0.63574 0.16064-0.35205 0.46142-0.68701 0.30078-0.33838 0.63575-0.54688 0.60498-0.36572 1.333-0.42041 0.08203-0.01367 0.31104 0 0.23242 0.01367 0.34521 0.02735z m-1.6372 9.89843q-0.22559 0.08545-0.33155 0.28028-0.10254 0.19482-0.04785 0.42041 0.01367 0.08545 0.11963 0.24609 0.10596 0.16065 0.21875 0.27344 0.50244 0.50244 1.23047 0.50244 0.72803 0 1.23047-0.50244 0.11279-0.11279 0.21875-0.27344 0.10596-0.16064 0.11963-0.24609 0.05469-0.19482-0.0376-0.38282-0.08887-0.19141-0.27002-0.29052-0.08545-0.04102-0.25293-0.04102-0.11279 0-0.15381 0.01367-0.04102 0.01367-0.11279 0.04102-0.09912 0.05811-0.18115 0.15723-0.11279 0.15381-0.17774 0.20849-0.06152 0.05469-0.14697 0.09912-0.08203 0.04102-0.23584 0.04102-0.15381 0-0.23926-0.04102-0.08203-0.04443-0.14697-0.09912-0.06152-0.05469-0.17432-0.20849-0.15381-0.19824-0.43408-0.21192-0.14014 0-0.19482 0.01367z"
-                      fill="#ffffff"
-                    ></path>
-                  </svg>
-                </div>
-                <div
-                  data-pencil-id="PSznr"
-                  data-pencil-name="Titles"
-                  class="box-border w-fit shrink-0 h-fit flex flex-col gap-[2px] justify-start items-start"
-                >
-                  <div
-                    data-pencil-id="zVbgx"
-                    data-pencil-name="App Name"
-                    class="text-[18px]/[normal] box-border text-[#ffffff] font-[Inter,system-ui,sans-serif] font-semibold text-left [white-space:nowrap]"
-                  >
-                    Smart Nudge
-                  </div>
-                  <div
-                    data-pencil-id="Cvtcq"
-                    data-pencil-name="Author"
-                    class="text-[12px]/[normal] box-border text-[#38bdf8] font-[Inter,system-ui,sans-serif] font-medium text-left [white-space:nowrap]"
-                  >
-                    Shopee &amp; QRIS Radar
-                  </div>
-                </div>
-              </div>
-              <div
-                data-pencil-id="CSz1d"
-                data-pencil-name="Action Button"
-                class="box-border w-[36px] shrink-0 h-[36px] [box-shadow:0px_1px_0px_0px_#ffffff0d] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(180deg,_#ffffff08_0%,_#ffffff1a_100%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff40] rounded-[8px]"
-              >
-                <svg
-                  data-pencil-id="f5deC"
-                  data-pencil-name="Chevron"
-                  data-icon-name="chevron-right"
-                  data-icon-set="lucide"
-                  viewBox="0 0 13.99993896484375 14"
-                  preserveAspectRatio="xMidYMid meet"
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="box-border w-[16px] shrink-0 h-[16px]"
-                >
-                  <path
-                    d="M5.09619 2.93945q-0.25293 0.08545-0.37939 0.30762-0.04102 0.08545-0.04102 0.25293 0 0.16748 0.04102 0.25293 0.04443 0.08203 1.62353 1.66455l1.58252 1.58252-1.58252 1.58252q-1.5791 1.58252-1.62353 1.66797-0.04102 0.08203-0.04102 0.23584 0 0.15381 0.03418 0.23926 0.0376 0.08203 0.1333 0.18115 0.09912 0.0957 0.18115 0.1333 0.08545 0.03418 0.23926 0.03418 0.15381 0 0.24268-0.04785 0.09229-0.05127 1.90381-1.8628 1.81494-1.81494 1.86279-1.9038 0.05127-0.09229 0.05127-0.25977 0-0.16748-0.04443-0.24951-0.04102-0.08545-1.85938-1.90723l-1.44238-1.42871q-0.33496-0.33496-0.46143-0.41699-0.09912-0.07178-0.19824-0.07178l-0.04102 0q-0.14014 0-0.18115 0.01367z"
-                    fill="#e6e6e6"
-                  ></path>
-                </svg>
-              </div>
-            </div>
-            <div
-              data-pencil-id="EdDGv"
-              data-pencil-name="Description"
-              class="text-[15px]/[24px] box-border w-full text-[#ffffffd9] font-[Inter,system-ui,sans-serif] font-medium text-left"
-            >
-              Floating chip otomatis melayang lembut selama 6 detik saat membuka Shopee, Tokopedia,
-              atau scanner QRIS.
-            </div>
-            <div
-              data-pencil-id="jPqTL"
-              data-pencil-name="Divider"
-              class="box-border w-full h-[1px] shrink-0 flex flex-row gap-0 justify-start items-start bg-[#ffffff0d]"
-            ></div>
-          </div>
-          <div
-            data-pencil-id="M97Gmw"
-            data-pencil-name="Visual Preview"
-            class="box-border w-full h-[360px] shrink-0 flex flex-col items-center justify-center pb-6 px-5 leading-normal"
-          >
-            <div
-              data-pencil-id="GQgwU"
-              data-pencil-name="Floating Chip UI"
-              class="box-border w-full h-fit shrink-0 [box-shadow:0px_12px_24px_0px_#00000088] flex flex-col gap-[14px] p-[16px] justify-start items-start bg-[#091322] [border:1.2px_solid_#38bdf84d] rounded-[16px]"
-            >
-              <div
-                data-pencil-id="uaIzi"
-                data-pencil-name="HUD Header"
-                class="box-border w-full h-fit shrink-0 flex flex-row gap-0 justify-between items-center"
-              >
-                <div
-                  data-pencil-id="D1VQwJ"
-                  data-pencil-name="App Detect"
-                  class="box-border w-fit shrink-0 h-fit flex flex-row gap-[6px] justify-start items-center"
-                >
-                  <div
-                    data-pencil-id="Kzwml"
-                    data-pencil-name="Orange Dot"
-                    class="box-border w-[8px] shrink-0 h-[8px] flex flex-row gap-0 justify-start items-start bg-[#fb923c] rounded-[4px]"
-                  ></div>
-                  <div
-                    data-pencil-id="BAQ7k"
-                    data-pencil-name="Detected Label"
-                    class="text-[11px]/[normal] box-border text-[#fb923c] font-[Inter,system-ui,sans-serif] font-semibold text-left [white-space:nowrap]"
-                  >
-                    Shopee Terdeteksi
-                  </div>
-                </div>
-                <div
-                  data-pencil-id="kPoTu"
-                  data-pencil-name="Timer"
-                  class="text-[11px]/[normal] box-border text-[#787a85] font-[Inter,system-ui,sans-serif] font-normal text-left [white-space:nowrap]"
-                >
-                  ⏳ 5s
-                </div>
-              </div>
-              <div
-                data-pencil-id="x81Yaz"
-                data-pencil-name="Nudge Content"
-                class="box-border w-full h-fit shrink-0 flex flex-row gap-[10px] p-[12px_14px] justify-start items-center bg-[#0f2238] [border:1px_solid_#38bdf833] rounded-[12px]"
-              >
-                <svg
-                  data-pencil-id="gsJxy"
-                  data-pencil-name="Warning Icon"
-                  data-icon-name="sparkles"
-                  data-icon-set="lucide"
-                  viewBox="0 0 13.99993896484375 14"
-                  preserveAspectRatio="xMidYMid meet"
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="box-border w-[20px] shrink-0 h-[20px]"
-                >
-                  <path
-                    d="M6.84619 0.58789q-0.28027 0.04102-0.54687 0.22559-0.29395 0.2085-0.40674 0.57422-0.02734 0.08203-0.3418 1.75683-0.31445 1.67139-0.35889 1.76367-0.04102 0.08887-0.10937 0.16065-0.07178 0.08203-0.15381 0.11279-0.11279 0.04102-0.4751 0.12305l-1.28857 0.23926q-1.68164 0.32129-1.77734 0.34863-0.23926 0.07178-0.44434 0.27002-0.20166 0.19482-0.29395 0.44092-0.08887 0.24268-0.06152 0.50244 0.02734 0.25635 0.16748 0.4956 0.09912 0.16748 0.27344 0.30762 0.17432 0.14014 0.35889 0.19824 0.0957 0.02734 1.76367 0.34863l1.28515 0.25293q0.37939 0.06836 0.50586 0.10938 0.08203 0.04443 0.15381 0.11279 0.05469 0.08545 0.09912 0.16748 0.04102 0.12646 0.10938 0.50586l0.23926 1.24414q0.32129 1.68164 0.34863 1.76367 0.15381 0.46484 0.58789 0.67335 0.2666 0.14014 0.51953 0.14013 0.25293 0 0.51953-0.14013 0.43408-0.2085 0.58789-0.67335 0.02734-0.08203 0.3418-1.74658 0.31445-1.66797 0.3418-1.72265 0.02734-0.11279 0.12646-0.2085 0.09912-0.09912 0.21191-0.14355 0.06836-0.02734 1.73291-0.3418 1.66797-0.31445 1.75-0.3418 0.46484-0.15381 0.67335-0.58789 0.2666-0.51953 0-1.03906-0.09912-0.2085-0.28028-0.36231-0.18115-0.15381-0.39307-0.22558-0.0957-0.02734-1.77734-0.34863l-1.23047-0.23926q-0.37939-0.06836-0.50586-0.10938-0.0957-0.03076-0.15381-0.08545-0.10938-0.11279-0.1538-0.23925-0.02734-0.06836-0.3418-1.73291-0.31445-1.66797-0.3418-1.75-0.14014-0.46484-0.60498-0.68702-0.14014-0.07178-0.31445-0.09912-0.17432-0.02734-0.3418-0.01367z m4.73047 0.01367q-0.12305 0.01367-0.24268 0.09912-0.11963 0.08203-0.1914 0.19483-0.04102 0.08545-0.05469 0.20508-0.01367 0.11621-0.01367 0.35546l0 0.29395-0.36572 0q-0.26318 0.01367-0.32813 0.02051-0.06152 0.00684-0.1333 0.03418-0.2666 0.12646-0.31445 0.42041-0.04785 0.29395 0.14697 0.50586 0.08545 0.08203 0.18115 0.14013 0.08545 0.02734 0.14697 0.03418 0.06494 0.00684 0.31788 0.02051l0.34863 0 0 0.34863q0.01367 0.25293 0.02051 0.31788 0.00683 0.06152 0.03418 0.14697 0.05811 0.0957 0.14013 0.18115 0.21191 0.19482 0.50586 0.14697 0.29395-0.04785 0.42041-0.31445 0.02734-0.08545 0.03418-0.14014 0.00684-0.05811 0.02051-0.32129l0-0.36572 0.29395 0q0.32129 0 0.45458-0.03418 0.1333-0.03418 0.25293-0.15381 0.11963-0.11963 0.15381-0.31445 0.03418-0.19824-0.04785-0.35205-0.04443-0.08203-0.12305-0.15039-0.0752-0.07178-0.1538-0.10596-0.07519-0.0376-0.14014-0.04443-0.06152-0.00684-0.32813-0.02051l-0.3623 0 0-0.34863q0-0.23926-0.00684-0.30762-0.00684-0.07178-0.03418-0.12646-0.08545-0.21191-0.25293-0.30762-0.16748-0.09912-0.37939-0.05811z m-4.26904 2.7583q0.23926 1.26123 0.29394 1.55518 0.05811 0.29395 0.1128 0.42041 0.12646 0.30762 0.38281 0.56738 0.25977 0.25635 0.56738 0.38281 0.12646 0.05469 0.41358 0.1128 0.28711 0.05469 1.54833 0.29394 1.56885 0.29395 1.57569 0.30762 0.00684 0.01367-1.60303 0.31445-1.60986 0.30078-1.72266 0.32813-0.39307 0.09912-0.72119 0.40674-0.32813 0.30762-0.46826 0.70068-0.04443 0.09912-0.09912 0.43408l-0.32129 1.63721q-0.25293 1.37402-0.2666 1.37402-0.01367 0-0.30762-1.55517-0.23926-1.2749-0.29736-1.56202-0.05469-0.28711-0.10938-0.41357-0.09912-0.23584-0.30078-0.46484-0.20166-0.23242-0.41357-0.35889-0.14014-0.09912-0.2666-0.14014-0.16748-0.04102-0.57422-0.12646l-1.28516-0.25293q-1.6543-0.30762-1.64062-0.32129 0.01367-0.01367 1.60986-0.30762l1.51416-0.29394q0.25293-0.05811 0.38965-0.1128 0.29395-0.11279 0.56738-0.37597 0.27344-0.2666 0.3999-0.57422 0.05469-0.12646 0.10938-0.41358 0.05811-0.28711 0.29736-1.56201 0.29395-1.55518 0.30762-1.55517 0.01367 0 0.30762 1.55517z m-5.33203 6.59326q-0.31104 0.07178-0.57764 0.23926-0.26318 0.16748-0.46143 0.42041-0.34863 0.4751-0.34863 1.05615 0 0.58105 0.3418 1.04249 0.34521 0.46143 0.91943 0.6289 0.64258 0.18457 1.25781-0.10937 0.32471-0.15381 0.56055-0.44092 0.23926-0.28711 0.35205-0.65283 0.02734-0.11279 0.03418-0.18116 0.00684-0.06836 0.02051-0.28027 0-0.25293-0.02051-0.3623-0.02051-0.11279-0.10596-0.32471-0.15381-0.36231-0.46826-0.63574-0.31445-0.27344-0.70752-0.38623-0.15381-0.02734-0.3999-0.03418-0.24268-0.00684-0.39648 0.0205z m0.60156 1.18946q0.24951 0.11279 0.31787 0.38623 0.07178 0.27344-0.0957 0.48193-0.12646 0.15381-0.29395 0.21192-0.16748 0.05469-0.33496 0-0.25293-0.07178-0.37939-0.33497-0.04102-0.09912-0.03418-0.23242 0.00684-0.1333 0.04785-0.23242 0.09912-0.22217 0.32129-0.29736 0.22559-0.07861 0.45117 0.01709z"
-                    fill="#38bdf8"
-                  ></path>
-                </svg>
-                <div
-                  data-pencil-id="Bi604"
-                  data-pencil-name="Text Col"
-                  class="box-border [flex:1_1_0] h-fit flex flex-col gap-[2px] justify-start items-start"
-                >
-                  <div
-                    data-pencil-id="Luvu3"
-                    data-pencil-name="Nudge Header"
-                    class="text-[12px]/[normal] box-border text-[#ffffff] font-[Inter,system-ui,sans-serif] font-semibold text-left [white-space:nowrap]"
-                  >
-                    Sisa Uang Jajan: Rp 120.000
-                  </div>
-                  <div
-                    data-pencil-id="KpBmL"
-                    data-pencil-name="Nudge Sub"
-                    class="text-[11px]/[normal] box-border text-[#93c5fd] font-[Inter,system-ui,sans-serif] font-normal text-left [white-space:nowrap]"
-                  >
-                    Yakin mau checkout sekarang?
-                  </div>
-                </div>
-              </div>
-              <div
-                data-pencil-id="WVqoK"
-                data-pencil-name="HUD Security Tag"
-                class="box-border w-full h-fit shrink-0 flex flex-row gap-[6px] justify-center items-center"
-              >
-                <svg
-                  data-pencil-id="W2b9s"
-                  data-pencil-name="Shield Icon"
-                  data-icon-name="shield-check"
-                  data-icon-set="lucide"
-                  viewBox="0 0 13.99993896484375 14"
-                  preserveAspectRatio="xMidYMid meet"
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="box-border w-[13px] shrink-0 h-[13px]"
-                >
-                  <path
-                    d="M6.84619 0.60156q-0.34863 0.02734-0.68701 0.30762-0.51611 0.42041-1.00147 0.70068-0.48193 0.28027-1.01513 0.4751-0.30762 0.11279-0.58789 0.1709-0.28027 0.05469-0.66992 0.08203-0.23926 0.01367-0.36573 0.07178-0.19482 0.06836-0.37939 0.22217-0.18115 0.15381-0.26319 0.34863l-0.01367 0.03076q-0.07178 0.12646-0.08545 0.22217-0.01367 0.15381-0.02734 0.60156l0 1.78076q0 2.25244 0.01367 2.46094 0.14014 1.6543 1.10742 2.88477 0.14014 0.16748 0.43409 0.46142 0.29395 0.29394 0.48877 0.44775 0.92285 0.7417 2.2832 1.27491 0.46143 0.18115 0.65625 0.23926 0.23926 0.05469 0.43408 0.01367 0.16748-0.02734 0.5332-0.15381 1.35693-0.51953 2.27979-1.20313 0.37939-0.2666 0.71435-0.60498 1.37402-1.3706 1.54151-3.37353 0.01367-0.23584 0.01367-2.46094 0-2.22852-0.02734-2.35498-0.07178-0.32129-0.31787-0.56396-0.24268-0.24609-0.5503-0.31788-0.09912-0.02734-0.37939-0.04101-0.48877-0.02734-0.96387-0.18115-0.81348-0.2666-1.55518-0.77246-0.2666-0.18115-0.64257-0.48877-0.42041-0.33496-0.96729-0.28028z m0.43408 1.34326q0.64258 0.51953 1.32959 0.86817 1.2168 0.61865 2.25244 0.68701l0.21192 0-0.01367 4.31348q0 0.33496-0.02735 0.50244-0.22559 1.34326-1.1416 2.27637-0.91602 0.92969-2.66601 1.57226l-0.21192 0.08545-0.18115-0.05469q-2.32422-0.85449-3.2334-2.22851-0.47852-0.71436-0.63232-1.63721-0.02734-0.18115-0.02735-0.50244l-0.01367-4.32715 0.19483 0q0.86816-0.05469 1.84912-0.48193 0.98096-0.42725 1.83545-1.12793 0.16748-0.14014 0.19482-0.14014 0.02734 0 0.28027 0.19482z m1.32959 3.31885q-0.06836 0.02734-0.12646 0.05127-0.05469 0.02051-1.06299 1.02539l-0.99463 0.99463-0.40674-0.40332q-0.2666-0.2666-0.3623-0.33838-0.12646-0.11279-0.19824-0.14013-0.06836-0.02734-0.19483-0.02735-0.12646 0-0.16748 0.01367-0.04102 0.01367-0.09912 0.04102-0.18115 0.09912-0.28027 0.2666-0.04102 0.08545-0.04102 0.25293l0 0.01367q0 0.14014 0.03418 0.21192 0.0376 0.06836 0.17774 0.22216 0.0957 0.11279 0.48876 0.50586l0.04102 0.04102q0.42041 0.42041 0.55371 0.54687 0.1333 0.12305 0.20166 0.15381 0.14014 0.06836 0.29395 0.05469 0.15381-0.01367 0.28027-0.09912 0.07178-0.05469 1.28857-1.27149 0.86816-0.86816 1.04932-1.06298 0.18457-0.19824 0.21192-0.27002 0.0957-0.27686-0.05811-0.52295-0.15381-0.24609-0.44775-0.25977-0.12646-0.01367-0.18116 0z"
-                    fill="#64748b"
-                  ></path>
-                </svg>
-                <div
-                  data-pencil-id="c1rsd"
-                  data-pencil-name="Security Text"
-                  class="text-[10px]/[normal] box-border text-[#64748b] font-[Inter,system-ui,sans-serif] font-normal text-left [white-space:nowrap]"
-                >
-                  0 Keystroke Log • Package ID Match Only
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          data-pencil-id="neAhB"
-          id="card-amplop-mental"
-          data-pencil-name="Card - Amplop Mental"
-          class="box-border w-[360px] shrink-0 h-[536px] flex flex-col items-start justify-between rounded-[22px] border border-[#fbbf24/20] [background-image:linear-gradient(-151.249deg,_#2d200e_13.325%,_#1a1207_50%,_#0d0903_86.675%)] bg-no-repeat bg-[length:100%_100%] overflow-hidden leading-normal transition-transform duration-300 hover:scale-[1.01]"
-        >
-          <div
-            data-pencil-id="x4Yvz"
-            data-pencil-name="Card Header"
-            class="box-border w-full h-fit shrink-0 flex flex-col items-start justify-start gap-3.5 pt-6 px-6 leading-normal"
-          >
-            <div
-              data-pencil-id="avzBY"
-              data-pencil-name="Top Row"
-              class="box-border w-full h-fit shrink-0 flex flex-row gap-0 justify-between items-center"
-            >
-              <div
-                data-pencil-id="UYhyu"
-                data-pencil-name="Icon and Title"
-                class="box-border w-fit shrink-0 h-fit flex flex-row gap-[12px] justify-start items-center"
-              >
-                <div
-                  data-pencil-id="rQrkJ"
-                  data-pencil-name="App Icon"
-                  class="box-border w-[52px] shrink-0 h-[52px] [box-shadow:0px_1.2px_2.4px_0px_#00000047] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(-135deg,_#d97706_14.645%,_#b45309_85.355%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff33] rounded-[12px]"
-                >
-                  <svg
-                    data-pencil-id="e0gkRQ"
-                    data-pencil-name="Icon"
-                    data-icon-name="wallet"
-                    data-icon-set="lucide"
-                    viewBox="0 0 13.99993896484375 14"
-                    preserveAspectRatio="xMidYMid meet"
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="box-border w-[22px] shrink-0 h-[22px]"
-                  >
-                    <path
-                      d="M2.60449 1.20313q-0.50586 0.08545-0.87842 0.43749-0.36914 0.34863-0.50927 0.86475-0.02734 0.08545-0.02735 0.71436l-0.01367 3.78027 0.01367 3.78027q0 0.62891 0.02735 0.71436 0.2666 0.98096 1.26123 1.28857l0.12646 0.04102 8.28858 0q0.76904 0 0.99121-0.02734 0.15723-0.01367 0.25293-0.07178l0.0581-0.02735q0.15381-0.06836 0.29395-0.20849 0.14014-0.14014 0.20849-0.29395l0.01368-0.01367q0.07178-0.12647 0.08545-0.21191 0.02734-0.09912 0.02734-0.33496l0-1.8628 0.12646-0.09912q0.32129-0.23584 0.43409-0.6289 0.01367-0.06836 0.02734-0.22559l0-0.65625q0-0.57422-0.00684-0.68701-0.00683-0.11279-0.03418-0.2085-0.04443-0.14014-0.09228-0.229-0.04785-0.09229-0.17432-0.23242-0.12646-0.14014-0.21191-0.18457l-0.06836-0.05469-0.01367-2.0166q0-0.16748-0.02735-0.25293-0.07178-0.18115-0.21191-0.35547-0.14014-0.17432-0.29395-0.27344-0.22217-0.12646-0.48877-0.15381l-0.11279-0.01367-0.01367-0.68701q0-0.48877-0.00684-0.6084-0.00683-0.11963-0.03418-0.20166-0.05811-0.15381-0.12304-0.25977-0.06152-0.10596-0.18457-0.23242-0.25293-0.24951-0.54688-0.30761-0.12647-0.02734-4.07422-0.02735-3.94775 0-4.08789 0.02735z m7.89551 1.70898l0 0.58789-7.68701 0-0.0957-0.04102q-0.15381-0.05811-0.26661-0.19824-0.11279-0.14014-0.11279-0.34863 0-0.12646 0.05469-0.23926 0.05811-0.12646 0.17431-0.21533 0.11963-0.09229 0.25977-0.11963 0.08545 0 3.87939-0.01367l3.79395 0 0 0.58789z m-8.02197 1.69531q0.11279 0.02734 0.25293 0.04785 0.14014 0.02051 4.54931 0.02051l4.39551 0 0 1.75-0.7417 0q-0.58789 0-0.72119 0.01367-0.1333 0.01367-0.32812 0.09912-0.23926 0.08203-0.46485 0.25977-0.22217 0.17432-0.3623 0.38281-0.33496 0.50586-0.30078 1.08692 0.03418 0.58105 0.40332 1.0288 0.37256 0.44775 0.97412 0.5879 0.12646 0.02734 0.82715 0.02734l0.71435 0.01367 0 1.75-4.38183 0q-4.38184 0-4.48096-0.02734-0.29395-0.05811-0.43408-0.33496l-0.04102-0.09913 0-6.11816q0-0.5332 0.01367-0.51953l0.12647 0.03076z m9.77197 3.55469l0 0.58789-1.90381-0.01367-0.09912-0.04102q-0.0957-0.04443-0.17432-0.1333-0.0752-0.09229-0.11963-0.18799-0.04102-0.09912-0.03417-0.23242 0.00684-0.1333 0.04785-0.21875 0.07178-0.12646 0.18115-0.21533 0.11279-0.09229 0.25293-0.10596 0.09912-0.02734 0.96728-0.02734l0.88184 0 0 0.58789z"
-                      fill="#ffffff"
-                    ></path>
-                  </svg>
-                </div>
-                <div
-                  data-pencil-id="Qzq0j"
-                  data-pencil-name="Titles"
-                  class="box-border w-fit shrink-0 h-fit flex flex-col gap-[2px] justify-start items-start"
-                >
-                  <div
-                    data-pencil-id="gUvJD"
-                    data-pencil-name="App Name"
-                    class="text-[18px]/[normal] box-border text-[#ffffff] font-[Inter,system-ui,sans-serif] font-semibold text-left [white-space:nowrap]"
-                  >
-                    Amplop Mental
-                  </div>
-                  <div
-                    data-pencil-id="RjcIS"
-                    data-pencil-name="Author"
-                    class="text-[12px]/[normal] box-border text-[#fbbf24] font-[Inter,system-ui,sans-serif] font-medium text-left [white-space:nowrap]"
-                  >
-                    Strict Budget Separation
-                  </div>
-                </div>
-              </div>
-              <div
-                data-pencil-id="hZVJC"
-                data-pencil-name="Action Button"
-                class="box-border w-[36px] shrink-0 h-[36px] [box-shadow:0px_1px_0px_0px_#ffffff0d] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(180deg,_#ffffff08_0%,_#ffffff1a_100%)] bg-no-repeat bg-[length:100%_100%] [border:1px_solid_#ffffff40] rounded-[8px]"
-              >
-                <svg
-                  data-pencil-id="Gf22n"
-                  data-pencil-name="Chevron"
-                  data-icon-name="chevron-right"
-                  data-icon-set="lucide"
-                  viewBox="0 0 13.99993896484375 14"
-                  preserveAspectRatio="xMidYMid meet"
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="box-border w-[16px] shrink-0 h-[16px]"
-                >
-                  <path
-                    d="M5.09619 2.93945q-0.25293 0.08545-0.37939 0.30762-0.04102 0.08545-0.04102 0.25293 0 0.16748 0.04102 0.25293 0.04443 0.08203 1.62353 1.66455l1.58252 1.58252-1.58252 1.58252q-1.5791 1.58252-1.62353 1.66797-0.04102 0.08203-0.04102 0.23584 0 0.15381 0.03418 0.23926 0.0376 0.08203 0.1333 0.18115 0.09912 0.0957 0.18115 0.1333 0.08545 0.03418 0.23926 0.03418 0.15381 0 0.24268-0.04785 0.09229-0.05127 1.90381-1.8628 1.81494-1.81494 1.86279-1.9038 0.05127-0.09229 0.05127-0.25977 0-0.16748-0.04443-0.24951-0.04102-0.08545-1.85938-1.90723l-1.44238-1.42871q-0.33496-0.33496-0.46143-0.41699-0.09912-0.07178-0.19824-0.07178l-0.04102 0q-0.14014 0-0.18115 0.01367z"
-                    fill="#e6e6e6"
-                  ></path>
-                </svg>
-              </div>
-            </div>
-            <div
-              data-pencil-id="UEw91"
-              data-pencil-name="Description"
-              class="text-[15px]/[24px] box-border w-full text-[#ffffffd9] font-[Inter,system-ui,sans-serif] font-medium text-left"
-            >
-              Pisahkan Uang Pokok (kos, tagihan, cicilan) dari Uang Jajan bebas tanpa rasa bersalah.
-            </div>
-            <div
-              data-pencil-id="OWvY3"
-              data-pencil-name="Divider"
-              class="box-border w-full h-[1px] shrink-0 flex flex-row gap-0 justify-start items-start bg-[#ffffff0d]"
-            ></div>
-          </div>
-          <div
-            data-pencil-id="x296X"
-            data-pencil-name="Visual Preview"
-            class="box-border w-full h-[360px] shrink-0 flex flex-col items-center justify-center pb-6 px-5 leading-normal"
-          >
-            <div
-              data-pencil-id="dKrQB"
-              data-pencil-name="Envelopes Stack"
-              class="box-border w-full h-fit shrink-0 [box-shadow:0px_12px_24px_0px_#00000088] flex flex-col gap-[10px] p-[14px] justify-start items-start bg-[#140e05] [border:1.2px_solid_#fbbf2440] rounded-[16px]"
-            >
-              <div
-                data-pencil-id="tR4I7"
-                data-pencil-name="Envelope Pokok"
-                class="box-border w-full h-fit shrink-0 flex flex-row gap-0 p-[10px_12px] justify-between items-center bg-[#1e160a] [border:1px_solid_#ffffff14] rounded-[10px]"
-              >
-                <div
-                  data-pencil-id="uH7Xl"
-                  data-pencil-name="Left"
-                  class="box-border w-fit shrink-0 h-fit flex flex-row gap-[8px] justify-start items-center"
-                >
-                  <svg
-                    data-pencil-id="PoFv7"
-                    data-pencil-name="Lock Icon"
-                    data-icon-name="lock"
-                    data-icon-set="lucide"
-                    viewBox="0 0 13.99993896484375 14"
-                    preserveAspectRatio="xMidYMid meet"
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="box-border w-[14px] shrink-0 h-[14px]"
-                  >
-                    <path
-                      d="M6.77441 0.60156q-0.72803 0.02734-1.38769 0.3794-0.65625 0.34863-1.12451 0.92285-0.46826 0.57422-0.64942 1.28857l0 0.01367q-0.07178 0.29395-0.08545 0.48536-0.01367 0.18799-0.02734 1.02539l0 1.10742-0.2666 0q-0.40674 0-0.63916 0.04443-0.229 0.04102-0.45117 0.15039-0.32471 0.16748-0.56397 0.44776-0.23584 0.28027-0.34863 0.64599l-0.05469 0.15381 0 4.7168 0.05469 0.15381q0.15723 0.51953 0.56055 0.86132 0.40674 0.3418 0.93994 0.39991 0.14014 0.02734 4.26904 0.02734 4.12891 0 4.26904-0.02734 0.30762-0.02734 0.58789-0.16748 0.32471-0.15381 0.56055-0.44092 0.23926-0.28711 0.35205-0.65283l0.05469-0.15381 0-4.7168-0.05469-0.15381q-0.11279-0.36572-0.35205-0.64599-0.23584-0.28027-0.56055-0.44776-0.22217-0.10938-0.45459-0.15039-0.229-0.04443-0.63574-0.04443l-0.2666 0 0-1.13477q-0.01367-0.81006-0.02734-0.99804-0.01367-0.19141-0.08545-0.47168l0-0.02735q-0.18115-0.71436-0.66651-1.30224-0.48193-0.58789-1.15185-0.93653-0.82715-0.40674-1.79444-0.35205z m0.70069 1.20313q0.75537 0.15381 1.2749 0.7417 0.3623 0.40674 0.50244 0.92627 0.05811 0.19482 0.06494 0.41357 0.00684 0.21533 0.00684 0.9707l0 0.96729-4.64844 0 0-1.06299q0-0.82715 0.01367-1.0083 0.01367-0.18457 0.09912-0.40674 0.22217-0.64258 0.74854-1.06982 0.52637-0.42725 1.19629-0.5127 0.14014-0.01367 0.3623 0 0.22559 0.01367 0.3794 0.04102z m3.85205 5.25q0.08203 0.04443 0.15723 0.12304 0.07861 0.0752 0.11279 0.15381 0.0376 0.0752 0.0581 0.19483 0.02051 0.11621 0.00684 2.19092l0 1.6372q0 0.3623-0.02734 0.48877-0.01367 0.08545-0.07178 0.14014l-0.01367 0.02734q-0.11279 0.12646-0.26661 0.19824l-0.0957 0.04102-8.37402 0-0.0957-0.04102q-0.15381-0.0581-0.26661-0.19824l-0.01367-0.02734q-0.05811-0.06836-0.07178-0.14014-0.02734-0.12646-0.02734-0.48877l0-1.65088q-0.01367-2.08838 0.01367-2.20117 0.01367-0.18115 0.1333-0.31445 0.11963-0.1333 0.28711-0.17432 0.06836-0.01367 4.25537-0.01367l4.20069 0.01367 0.09912 0.04102z"
-                      fill="#94a3b8"
-                    ></path>
-                  </svg>
-                  <div
-                    data-pencil-id="LHpli"
-                    data-pencil-name="Text"
-                    class="box-border w-fit shrink-0 h-fit flex flex-col gap-[1px] justify-start items-start"
-                  >
-                    <div
-                      data-pencil-id="eAtRW"
-                      data-pencil-name="Title"
-                      class="text-[11px]/[normal] box-border text-[#e2e8f0] font-[Inter,system-ui,sans-serif] font-semibold text-left [white-space:nowrap]"
-                    >
-                      Uang Pokok (Terkunci)
+                <!-- Comment #2: .ExtensionHighlight-module__3Yq4tG__categories with activeBackdrop -->
+                <div class="raycast-categories-container">
+                    <div class="raycast-categories" id="raycastCategories">
+                        <div class="raycast-active-backdrop" id="activeBackdrop"></div>
+                        <div class="raycast-category-pill active" onclick="selectShowcaseCategory(0, 0, this)">
+                            Semua Fitur
+                        </div>
+                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(0, 1, this)">
+                            Widget Cepat
+                        </div>
+                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(416, 2, this)">
+                            Smart Nudge
+                        </div>
+                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(832, 3, this)">
+                            Amplop Mental
+                        </div>
+                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(1248, 4, this)">
+                            Privasi SQLite
+                        </div>
                     </div>
-                    <div
-                      data-pencil-id="mgXVN"
-                      data-pencil-name="Sub"
-                      class="text-[10px]/[normal] box-border text-[#64748b] font-[Inter,system-ui,sans-serif] font-normal text-left [white-space:nowrap]"
-                    >
-                      Kos, Listrik, Tabungan
-                    </div>
-                  </div>
                 </div>
-                <div
-                  data-pencil-id="YWngm"
-                  data-pencil-name="Value"
-                  class="text-[13px]/[normal] box-border text-[#cbd5e1] font-[Inter,system-ui,sans-serif] font-bold text-left [white-space:nowrap]"
-                >
-                  Rp 3.500.000
-                </div>
-              </div>
-              <div
-                data-pencil-id="xSOqI"
-                data-pencil-name="Envelope Jajan"
-                class="box-border w-full h-fit shrink-0 flex flex-row gap-0 p-[10px_12px] justify-between items-center bg-[#fbbf241a] [border:1px_solid_#fbbf2466] rounded-[10px]"
-              >
-                <div
-                  data-pencil-id="FhAoJ"
-                  data-pencil-name="Left"
-                  class="box-border w-fit shrink-0 h-fit flex flex-row gap-[8px] justify-start items-center"
-                >
-                  <svg
-                    data-pencil-id="cjIo1"
-                    data-pencil-name="Cup Icon"
-                    data-icon-name="coffee"
-                    data-icon-set="lucide"
-                    viewBox="0 0 13.99993896484375 14"
-                    preserveAspectRatio="xMidYMid meet"
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="box-border w-[14px] shrink-0 h-[14px]"
-                  >
-                    <path
-                      d="M3.40088 0.60156q-0.18115 0.02734-0.32129 0.16748-0.08203 0.08545-0.11279 0.15723-0.02734 0.06836-0.04102 0.24951 0 0.12646 0 0.57422 0 0.44775 0 0.57422 0.01367 0.18115 0.04102 0.25293 0.03076 0.06836 0.11279 0.15381 0.18115 0.18115 0.42041 0.18115 0.23926 0 0.42041-0.18115 0.08203-0.08545 0.10938-0.15381 0.03076-0.07178 0.04443-0.25293 0-0.12646 0-0.57422l0-0.60156q0-0.12646-0.02734-0.18115-0.07178-0.19824-0.25293-0.30079-0.18115-0.10596-0.39307-0.06494z m2.32422 0q-0.12646 0.01367-0.2461 0.10596-0.11621 0.08887-0.17431 0.21533l-0.04102 0.09912 0 1.45606 0.04102 0.09912q0.04443 0.08203 0.11279 0.16064 0.07178 0.0752 0.14014 0.1128 0.07178 0.03418 0.18115 0.04785 0.22559 0.04102 0.42041-0.09229 0.19824-0.1333 0.23926-0.36914 0.02734-0.09912 0.02734-0.68701 0-0.58789-0.02734-0.68701-0.04102-0.23584-0.23242-0.36914-0.18799-0.1333-0.44092-0.09229z m2.35156 0q-0.18115 0.01367-0.31445 0.14698-0.1333 0.1333-0.16065 0.31445-0.02734 0.09912-0.02734 0.68701 0 0.58789 0.01367 0.68701 0.05469 0.23584 0.24951 0.36914 0.19824 0.1333 0.4375 0.09229 0.0957-0.01367 0.16406-0.04785 0.07178-0.0376 0.14014-0.1128 0.07178-0.07861 0.11621-0.16064l0.04102-0.09912 0.01367-1.41504-0.04102-0.0957q-0.08545-0.19824-0.25293-0.30079-0.16748-0.10596-0.37939-0.06494z m-5.87891 3.48633q-0.2085 0.02734-0.37255 0.11279-0.16064 0.08203-0.31446 0.23584-0.15381 0.15381-0.22217 0.28028l-0.01367 0.04443q-0.05811 0.10938-0.07178 0.22217-0.02734 0.15381-0.02734 0.64599l0 4.68946 0.04102 0.16748q0.19824 0.86816 0.7998 1.47656 0.60156 0.6084 1.49707 0.82031l0.16748 0.04102 3.82129 0q0.39307 0 0.50586-0.02735 0.96729-0.15381 1.65088-0.84082 0.54688-0.56055 0.7417-1.30224 0.04443-0.12647 0.07178-0.3418 0.02734-0.21875 0.02734-0.31445l0-0.07178 0.11279-0.01367q0.50244-0.04102 0.8545-0.16748 0.76904-0.2666 1.28515-0.90234 0.51953-0.63916 0.63233-1.44922 0.02734-0.15381 0.02734-0.42041 0-0.2666-0.02734-0.42041-0.14014-0.85449-0.70752-1.49024-0.56738-0.63916-1.40821-0.86133l-0.06836-0.02734q-0.15381-0.04443-0.32128-0.05811-0.23926-0.01367-0.98096-0.02734l-3.34619 0q-4.22803 0-4.3545 0z m7.12647 3.58545q0 1.73633 0 2.10889 0 0.36914-0.02735 0.47851-0.09912 0.49219-0.4375 0.85108-0.33496 0.35547-0.81005 0.4956-0.18115 0.04102-0.52637 0.05469-0.3418 0.01367-1.81152 0.01367l-1.87647-0.01367-0.16748-0.04102q-0.46143-0.12646-0.76904-0.43408-0.48877-0.44775-0.56055-1.13476-0.01367-0.19482-0.01367-2.4917l0-2.31055 7 0 0 2.42334z m1.44238-2.396q0.4751 0.07178 0.85108 0.39307 0.37939 0.32129 0.54687 0.78271 0.03076 0.09912 0.05811 0.27344 0.02734 0.17432 0.02734 0.27344 0 0.44775-0.23926 0.86133-0.23584 0.41357-0.61523 0.63574-0.18115 0.11279-0.42041 0.18457-0.23584 0.06836-0.38965 0.06836l-0.08545 0 0-3.5 0.04102 0q0.0581 0 0.22558 0.02734z"
-                      fill="#fbbf24"
-                    ></path>
-                  </svg>
-                  <div
-                    data-pencil-id="ZySPe"
-                    data-pencil-name="Text"
-                    class="box-border w-fit shrink-0 h-fit flex flex-col gap-[1px] justify-start items-start"
-                  >
-                    <div
-                      data-pencil-id="l5anD"
-                      data-pencil-name="Title"
-                      class="text-[11px]/[normal] box-border text-[#fbbf24] font-[Inter,system-ui,sans-serif] font-semibold text-left [white-space:nowrap]"
-                    >
-                      Uang Jajan Bebas
-                    </div>
-                    <div
-                      data-pencil-id="wO9Sy"
-                      data-pencil-name="Sub"
-                      class="text-[10px]/[normal] box-border text-[#fbbf24cc] font-[Inter,system-ui,sans-serif] font-normal text-left [white-space:nowrap]"
-                    >
-                      Boleh dihabiskan
-                    </div>
-                  </div>
-                </div>
-                <div
-                  data-pencil-id="T2tel"
-                  data-pencil-name="Value"
-                  class="text-[13px]/[normal] box-border text-[#fbbf24] font-[Inter,system-ui,sans-serif] font-bold text-left [white-space:nowrap]"
-                >
-                  Rp 750.000
-                </div>
-              </div>
             </div>
-          </div>
+
+            <!-- Comment #1: .ExtensionHighlight-module__3Yq4tG__reelContainer (Cards Reel Track) -->
+            <div class="raycast-reel-container" id="showcaseTrack">
+                <div class="raycast-reel-track">
+                    <!-- Card 1: Widget 4x2 Interaktif (Linear Theme Style) -->
+                    <div class="raycast-card raycast-card-1" id="card-widget-4x2">
+                        <div class="raycast-card-header">
+                            <div class="raycast-header-top">
+                                <div style="display: flex; align-items: center;">
+                                    <div class="raycast-icon-wrap" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);">
+                                        <div style="width: 32px; height: 32px; border-radius: 16px; background: linear-gradient(-135deg, #818cf8 14.6%, #4f46e5 85.4%); display: flex; align-items: center; justify-content: center;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="raycast-title-box">
+                                        <span class="raycast-card-title">Widget 4x2</span>
+                                        <span class="raycast-card-subtitle" style="color: #818cf8;">Home Screen 1-Tap Log</span>
+                                    </div>
+                                </div>
+                                <div class="raycast-action-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </div>
+                            </div>
+                            <p class="raycast-card-desc">Catat pengeluaran &lt; 2 detik langsung dari layar utama tanpa buka aplikasi.</p>
+                            <div class="raycast-card-divider"></div>
+                        </div>
+                        <div class="raycast-card-stage">
+                            <!-- Starry background decoration matching Raycast linear card -->
+                            <div style="position: absolute; width: 2px; height: 2px; border-radius: 50%; background: rgba(255,255,255,0.4); top: 30px; left: 40px;"></div>
+                            <div style="position: absolute; width: 2px; height: 2px; border-radius: 50%; background: rgba(255,255,255,0.3); top: 80px; left: 180px;"></div>
+                            <div style="position: absolute; width: 2px; height: 2px; border-radius: 50%; background: rgba(255,255,255,0.5); top: 40px; left: 280px;"></div>
+                            <!-- Linear Wireframe Horizon Arc -->
+                            <div style="width: 260px; height: 260px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.4); position: absolute; top: 15px; left: 50px;"></div>
+                            <div style="width: 130px; height: 16px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.4); position: absolute; top: 110px; left: 45px; transform: rotate(40deg); transform-origin: top left; background: rgba(255,255,255,0.04);"></div>
+                            <div style="width: 110px; height: 16px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.3); position: absolute; top: 140px; left: 35px; transform: rotate(40deg); transform-origin: top left; background: rgba(255,255,255,0.04);"></div>
+                            <!-- Status Dock -->
+                            <div style="position: absolute; bottom: 30px; width: 310px; display: flex; justify-content: center; gap: 16px; z-index: 5;">
+                                <div style="width: 44px; height: 44px; border-radius: 22px; border: 1.5px dashed rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center;">
+                                    <span style="font-size: 11px; font-weight: 600; color: #fff;">10k</span>
+                                </div>
+                                <div style="width: 44px; height: 44px; border-radius: 22px; border: 3px solid #ffffff; box-shadow: 0 0 14px rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center;">
+                                    <span style="font-size: 11px; font-weight: 600; color: #fff;">20k</span>
+                                </div>
+                                <div style="width: 44px; height: 44px; border-radius: 22px; border: 3px solid #f59e0b; box-shadow: 0 0 14px rgba(245,158,11,0.6); display: flex; align-items: center; justify-content: center; background: rgba(245,158,11,0.15);">
+                                    <span style="font-size: 11px; font-weight: 600; color: #f59e0b;">50k</span>
+                                </div>
+                                <div style="width: 44px; height: 44px; border-radius: 22px; background: #707bfb; box-shadow: 0 0 16px rgba(112,123,251,0.8); display: flex; align-items: center; justify-content: center;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Smart Nudge (Shopee/QRIS Radar) -->
+                    <div class="raycast-card raycast-card-2" id="card-smart-nudge">
+                        <div class="raycast-card-header">
+                            <div class="raycast-header-top">
+                                <div style="display: flex; align-items: center;">
+                                    <div class="raycast-icon-wrap" style="background: linear-gradient(-135deg, #0284c7 14.6%, #0369a1 85.4%); border: 1px solid rgba(255, 255, 255, 0.2);">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="M4 2C2.8 3.7 2 5.7 2 8"/><path d="M22 8c0-2.3-.8-4.3-2-6"/></svg>
+                                    </div>
+                                    <div class="raycast-title-box">
+                                        <span class="raycast-card-title">Smart Nudge</span>
+                                        <span class="raycast-card-subtitle" style="color: #38bdf8;">Shopee &amp; QRIS Radar</span>
+                                    </div>
+                                </div>
+                                <div class="raycast-action-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </div>
+                            </div>
+                            <p class="raycast-card-desc">Floating chip otomatis melayang lembut selama 6 detik saat membuka app belanja.</p>
+                            <div class="raycast-card-divider"></div>
+                        </div>
+                        <div class="raycast-card-stage" style="padding: 20px;">
+                            <div style="width: 100%; max-width: 320px; background: #091322; border: 1.2px solid rgba(56, 189, 248, 0.35); border-radius: 16px; padding: 16px; box-shadow: 0 12px 28px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 14px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 8px; height: 8px; border-radius: 4px; background: #fb923c; box-shadow: 0 0 8px #fb923c;"></div>
+                                        <span style="font-size: 12px; font-weight: 600; color: #fb923c;">Shopee Terdeteksi</span>
+                                    </div>
+                                    <span style="font-size: 11px; color: #787a85;">⏳ 5s</span>
+                                </div>
+                                <div style="background: #0f2238; border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                                    <div>
+                                        <div style="font-size: 13px; font-weight: 600; color: #ffffff;">Sisa Uang Jajan: Rp 120.000</div>
+                                        <div style="font-size: 11px; color: #93c5fd;">Yakin mau checkout sekarang?</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+                                    <span style="font-size: 10px; color: #64748b;">0 Keystroke Log • Package ID Match Only</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Amplop Mental (Budget Separation) -->
+                    <div class="raycast-card raycast-card-3" id="card-amplop-mental">
+                        <div class="raycast-card-header">
+                            <div class="raycast-header-top">
+                                <div style="display: flex; align-items: center;">
+                                    <div class="raycast-icon-wrap" style="background: linear-gradient(-135deg, #d97706 14.6%, #b45309 85.4%); border: 1px solid rgba(255, 255, 255, 0.2);">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+                                    </div>
+                                    <div class="raycast-title-box">
+                                        <span class="raycast-card-title">Amplop Mental</span>
+                                        <span class="raycast-card-subtitle" style="color: #fbbf24;">Strict Budget Separation</span>
+                                    </div>
+                                </div>
+                                <div class="raycast-action-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </div>
+                            </div>
+                            <p class="raycast-card-desc">Pisahkan Uang Pokok (kos, tagihan) dari Uang Jajan bebas tanpa rasa bersalah.</p>
+                            <div class="raycast-card-divider"></div>
+                        </div>
+                        <div class="raycast-card-stage" style="padding: 20px;">
+                            <div style="width: 100%; max-width: 320px; background: #140e05; border: 1.2px solid rgba(251, 191, 36, 0.3); border-radius: 16px; padding: 14px; box-shadow: 0 12px 28px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 10px;">
+                                <div style="background: #1e160a; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                        <div>
+                                            <div style="font-size: 11px; font-weight: 600; color: #e2e8f0;">Uang Pokok (Terkunci)</div>
+                                            <div style="font-size: 10px; color: #64748b;">Kos, Listrik, Tabungan</div>
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 13px; font-weight: 700; color: #cbd5e1;">Rp 3.500.000</div>
+                                </div>
+                                <div style="background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.4); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/></svg>
+                                        <div>
+                                            <div style="font-size: 11px; font-weight: 600; color: #fbbf24;">Uang Jajan Bebas</div>
+                                            <div style="font-size: 10px; color: rgba(251, 191, 36, 0.8);">Boleh dihabiskan</div>
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 13px; font-weight: 700; color: #fbbf24;">Rp 750.000</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Privasi SQLite (100% Offline & Local) -->
+                    <div class="raycast-card raycast-card-4" id="card-privasi-sqlite">
+                        <div class="raycast-card-header">
+                            <div class="raycast-header-top">
+                                <div style="display: flex; align-items: center;">
+                                    <div class="raycast-icon-wrap" style="background: linear-gradient(-135deg, #a855f7 14.6%, #7e22ce 85.4%); border: 1px solid rgba(255, 255, 255, 0.2);">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
+                                    </div>
+                                    <div class="raycast-title-box">
+                                        <span class="raycast-card-title">Privasi SQLite</span>
+                                        <span class="raycast-card-subtitle" style="color: #c084fc;">100% Offline &amp; Lokal</span>
+                                    </div>
+                                </div>
+                                <div class="raycast-action-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </div>
+                            </div>
+                            <p class="raycast-card-desc">Data keuangan tersimpan aman di internal HP tanpa kirim ke cloud atau server.</p>
+                            <div class="raycast-card-divider"></div>
+                        </div>
+                        <div class="raycast-card-stage" style="padding: 20px;">
+                            <div style="width: 100%; max-width: 320px; background: #130924; border: 1.2px solid rgba(168, 85, 247, 0.35); border-radius: 16px; padding: 14px; box-shadow: 0 12px 28px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 10px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px;">
+                                    <span style="font-size: 11px; font-weight: 600; color: #c084fc;">Enkripsi Room SQLite v3.45</span>
+                                    <span style="font-size: 10px; color: #34d399; display: flex; align-items: center; gap: 4px;">
+                                        <span style="width: 6px; height: 6px; border-radius: 3px; background: #34d399;"></span>
+                                        Terenkripsi
+                                    </span>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 8px 10px; font-size: 11px; color: #cbd5e1; display: flex; justify-content: space-between;">
+                                    <span>Penyimpanan Lokal:</span>
+                                    <span style="color: #ffffff; font-weight: 600;">/data/user/0/app</span>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 8px 10px; font-size: 11px; color: #cbd5e1; display: flex; justify-content: space-between;">
+                                    <span>Akses Internet:</span>
+                                    <span style="color: #34d399; font-weight: 600;">0 Permission (Nol)</span>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 8px 10px; font-size: 11px; color: #cbd5e1; display: flex; justify-content: space-between;">
+                                    <span>Ketergantungan Cloud:</span>
+                                    <span style="color: #34d399; font-weight: 600;">Nir-Server (100% Offline)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Showcase Reel Bottom Bar: Browse link & Prev/Next buttons -->
+            <div class="raycast-bottom-bar">
+                <a href="#fitur" class="raycast-browse-link">
+                    <span>Pelajari seluruh arsitektur fitur</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </a>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <button type="button" onclick="scrollShowcaseStep(-1)" aria-label="Previous feature" class="raycast-nav-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button type="button" onclick="scrollShowcaseStep(1)" aria-label="Next feature" class="raycast-nav-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
-      <!-- Showcase Reel Bottom Bar (from pen.dev section-card) -->
-      <div
-        data-pencil-name="Showcase Reel Bottom Bar"
-        class="box-border w-full max-w-[1200px] px-6 lg:px-0 h-fit shrink-0 flex flex-row gap-0 pt-3 justify-between items-center"
-      >
-        <a
-          href="#fitur"
-          data-pencil-name="Browse Link"
-          class="box-border w-fit shrink-0 h-fit flex flex-row gap-1.5 justify-start items-center text-[#9c9c9d] hover:text-white transition-colors group cursor-pointer"
-        >
-          <span
-            data-pencil-name="Browse Text"
-            class="text-sm box-border font-medium tracking-[0.3px] text-left whitespace-nowrap"
-          >
-            Browse thousands more
-          </span>
-          <svg
-            data-pencil-name="Arrow Icon"
-            data-icon-name="arrow-right"
-            data-icon-set="lucide"
-            viewBox="0 0 14 14"
-            preserveAspectRatio="xMidYMid meet"
-            xmlns="http://www.w3.org/2000/svg"
-            class="box-border w-4 shrink-0 h-4 transition-transform duration-200 group-hover:translate-x-1"
-          >
-            <path
-              d="M6.90088 2.35156q-0.18115 0.02734-0.32129 0.16748-0.11279 0.11279-0.14697 0.28028-0.03418 0.16748 0.02051 0.32129 0.02734 0.08545 0.25976 0.3247 0.23242 0.23584 1.36377 1.37061 1.58252 1.58252 1.58252 1.59619 0 0.01367-3.45557 0.01367l-3.44531 0-0.08545 0.04102q-0.22217 0.11279-0.30078 0.33838-0.0752 0.22217 0.00684 0.43408 0.05811 0.0957 0.14013 0.18115 0.08545 0.08203 0.16748 0.11963 0.08545 0.03418 0.53321 0.03418l3.01123 0q3.42822 0 3.42822 0.01367 0 0.01367-1.58252 1.59619-1.13135 1.13477-1.36377 1.37402-0.23242 0.23584-0.25976 0.3213-0.05469 0.15381-0.02051 0.32128 0.03418 0.16748 0.14697 0.28028 0.18115 0.18115 0.42041 0.18115l0.04102 0q0.11279 0 0.19824-0.05469 0.14014-0.09912 0.51611-0.46484l1.68164-1.67822q2.1123-2.10205 2.15332-2.18409 0.07178-0.12646 0.07178-0.28027 0-0.15381-0.07178-0.28027-0.04102-0.08203-2.1499-2.18067-2.10547-2.10205-2.17725-2.13623-0.06836-0.0376-0.23584-0.06494-0.04102 0-0.12646 0.01367z"
-              fill="currentColor"
-            ></path>
-          </svg>
-        </a>
-        <div
-          data-pencil-name="Pagination"
-          class="box-border w-fit shrink-0 h-fit flex flex-row gap-3 justify-start items-center"
-        >
-          <button
-            type="button"
-            onclick="scrollShowcaseStep(-1)"
-            data-pencil-name="Previous Button"
-            aria-label="Previous card"
-            class="box-border w-[58px] shrink-0 h-[58px] [box-shadow:0px_1px_0px_0px_#ffffff1a] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(-137deg,_#111214_18.161%,_#0c0d0f_68.396%)] bg-no-repeat bg-[length:100%_100%] [border:1.5px_solid_#ffffff0f] rounded-[29px] hover:border-white/20 transition-all cursor-pointer text-[#6a6b6c] hover:text-white active:scale-95"
-          >
-            <svg
-              data-pencil-name="Prev Icon"
-              data-icon-name="chevron-left"
-              data-icon-set="lucide"
-              viewBox="0 0 14 14"
-              preserveAspectRatio="xMidYMid meet"
-              xmlns="http://www.w3.org/2000/svg"
-              class="box-border w-4 shrink-0 h-4"
-            >
-              <path
-                d="M8.59619 2.93945q-0.08545 0.02734-0.19482 0.1128-0.14014 0.12646-0.53321 0.51611l-1.28857 1.2749q-1.81836 1.82178-1.86279 1.90723-0.04102 0.08203-0.04102 0.24951 0 0.16748 0.04785 0.25977 0.05127 0.08887 1.8628 1.9038 1.81494 1.81152 1.9038 1.8628 0.09229 0.04785 0.2461 0.04785 0.15381 0 0.23584-0.03418 0.08545-0.0376 0.18115-0.1333 0.09912-0.09912 0.1333-0.18115 0.0376-0.08545 0.0376-0.23926 0-0.15381-0.04443-0.23584-0.04102-0.08545-1.62012-1.66797l-1.58252-1.58252 1.58252-1.58252q1.5791-1.58252 1.62012-1.66455 0.04443-0.08545 0.04443-0.23926 0-0.15381-0.0376-0.23584-0.03418-0.08545-0.11621-0.18457-0.16748-0.15381-0.39307-0.16748-0.14014 0-0.18115 0.01367z"
-                fill="currentColor"
-              ></path>
-            </svg>
-          </button>
-          <button
-            type="button"
-            onclick="scrollShowcaseStep(1)"
-            data-pencil-name="Next Button"
-            aria-label="Next card"
-            class="box-border w-[58px] shrink-0 h-[58px] [box-shadow:0px_1px_0px_0px_#ffffff1a] flex flex-row gap-0 justify-center items-center [background-image:linear-gradient(-137deg,_#111214_18.161%,_#0c0d0f_68.396%)] bg-no-repeat bg-[length:100%_100%] [border:1.5px_solid_#ffffff0f] rounded-[29px] hover:border-white/20 transition-all cursor-pointer text-white active:scale-95"
-          >
-            <svg
-              data-pencil-name="Next Icon"
-              data-icon-name="chevron-right"
-              data-icon-set="lucide"
-              viewBox="0 0 14 14"
-              preserveAspectRatio="xMidYMid meet"
-              xmlns="http://www.w3.org/2000/svg"
-              class="box-border w-4 shrink-0 h-4"
-            >
-              <path
-                d="M5.09619 2.93945q-0.25293 0.08545-0.37939 0.30762-0.04102 0.08545-0.04102 0.25293 0 0.16748 0.04102 0.25293 0.04443 0.08203 1.62353 1.66455l1.58252 1.58252-1.58252 1.58252q-1.5791 1.58252-1.62353 1.66797-0.04102 0.08203-0.04102 0.23584 0 0.15381 0.03418 0.23926 0.0376 0.08203 0.1333 0.18115 0.09912 0.0957 0.18115 0.1333 0.08545 0.03418 0.23926 0.03418 0.15381 0 0.24268-0.04785 0.09229-0.05127 1.90381-1.8628 1.81494-1.81494 1.86279-1.9038 0.05127-0.09229 0.05127-0.25977 0-0.16748-0.04443-0.24951-0.04102-0.08545-1.85938-1.90723l-1.44238-1.42871q-0.33496-0.33496-0.46143-0.41699-0.09912-0.07178-0.19824-0.07178l-0.04102 0q-0.14014 0-0.18115 0.01367z"
-                fill="currentColor"
-              ></path>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
 
         <script>
-            function scrollShowcase(pos, btn) {
-                const track = document.getElementById("showcaseTrack");
-                if (track) track.scrollTo({ left: pos, behavior: "smooth" });
-                document.querySelectorAll(".showcase-pill").forEach(p => {
-                    p.classList.remove("active", "shadow-[rgba(0,_0,_0,_0.4)_0px_4px_10px_0px]", "border-white/18");
-                    p.classList.add("border-transparent");
-                    p.style.backgroundImage = "none";
-                    const label = p.querySelector('[data-pencil-name="Label"]');
-                    if (label) label.style.color = "#8e9095";
-                });
-                if (btn) {
-                    btn.classList.add("active", "shadow-[rgba(0,_0,_0,_0.4)_0px_4px_10px_0px]", "border-white/18");
-                    btn.classList.remove("border-transparent");
-                    btn.style.backgroundImage = "radial-gradient(ellipse 55% 90% at 50% 10%, #5a5a5a 0%, #1a1a1a 100%)";
-                    const label = btn.querySelector('[data-pencil-name="Label"]');
-                    if (label) label.style.color = "#ffffff";
-                }
-            }
-
-            function scrollShowcaseStep(dir) {
+            function selectShowcaseCategory(scrollPos, pillIndex, pillEl) {
                 const track = document.getElementById("showcaseTrack");
                 if (track) {
-                    const step = 384; // 360px card + 24px gap
-                    track.scrollBy({ left: dir * step, behavior: "smooth" });
+                    track.scrollTo({ left: scrollPos, behavior: "smooth" });
+                }
+                const pills = document.querySelectorAll(".raycast-category-pill");
+                pills.forEach(p => p.classList.remove("active"));
+                if (pillEl) {
+                    pillEl.classList.add("active");
+                    updateActiveBackdrop(pillEl);
                 }
             }
-        </script>
 
+            function updateActiveBackdrop(pillEl) {
+                const backdrop = document.getElementById("activeBackdrop");
+                if (!backdrop || !pillEl) return;
+                backdrop.style.width = pillEl.offsetWidth + "px";
+                backdrop.style.transform = "translate3d(" + pillEl.offsetLeft + "px, 0, 0)";
+            }
+
+            function scrollShowcaseStep(direction) {
+                const track = document.getElementById("showcaseTrack");
+                if (track) {
+                    const step = 416; // 360px card + 56px gap
+                    track.scrollBy({ left: direction * step, behavior: "smooth" });
+                }
+            }
+
+            // Initialize active backdrop on load
+            window.addEventListener("DOMContentLoaded", function() {
+                const activePill = document.querySelector(".raycast-category-pill.active");
+                if (activePill) {
+                    setTimeout(function() { updateActiveBackdrop(activePill); }, 50);
+                }
+            });
+            window.addEventListener("resize", function() {
+                const activePill = document.querySelector(".raycast-category-pill.active");
+                if (activePill) {
+                    updateActiveBackdrop(activePill);
+                }
+            });
+        </script>
     </div>
 </section>
 
