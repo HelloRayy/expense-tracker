@@ -189,46 +189,190 @@ export function initFaqAccordion() {
 }
 
 // ============================================================================
-// 5. FAST & SNAPPY SECTION-LEVEL VIEWPORT ENTRANCE
-// Applies ONLY at section container level.
-// NO child hiding (opacity: 0) — eliminates missing or delayed components!
-// NO pulse, loop, or component-level micro jitter.
+// 5. FAST & SNAPPY PER-COMPONENT SECTION VIEWPORT ENTRANCE
+// When a section enters viewport, each component cascades in with a crisp,
+// snappy 0.35s fade-and-rise (stagger: 0.05s).
+// clearProps: 'all' immediately cleans inline styles upon completion.
 // ============================================================================
 export function initFastSectionMotion() {
   if (prefersReducedMotion) return
 
-  // Hero Section: Above fold, animate immediately and swiftly on load
+  // 1. HERO SECTION (Above fold: cascades in immediately on load)
   const heroSection = document.querySelector<HTMLElement>('section#hero')
   if (heroSection) {
-    gsap.from(heroSection, {
-      y: 20,
+    const heroElements = [
+      heroSection.querySelector('h1'),
+      heroSection.querySelector('p'),
+      heroSection.querySelector('.actions'),
+      heroSection.querySelector('.customers'),
+      heroSection.querySelector('figure.image-container'),
+    ].filter(Boolean) as HTMLElement[]
+
+    gsap.from(heroElements, {
+      y: 18,
       opacity: 0,
       duration: 0.35,
+      stagger: 0.06,
       ease: 'power2.out',
       clearProps: 'all',
     })
   }
 
-  // All Other Major Sections: Fast, snappy reveal upon entering viewport
-  const sections = document.querySelectorAll<HTMLElement>(
-    'section.customers, section#download, section#fitur, section#faq, section#cta, footer'
-  )
+  // 2. COMPATIBILITY CHIPS BAR
+  const compatSection = document.querySelector<HTMLElement>('section.customers')
+  if (compatSection) {
+    const compatItems = compatSection.querySelectorAll<HTMLElement>('.compat-item')
+    if (compatItems.length > 0) {
+      gsap.from(compatItems, {
+        scrollTrigger: {
+          trigger: compatSection,
+          start: 'top 88%',
+          toggleActions: 'play none none none',
+          once: true,
+        },
+        y: 16,
+        opacity: 0,
+        duration: 0.32,
+        stagger: 0.04,
+        ease: 'power2.out',
+        clearProps: 'all',
+      })
+    }
+  }
 
-  sections.forEach((sec) => {
-    gsap.from(sec, {
-      scrollTrigger: {
-        trigger: sec,
-        start: 'top 92%',
-        toggleActions: 'play none none none',
-        once: true,
-      },
-      y: 24,
-      opacity: 0,
-      duration: 0.35,
-      ease: 'power2.out',
-      clearProps: 'all',
-    })
-  })
+  // 3. RAYCAST DOWNLOAD HUB
+  const downloadSection = document.querySelector<HTMLElement>('section#download')
+  if (downloadSection) {
+    const downloadElements = [
+      downloadSection.querySelector('[data-pencil-name="Title Line 1"]'),
+      downloadSection.querySelector('[data-pencil-name="Title Line 2"]'),
+      downloadSection.querySelector('[data-pencil-name="CTA Buttons Row"]'),
+      downloadSection.querySelector('#keyboardCanvas'),
+    ].filter(Boolean) as HTMLElement[]
+
+    if (downloadElements.length > 0) {
+      gsap.from(downloadElements, {
+        scrollTrigger: {
+          trigger: downloadSection,
+          start: 'top 88%',
+          toggleActions: 'play none none none',
+          once: true,
+        },
+        y: 18,
+        opacity: 0,
+        duration: 0.35,
+        stagger: 0.06,
+        ease: 'power2.out',
+        clearProps: 'all',
+      })
+    }
+  }
+
+  // 4. RAYCAST EXTENSION SHOWCASE REEL (#fitur)
+  const fiturSection = document.querySelector<HTMLElement>('section#fitur')
+  if (fiturSection) {
+    const fiturElements = [
+      fiturSection.querySelector('.raycast-title-group'),
+      fiturSection.querySelector('.raycast-categories'),
+      ...Array.from(fiturSection.querySelectorAll('.raycast-card')),
+      fiturSection.querySelector('.raycast-bottom-bar'),
+    ].filter(Boolean) as HTMLElement[]
+
+    if (fiturElements.length > 0) {
+      gsap.from(fiturElements, {
+        scrollTrigger: {
+          trigger: fiturSection,
+          start: 'top 88%',
+          toggleActions: 'play none none none',
+          once: true,
+        },
+        y: 20,
+        opacity: 0,
+        duration: 0.35,
+        stagger: 0.05,
+        ease: 'power2.out',
+        clearProps: 'all',
+      })
+    }
+  }
+
+  // 5. FAQ ACCORDION SECTION (#faq)
+  const faqSection = document.querySelector<HTMLElement>('section#faq')
+  if (faqSection) {
+    const faqHeader = [
+      faqSection.querySelector('.nummeration'),
+      faqSection.querySelector('h2'),
+      faqSection.querySelector('p'),
+    ].filter(Boolean) as HTMLElement[]
+    const faqItems = Array.from(faqSection.querySelectorAll<HTMLElement>('details.faq-item'))
+
+    const allFaqElements = [...faqHeader, ...faqItems]
+    if (allFaqElements.length > 0) {
+      gsap.from(allFaqElements, {
+        scrollTrigger: {
+          trigger: faqSection,
+          start: 'top 88%',
+          toggleActions: 'play none none none',
+          once: true,
+        },
+        y: 18,
+        opacity: 0,
+        duration: 0.35,
+        stagger: 0.05,
+        ease: 'power2.out',
+        clearProps: 'all',
+      })
+    }
+  }
+
+  // 6. CALL TO ACTION BANNER (#cta)
+  const ctaSection = document.querySelector<HTMLElement>('section#cta')
+  if (ctaSection) {
+    const ctaElements = [
+      ctaSection.querySelector('h2'),
+      ctaSection.querySelector('p'),
+      ctaSection.querySelector('.actions'),
+    ].filter(Boolean) as HTMLElement[]
+
+    if (ctaElements.length > 0) {
+      gsap.from(ctaElements, {
+        scrollTrigger: {
+          trigger: ctaSection,
+          start: 'top 88%',
+          toggleActions: 'play none none none',
+          once: true,
+        },
+        y: 18,
+        opacity: 0,
+        duration: 0.35,
+        stagger: 0.06,
+        ease: 'power2.out',
+        clearProps: 'all',
+      })
+    }
+  }
+
+  // 7. FOOTER SECTION (footer)
+  const footerEl = document.querySelector<HTMLElement>('footer')
+  if (footerEl) {
+    const footerCols = footerEl.querySelectorAll<HTMLElement>('.footer-content ul > li')
+    if (footerCols.length > 0) {
+      gsap.from(footerCols, {
+        scrollTrigger: {
+          trigger: footerEl,
+          start: 'top 92%',
+          toggleActions: 'play none none none',
+          once: true,
+        },
+        y: 16,
+        opacity: 0,
+        duration: 0.35,
+        stagger: 0.05,
+        ease: 'power2.out',
+        clearProps: 'all',
+      })
+    }
+  }
 
   // Recalculate trigger coordinates
   ScrollTrigger.refresh()
