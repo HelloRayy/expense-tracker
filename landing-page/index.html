@@ -22,23 +22,28 @@
     <script src="/static/js/main.js"></script>
     <script src="/static/js/scroll.js"></script>
 
-    <style id="visual-diff-freeze">
-      *, *::before, *::after {
-        -moz-animation: none !important;
-        -moz-transition: none !important;
-        animation: none !important;
-        transition: none !important;
-        caret-color: transparent !important;
-      }
-      [data-sal] {
-        opacity: 1 !important;
-        transform: none !important;
-      }
-      html {
-        scroll-behavior: smooth !important;
-      }
+    <style id="motion-styles">
       :root {
         --header-height: 72px;
+      }
+      /* Awwwards Smooth Hover and Transitions */
+      .button, button:not(.theme-switch), .raycast-card, .raycast-category-pill, .card, .faq-item {
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+      }
+      /* Specular Glare Effect on Cards */
+      .raycast-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: radial-gradient(400px circle at var(--card-mouse-x, 50%) var(--card-mouse-y, 50%), rgba(255, 255, 255, 0.08), transparent 60%);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        z-index: 5;
+      }
+      .raycast-card:hover::before {
+        opacity: 1;
       }
       header, #header, header.small, #header.small {
         background: transparent !important;
@@ -4086,5 +4091,6 @@
     </fieldset>
 </button>
 
+<script type="module" src="/src/motion.ts"></script>
 </body>
 </html>
