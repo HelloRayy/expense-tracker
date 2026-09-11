@@ -313,95 +313,274 @@ export function initHeroFloating() {
 }
 
 // ============================================================================
-// 8. KINETIC SCROLLTRIGGER REVEALS & PARALLAX
+// 8. SECTION VIEWPORT ENTRANCE MOTION (STAGGERED KINETIC CASCADE PER SECTION)
 // ============================================================================
-export function initScrollTriggerAnimations() {
+export function initSectionViewportMotion() {
   if (prefersReducedMotion) return
 
-  // Hero section reveal
-  const heroH1 = document.querySelector('section.hero h1, section.hero .h1, section.hero h2')
-  if (heroH1) {
-    gsap.from(heroH1, {
-      y: 45,
-      opacity: 0,
-      duration: 1.1,
-      ease: 'power4.out',
-      delay: 0.1,
-    })
+  // --------------------------------------------------------------------------
+  // SECTION: HERO
+  // --------------------------------------------------------------------------
+  const heroSection = document.querySelector<HTMLElement>('section#hero')
+  if (heroSection) {
+    const heroH1 = heroSection.querySelector('h1')
+    const heroSubtitle = heroSection.querySelector('p')
+    const heroActions = heroSection.querySelector('.actions')
+    const heroCustomers = heroSection.querySelector('.customers')
+    const heroMockup = heroSection.querySelector('figure.image-container')
+
+    const heroTl = gsap.timeline({ defaults: { ease: 'power4.out' } })
+    if (heroH1) heroTl.from(heroH1, { y: 45, opacity: 0, duration: 1.0 }, 0.1)
+    if (heroSubtitle) heroTl.from(heroSubtitle, { y: 30, opacity: 0, duration: 0.95 }, 0.22)
+    if (heroActions) heroTl.from(heroActions, { y: 25, opacity: 0, scale: 0.95, duration: 0.85, ease: 'back.out(1.4)' }, 0.35)
+    if (heroCustomers) heroTl.from(heroCustomers, { y: 20, opacity: 0, duration: 0.8 }, 0.48)
+    if (heroMockup) heroTl.from(heroMockup, { y: 65, opacity: 0, scale: 0.93, duration: 1.15, ease: 'power3.out' }, 0.38)
   }
 
-  const heroSubtitle = document.querySelector('section.hero p')
-  if (heroSubtitle) {
-    gsap.from(heroSubtitle, {
-      y: 30,
-      opacity: 0,
-      duration: 1.0,
-      ease: 'power3.out',
-      delay: 0.25,
-    })
+  // --------------------------------------------------------------------------
+  // SECTION: COMPATIBILITY / FEATURE BADGES
+  // --------------------------------------------------------------------------
+  const compatSection = document.querySelector<HTMLElement>('section.customers')
+  if (compatSection) {
+    const compatItems = compatSection.querySelectorAll<HTMLElement>('.compat-item')
+    if (compatItems.length > 0) {
+      gsap.from(compatItems, {
+        scrollTrigger: {
+          trigger: compatSection,
+          start: 'top 88%',
+          toggleActions: 'play none none none',
+          once: true,
+        },
+        y: 35,
+        opacity: 0,
+        scale: 0.88,
+        stagger: 0.12,
+        duration: 0.85,
+        ease: 'back.out(1.6)',
+      })
+    }
   }
 
-  const heroActions = document.querySelector('section.hero .actions')
-  if (heroActions) {
-    gsap.from(heroActions, {
-      y: 25,
-      opacity: 0,
-      scale: 0.96,
-      duration: 0.9,
-      ease: 'power3.out',
-      delay: 0.4,
-    })
-  }
+  // --------------------------------------------------------------------------
+  // SECTION: RAYCAST DOWNLOAD HUB & KEYBOARD CANVAS (#download)
+  // --------------------------------------------------------------------------
+  const downloadSection = document.querySelector<HTMLElement>('section#download')
+  if (downloadSection) {
+    const downloadCard = downloadSection.querySelector<HTMLElement>('[data-pencil-name="div"]')
+    const titleLine1 = downloadSection.querySelector<HTMLElement>('[data-pencil-name="Title Line 1"]')
+    const titleLine2 = downloadSection.querySelector<HTMLElement>('[data-pencil-name="Title Line 2"]')
+    const downloadButtons = downloadSection.querySelectorAll<HTMLElement>('[data-pencil-name="CTA Buttons Row"] a')
+    const keyboardKeys = downloadSection.querySelectorAll<HTMLElement>('#keyboardCanvas [data-pencil-name="div"]')
 
-  // Section Headers Reveal
-  const sectionHeaders = document.querySelectorAll('section:not(.hero) h2, .raycast-title-group h2')
-  sectionHeaders.forEach((header) => {
-    gsap.from(header, {
+    const downloadTl = gsap.timeline({
       scrollTrigger: {
-        trigger: header,
-        start: 'top 88%',
-        toggleActions: 'play none none none',
-      },
-      y: 35,
-      opacity: 0,
-      duration: 0.9,
-      ease: 'power3.out',
-    })
-  })
-
-  // Raycast Cards Stagger Kinetic Entrance
-  const raycastCards = document.querySelectorAll('.raycast-card')
-  if (raycastCards.length > 0) {
-    gsap.from(raycastCards, {
-      scrollTrigger: {
-        trigger: '#showcaseTrack',
+        trigger: downloadSection,
         start: 'top 82%',
         toggleActions: 'play none none none',
+        once: true,
       },
-      y: 60,
-      opacity: 0,
-      scale: 0.94,
-      stagger: 0.12,
-      duration: 1.0,
-      ease: 'power4.out',
     })
+
+    if (downloadCard) {
+      downloadTl.from(downloadCard, {
+        y: 50,
+        opacity: 0,
+        scale: 0.96,
+        duration: 1.0,
+        ease: 'power4.out',
+      }, 0)
+    }
+
+    if (titleLine1) {
+      downloadTl.from(titleLine1, {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+      }, 0.2)
+    }
+
+    if (titleLine2) {
+      downloadTl.from(titleLine2, {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+      }, 0.32)
+    }
+
+    if (downloadButtons.length > 0) {
+      downloadTl.from(downloadButtons, {
+        y: 20,
+        opacity: 0,
+        scale: 0.9,
+        stagger: 0.12,
+        duration: 0.75,
+        ease: 'back.out(1.5)',
+      }, 0.44)
+    }
+
+    // Aesthetic wave light-up effect on physical keycaps
+    if (keyboardKeys.length > 0) {
+      downloadTl.from(keyboardKeys, {
+        y: 20,
+        opacity: 0,
+        stagger: {
+          amount: 0.6,
+          from: 'start',
+        },
+        duration: 0.75,
+        ease: 'power3.out',
+      }, 0.25)
+    }
   }
 
-  // FAQ Accordions Smooth Stagger & Fluid Spring Open
-  const faqItems = document.querySelectorAll<HTMLDetailsElement>('details.faq-item')
-  if (faqItems.length > 0) {
-    gsap.from(faqItems, {
+  // --------------------------------------------------------------------------
+  // SECTION: RAYCAST EXTENSION HIGHLIGHT REEL & CATEGORIES (#fitur)
+  // --------------------------------------------------------------------------
+  const fiturSection = document.querySelector<HTMLElement>('section#fitur')
+  if (fiturSection) {
+    const sectionCard = fiturSection.querySelector<HTMLElement>('.raycast-section-card')
+    const titleH2 = fiturSection.querySelector<HTMLElement>('.raycast-title-group h2')
+    const titleP = fiturSection.querySelector<HTMLElement>('.raycast-title-group p')
+    const categoriesBar = fiturSection.querySelector<HTMLElement>('.raycast-categories')
+    const categoryPills = fiturSection.querySelectorAll<HTMLElement>('.raycast-category-pill')
+    const reelCards = fiturSection.querySelectorAll<HTMLElement>('.raycast-card')
+    const bottomBar = fiturSection.querySelector<HTMLElement>('.raycast-bottom-bar')
+
+    const fiturTl = gsap.timeline({
       scrollTrigger: {
-        trigger: '.faq-accordion-container',
-        start: 'top 85%',
+        trigger: fiturSection,
+        start: 'top 80%',
         toggleActions: 'play none none none',
+        once: true,
       },
-      y: 25,
-      opacity: 0,
-      stagger: 0.08,
-      duration: 0.75,
-      ease: 'power3.out',
     })
+
+    if (sectionCard) {
+      fiturTl.from(sectionCard, {
+        y: 50,
+        opacity: 0,
+        duration: 0.95,
+        ease: 'power4.out',
+      }, 0)
+    }
+
+    if (titleH2) {
+      fiturTl.from(titleH2, {
+        y: 35,
+        opacity: 0,
+        duration: 0.85,
+        ease: 'power3.out',
+      }, 0.15)
+    }
+
+    if (titleP) {
+      fiturTl.from(titleP, {
+        y: 25,
+        opacity: 0,
+        duration: 0.85,
+        ease: 'power3.out',
+      }, 0.25)
+    }
+
+    if (categoriesBar) {
+      fiturTl.from(categoriesBar, {
+        scale: 0.92,
+        opacity: 0,
+        y: 20,
+        duration: 0.75,
+        ease: 'back.out(1.5)',
+      }, 0.25)
+    }
+
+    if (categoryPills.length > 0) {
+      fiturTl.from(categoryPills, {
+        opacity: 0,
+        y: 10,
+        stagger: 0.06,
+        duration: 0.5,
+        ease: 'power2.out',
+      }, 0.35)
+    }
+
+    if (reelCards.length > 0) {
+      fiturTl.from(reelCards, {
+        y: 60,
+        opacity: 0,
+        scale: 0.93,
+        stagger: 0.14,
+        duration: 1.0,
+        ease: 'power4.out',
+      }, 0.42)
+    }
+
+    if (bottomBar) {
+      fiturTl.from(bottomBar, {
+        y: 25,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+      }, 0.68)
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // SECTION: FAQ ACCORDION SECTION (#faq)
+  // --------------------------------------------------------------------------
+  const faqSection = document.querySelector<HTMLElement>('section#faq')
+  if (faqSection) {
+    const nummeration = faqSection.querySelector<HTMLElement>('.nummeration')
+    const faqTitle = faqSection.querySelector<HTMLElement>('h2')
+    const faqDesc = faqSection.querySelector<HTMLElement>('p')
+    const faqItems = faqSection.querySelectorAll<HTMLDetailsElement>('details.faq-item')
+
+    const faqTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: faqSection,
+        start: 'top 82%',
+        toggleActions: 'play none none none',
+        once: true,
+      },
+    })
+
+    if (nummeration) {
+      faqTl.from(nummeration, {
+        scale: 0.85,
+        opacity: 0,
+        y: 20,
+        duration: 0.65,
+        ease: 'back.out(1.7)',
+      }, 0)
+    }
+
+    if (faqTitle) {
+      faqTl.from(faqTitle, {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+      }, 0.15)
+    }
+
+    if (faqDesc) {
+      faqTl.from(faqDesc, {
+        y: 25,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+      }, 0.25)
+    }
+
+    if (faqItems.length > 0) {
+      faqTl.from(faqItems, {
+        y: 35,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.8,
+        ease: 'power3.out',
+      }, 0.35)
+    }
 
     // Fluid height transition for details accordion
     faqItems.forEach((detail) => {
@@ -452,6 +631,101 @@ export function initScrollTriggerAnimations() {
       }
     })
   }
+
+  // --------------------------------------------------------------------------
+  // SECTION: CALL TO ACTION BANNER (#cta)
+  // --------------------------------------------------------------------------
+  const ctaSection = document.querySelector<HTMLElement>('section#cta')
+  if (ctaSection) {
+    const ctaContent = ctaSection.querySelector<HTMLElement>('.section-content')
+    const ctaH2 = ctaSection.querySelector<HTMLElement>('h2')
+    const ctaP = ctaSection.querySelector<HTMLElement>('p')
+    const ctaActions = ctaSection.querySelectorAll<HTMLElement>('.actions a')
+    const ctaImgs = ctaSection.querySelectorAll<HTMLElement>('.cta-background')
+
+    const ctaTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ctaSection,
+        start: 'top 82%',
+        toggleActions: 'play none none none',
+        once: true,
+      },
+    })
+
+    if (ctaContent) {
+      ctaTl.from(ctaContent, {
+        scale: 0.95,
+        y: 45,
+        opacity: 0,
+        duration: 0.95,
+        ease: 'power4.out',
+      }, 0)
+    }
+
+    if (ctaImgs.length > 0) {
+      ctaTl.from(ctaImgs, {
+        scale: 1.15,
+        opacity: 0,
+        duration: 1.2,
+        ease: 'power2.out',
+      }, 0)
+    }
+
+    if (ctaH2) {
+      ctaTl.from(ctaH2, {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+      }, 0.2)
+    }
+
+    if (ctaP) {
+      ctaTl.from(ctaP, {
+        y: 25,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+      }, 0.32)
+    }
+
+    if (ctaActions.length > 0) {
+      ctaTl.from(ctaActions, {
+        scale: 0.88,
+        y: 20,
+        opacity: 0,
+        stagger: 0.12,
+        duration: 0.75,
+        ease: 'back.out(1.5)',
+      }, 0.44)
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // SECTION: FOOTER VIEWPORT ENTRANCE (footer)
+  // --------------------------------------------------------------------------
+  const footerEl = document.querySelector<HTMLElement>('footer')
+  if (footerEl) {
+    const footerCols = footerEl.querySelectorAll<HTMLElement>('.footer-content li')
+    if (footerCols.length > 0) {
+      gsap.from(footerCols, {
+        scrollTrigger: {
+          trigger: footerEl,
+          start: 'top 92%',
+          toggleActions: 'play none none none',
+          once: true,
+        },
+        y: 30,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.8,
+        ease: 'power3.out',
+      })
+    }
+  }
+
+  // Recalculate trigger coordinates
+  ScrollTrigger.refresh()
 }
 
 // ============================================================================
@@ -468,7 +742,17 @@ export function initAwwwardsMotion() {
   init3DCardTilt()
   initReelDrag()
   initHeroFloating()
-  initScrollTriggerAnimations()
+  initSectionViewportMotion()
+
+  // Recalculate triggers after full page load and font hydration
+  window.addEventListener('load', () => {
+    ScrollTrigger.refresh()
+  })
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(() => {
+      ScrollTrigger.refresh()
+    })
+  }
 }
 
 // Auto-run on DOM ready
