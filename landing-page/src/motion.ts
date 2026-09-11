@@ -27,7 +27,7 @@ export function initSmoothScroll() {
   if (prefersReducedMotion) return
 
   lenis = new Lenis({
-    duration: 1.25,
+    duration: 1.0,
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     orientation: 'vertical',
     gestureOrientation: 'vertical',
@@ -54,7 +54,7 @@ export function initSmoothScroll() {
         e.preventDefault()
         lenis.scrollTo(target as HTMLElement, {
           offset: -80,
-          duration: 1.2,
+          duration: 0.9,
           easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         })
       }
@@ -63,7 +63,7 @@ export function initSmoothScroll() {
 }
 
 // ============================================================================
-// 2. SCROLL PROGRESS INDICATOR (AWWWARDS TOP GRADIENT BAR)
+// 2. SCROLL PROGRESS INDICATOR (MINIMAL TOP GRADIENT BAR)
 // ============================================================================
 export function initScrollProgressBar() {
   let bar = document.getElementById('awwwards-scroll-progress')
@@ -81,7 +81,7 @@ export function initScrollProgressBar() {
       transform: scaleX(0);
       z-index: 99999;
       pointer-events: none;
-      box-shadow: 0 0 10px rgba(110, 206, 157, 0.5);
+      box-shadow: 0 0 8px rgba(110, 206, 157, 0.4);
     `
     document.body.appendChild(bar)
   }
@@ -97,154 +97,7 @@ export function initScrollProgressBar() {
 }
 
 // ============================================================================
-// 3. AMBIENT CURSOR SPOTLIGHT (HIGH-END DARK THEME GLOW)
-// ============================================================================
-export function initAmbientSpotlight() {
-  if (prefersReducedMotion || window.innerWidth < 768) return
-
-  let spotlight = document.getElementById('awwwards-ambient-spotlight')
-  if (!spotlight) {
-    spotlight = document.createElement('div')
-    spotlight.id = 'awwwards-ambient-spotlight'
-    spotlight.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(110, 206, 157, 0.07) 0%, rgba(129, 140, 248, 0.04) 40%, transparent 70%);
-      pointer-events: none;
-      z-index: 1;
-      transform: translate(-50%, -50%);
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    `
-    document.body.appendChild(spotlight)
-  }
-
-  let mouseX = -500
-  let mouseY = -500
-  let currentX = -500
-  let currentY = -500
-
-  window.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX
-    mouseY = e.clientY
-    if (spotlight && spotlight.style.opacity === '0') {
-      spotlight.style.opacity = '1'
-    }
-  }, { passive: true })
-
-  document.addEventListener('mouseleave', () => {
-    if (spotlight) spotlight.style.opacity = '0'
-  })
-
-  // Smooth trailing physics
-  function animateSpotlight() {
-    currentX += (mouseX - currentX) * 0.12
-    currentY += (mouseY - currentY) * 0.12
-    if (spotlight) {
-      spotlight.style.transform = `translate3d(${currentX - 250}px, ${currentY - 250}px, 0)`
-    }
-    requestAnimationFrame(animateSpotlight)
-  }
-  requestAnimationFrame(animateSpotlight)
-}
-
-// ============================================================================
-// 4. MAGNETIC SPRING BUTTONS (SPRING PHYSICS ON HOVER)
-// ============================================================================
-export function initMagneticButtons() {
-  if (prefersReducedMotion || window.innerWidth < 768) return
-
-  const magneticElements = document.querySelectorAll<HTMLElement>('.button, .raycast-nav-btn')
-
-  magneticElements.forEach((el) => {
-    let boundRect: DOMRect | null = null
-
-    el.addEventListener('mouseenter', () => {
-      boundRect = el.getBoundingClientRect()
-    })
-
-    el.addEventListener('mousemove', (e) => {
-      if (!boundRect) boundRect = el.getBoundingClientRect()
-      const x = e.clientX - boundRect.left - boundRect.width / 2
-      const y = e.clientY - boundRect.top - boundRect.height / 2
-
-      gsap.to(el, {
-        x: x * 0.28,
-        y: y * 0.28,
-        duration: 0.35,
-        ease: 'power3.out',
-      })
-    })
-
-    el.addEventListener('mouseleave', () => {
-      gsap.to(el, {
-        x: 0,
-        y: 0,
-        duration: 0.7,
-        ease: 'elastic.out(1.2, 0.4)',
-      })
-      boundRect = null
-    })
-  })
-}
-
-// ============================================================================
-// 5. 3D CARD PERSPECTIVE TILT WITH SPECULAR GLARE
-// ============================================================================
-export function init3DCardTilt() {
-  if (prefersReducedMotion || window.innerWidth < 768) return
-
-  const cards = document.querySelectorAll<HTMLElement>('.raycast-card, .card')
-
-  cards.forEach((card) => {
-    let cardRect: DOMRect | null = null
-
-    card.addEventListener('mouseenter', () => {
-      cardRect = card.getBoundingClientRect()
-    })
-
-    card.addEventListener('mousemove', (e) => {
-      if (!cardRect) cardRect = card.getBoundingClientRect()
-      const x = e.clientX - cardRect.left
-      const y = e.clientY - cardRect.top
-
-      // Calculate percentage for specular gradient
-      const percentX = (x / cardRect.width) * 100
-      const percentY = (y / cardRect.height) * 100
-      card.style.setProperty('--card-mouse-x', `${percentX}%`)
-      card.style.setProperty('--card-mouse-y', `${percentY}%`)
-
-      // Perspective tilt rotation (-5 to +5 deg)
-      const rotX = ((y / cardRect.height) - 0.5) * -8
-      const rotY = ((x / cardRect.width) - 0.5) * 8
-
-      gsap.to(card, {
-        rotateX: rotX,
-        rotateY: rotY,
-        transformPerspective: 1000,
-        duration: 0.25,
-        ease: 'power2.out',
-      })
-    })
-
-    card.addEventListener('mouseleave', () => {
-      gsap.to(card, {
-        rotateX: 0,
-        rotateY: 0,
-        duration: 0.6,
-        ease: 'power3.out',
-      })
-      cardRect = null
-    })
-  })
-}
-
-// ============================================================================
-// 6. DRAGGABLE MOMENTUM CAROUSEL REEL TRACK
+// 3. DRAGGABLE MOMENTUM CAROUSEL REEL TRACK
 // ============================================================================
 export function initReelDrag() {
   const track = document.getElementById('showcaseTrack')
@@ -276,460 +129,116 @@ export function initReelDrag() {
     if (!isDown) return
     e.preventDefault()
     const x = e.pageX - track.offsetLeft
-    const walk = (x - startX) * 1.5 // Drag sensitivity
+    const walk = (x - startX) * 1.5
     track.scrollLeft = scrollLeft - walk
   })
 }
 
 // ============================================================================
-// 7. HERO MOCKUP AMBIENT FLOATING & PULSE
+// 4. FAQ ACCORDION INTERACTION (FLUID OPEN / CLOSE ON USER CLICK)
 // ============================================================================
-export function initHeroFloating() {
-  if (prefersReducedMotion) return
+export function initFaqAccordion() {
+  const faqItems = document.querySelectorAll<HTMLDetailsElement>('details.faq-item')
+  faqItems.forEach((detail) => {
+    const summary = detail.querySelector('summary')
+    const answer = detail.querySelector<HTMLElement>('.faq-answer')
+    const chevron = detail.querySelector<HTMLElement>('.faq-chevron')
 
-  const heroFigure = document.querySelector('section.hero figure')
-  if (heroFigure) {
-    gsap.to(heroFigure, {
-      y: -8,
-      duration: 3,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut',
-    })
-  }
+    if (!summary || !answer) return
 
-  // Ambient gradient glow breathing
-  const gradients = document.querySelectorAll('.theme-dark .gradient-container .gradient')
-  gradients.forEach((grad) => {
-    gsap.to(grad, {
-      scale: 1.05,
-      opacity: 0.18,
-      duration: 4,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut',
+    summary.addEventListener('click', (e) => {
+      e.preventDefault()
+
+      if (detail.open) {
+        if (chevron) {
+          gsap.to(chevron, { rotate: 0, duration: 0.2, ease: 'power2.out' })
+        }
+        gsap.to(answer, {
+          height: 0,
+          opacity: 0,
+          duration: 0.2,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            detail.open = false
+            answer.style.height = ''
+            answer.style.opacity = ''
+          },
+        })
+      } else {
+        detail.open = true
+        if (chevron) {
+          gsap.to(chevron, { rotate: 180, duration: 0.2, ease: 'power2.out' })
+        }
+        const naturalHeight = answer.scrollHeight
+        gsap.fromTo(
+          answer,
+          { height: 0, opacity: 0 },
+          {
+            height: naturalHeight,
+            opacity: 1,
+            duration: 0.2,
+            ease: 'power2.out',
+            onComplete: () => {
+              answer.style.height = ''
+            },
+          }
+        )
+      }
     })
   })
 }
 
 // ============================================================================
-// 8. SECTION VIEWPORT ENTRANCE MOTION (STAGGERED KINETIC CASCADE PER SECTION)
+// 5. FAST & SNAPPY SECTION-LEVEL VIEWPORT ENTRANCE
+// Applies ONLY at section container level.
+// NO child hiding (opacity: 0) — eliminates missing or delayed components!
+// NO pulse, loop, or component-level micro jitter.
 // ============================================================================
-export function initSectionViewportMotion() {
+export function initFastSectionMotion() {
   if (prefersReducedMotion) return
 
-  // --------------------------------------------------------------------------
-  // SECTION: HERO
-  // --------------------------------------------------------------------------
+  // Hero Section: Above fold, animate immediately and swiftly on load
   const heroSection = document.querySelector<HTMLElement>('section#hero')
   if (heroSection) {
-    const heroH1 = heroSection.querySelector('h1')
-    const heroSubtitle = heroSection.querySelector('p')
-    const heroActions = heroSection.querySelector('.actions')
-    const heroCustomers = heroSection.querySelector('.customers')
-    const heroMockup = heroSection.querySelector('figure.image-container')
-
-    const heroTl = gsap.timeline({ defaults: { ease: 'power4.out' } })
-    if (heroH1) heroTl.from(heroH1, { y: 45, opacity: 0, duration: 1.0 }, 0.1)
-    if (heroSubtitle) heroTl.from(heroSubtitle, { y: 30, opacity: 0, duration: 0.95 }, 0.22)
-    if (heroActions) heroTl.from(heroActions, { y: 25, opacity: 0, scale: 0.95, duration: 0.85, ease: 'back.out(1.4)' }, 0.35)
-    if (heroCustomers) heroTl.from(heroCustomers, { y: 20, opacity: 0, duration: 0.8 }, 0.48)
-    if (heroMockup) heroTl.from(heroMockup, { y: 65, opacity: 0, scale: 0.93, duration: 1.15, ease: 'power3.out' }, 0.38)
+    gsap.from(heroSection, {
+      y: 20,
+      opacity: 0,
+      duration: 0.35,
+      ease: 'power2.out',
+      clearProps: 'all',
+    })
   }
 
-  // --------------------------------------------------------------------------
-  // SECTION: COMPATIBILITY / FEATURE BADGES
-  // --------------------------------------------------------------------------
-  const compatSection = document.querySelector<HTMLElement>('section.customers')
-  if (compatSection) {
-    const compatItems = compatSection.querySelectorAll<HTMLElement>('.compat-item')
-    if (compatItems.length > 0) {
-      gsap.from(compatItems, {
-        scrollTrigger: {
-          trigger: compatSection,
-          start: 'top 88%',
-          toggleActions: 'play none none none',
-          once: true,
-        },
-        y: 35,
-        opacity: 0,
-        scale: 0.88,
-        stagger: 0.12,
-        duration: 0.85,
-        ease: 'back.out(1.6)',
-      })
-    }
-  }
+  // All Other Major Sections: Fast, snappy reveal upon entering viewport
+  const sections = document.querySelectorAll<HTMLElement>(
+    'section.customers, section#download, section#fitur, section#faq, section#cta, footer'
+  )
 
-  // --------------------------------------------------------------------------
-  // SECTION: RAYCAST DOWNLOAD HUB & KEYBOARD CANVAS (#download)
-  // --------------------------------------------------------------------------
-  const downloadSection = document.querySelector<HTMLElement>('section#download')
-  if (downloadSection) {
-    const downloadCard = downloadSection.querySelector<HTMLElement>('[data-pencil-name="div"]')
-    const titleLine1 = downloadSection.querySelector<HTMLElement>('[data-pencil-name="Title Line 1"]')
-    const titleLine2 = downloadSection.querySelector<HTMLElement>('[data-pencil-name="Title Line 2"]')
-    const downloadButtons = downloadSection.querySelectorAll<HTMLElement>('[data-pencil-name="CTA Buttons Row"] a')
-    const keyboardKeys = downloadSection.querySelectorAll<HTMLElement>('#keyboardCanvas [data-pencil-name="div"]')
-
-    const downloadTl = gsap.timeline({
+  sections.forEach((sec) => {
+    gsap.from(sec, {
       scrollTrigger: {
-        trigger: downloadSection,
-        start: 'top 82%',
+        trigger: sec,
+        start: 'top 92%',
         toggleActions: 'play none none none',
         once: true,
       },
+      y: 24,
+      opacity: 0,
+      duration: 0.35,
+      ease: 'power2.out',
+      clearProps: 'all',
     })
-
-    if (downloadCard) {
-      downloadTl.from(downloadCard, {
-        y: 50,
-        opacity: 0,
-        scale: 0.96,
-        duration: 1.0,
-        ease: 'power4.out',
-      }, 0)
-    }
-
-    if (titleLine1) {
-      downloadTl.from(titleLine1, {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-      }, 0.2)
-    }
-
-    if (titleLine2) {
-      downloadTl.from(titleLine2, {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-      }, 0.32)
-    }
-
-    if (downloadButtons.length > 0) {
-      downloadTl.from(downloadButtons, {
-        y: 20,
-        opacity: 0,
-        scale: 0.9,
-        stagger: 0.12,
-        duration: 0.75,
-        ease: 'back.out(1.5)',
-      }, 0.44)
-    }
-
-    // Aesthetic wave light-up effect on physical keycaps
-    if (keyboardKeys.length > 0) {
-      downloadTl.from(keyboardKeys, {
-        y: 20,
-        opacity: 0,
-        stagger: {
-          amount: 0.6,
-          from: 'start',
-        },
-        duration: 0.75,
-        ease: 'power3.out',
-      }, 0.25)
-    }
-  }
-
-  // --------------------------------------------------------------------------
-  // SECTION: RAYCAST EXTENSION HIGHLIGHT REEL & CATEGORIES (#fitur)
-  // --------------------------------------------------------------------------
-  const fiturSection = document.querySelector<HTMLElement>('section#fitur')
-  if (fiturSection) {
-    const sectionCard = fiturSection.querySelector<HTMLElement>('.raycast-section-card')
-    const titleH2 = fiturSection.querySelector<HTMLElement>('.raycast-title-group h2')
-    const titleP = fiturSection.querySelector<HTMLElement>('.raycast-title-group p')
-    const categoriesBar = fiturSection.querySelector<HTMLElement>('.raycast-categories')
-    const categoryPills = fiturSection.querySelectorAll<HTMLElement>('.raycast-category-pill')
-    const reelCards = fiturSection.querySelectorAll<HTMLElement>('.raycast-card')
-    const bottomBar = fiturSection.querySelector<HTMLElement>('.raycast-bottom-bar')
-
-    const fiturTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: fiturSection,
-        start: 'top 80%',
-        toggleActions: 'play none none none',
-        once: true,
-      },
-    })
-
-    if (sectionCard) {
-      fiturTl.from(sectionCard, {
-        y: 50,
-        opacity: 0,
-        duration: 0.95,
-        ease: 'power4.out',
-      }, 0)
-    }
-
-    if (titleH2) {
-      fiturTl.from(titleH2, {
-        y: 35,
-        opacity: 0,
-        duration: 0.85,
-        ease: 'power3.out',
-      }, 0.15)
-    }
-
-    if (titleP) {
-      fiturTl.from(titleP, {
-        y: 25,
-        opacity: 0,
-        duration: 0.85,
-        ease: 'power3.out',
-      }, 0.25)
-    }
-
-    if (categoriesBar) {
-      fiturTl.from(categoriesBar, {
-        scale: 0.92,
-        opacity: 0,
-        y: 20,
-        duration: 0.75,
-        ease: 'back.out(1.5)',
-      }, 0.25)
-    }
-
-    if (categoryPills.length > 0) {
-      fiturTl.from(categoryPills, {
-        opacity: 0,
-        y: 10,
-        stagger: 0.06,
-        duration: 0.5,
-        ease: 'power2.out',
-      }, 0.35)
-    }
-
-    if (reelCards.length > 0) {
-      fiturTl.from(reelCards, {
-        y: 60,
-        opacity: 0,
-        scale: 0.93,
-        stagger: 0.14,
-        duration: 1.0,
-        ease: 'power4.out',
-      }, 0.42)
-    }
-
-    if (bottomBar) {
-      fiturTl.from(bottomBar, {
-        y: 25,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-      }, 0.68)
-    }
-  }
-
-  // --------------------------------------------------------------------------
-  // SECTION: FAQ ACCORDION SECTION (#faq)
-  // --------------------------------------------------------------------------
-  const faqSection = document.querySelector<HTMLElement>('section#faq')
-  if (faqSection) {
-    const nummeration = faqSection.querySelector<HTMLElement>('.nummeration')
-    const faqTitle = faqSection.querySelector<HTMLElement>('h2')
-    const faqDesc = faqSection.querySelector<HTMLElement>('p')
-    const faqItems = faqSection.querySelectorAll<HTMLDetailsElement>('details.faq-item')
-
-    const faqTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: faqSection,
-        start: 'top 82%',
-        toggleActions: 'play none none none',
-        once: true,
-      },
-    })
-
-    if (nummeration) {
-      faqTl.from(nummeration, {
-        scale: 0.85,
-        opacity: 0,
-        y: 20,
-        duration: 0.65,
-        ease: 'back.out(1.7)',
-      }, 0)
-    }
-
-    if (faqTitle) {
-      faqTl.from(faqTitle, {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-      }, 0.15)
-    }
-
-    if (faqDesc) {
-      faqTl.from(faqDesc, {
-        y: 25,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-      }, 0.25)
-    }
-
-    if (faqItems.length > 0) {
-      faqTl.from(faqItems, {
-        y: 35,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.8,
-        ease: 'power3.out',
-      }, 0.35)
-    }
-
-    // Fluid height transition for details accordion
-    faqItems.forEach((detail) => {
-      const summary = detail.querySelector('summary')
-      const answer = detail.querySelector<HTMLElement>('.faq-answer')
-      const chevron = detail.querySelector('.faq-chevron')
-
-      if (summary && answer) {
-        summary.addEventListener('click', (e) => {
-          if (detail.open) {
-            // Animating close
-            e.preventDefault()
-            if (chevron) {
-              gsap.to(chevron, { rotate: 0, duration: 0.3, ease: 'power2.out' })
-            }
-            gsap.to(answer, {
-              height: 0,
-              opacity: 0,
-              duration: 0.3,
-              ease: 'power2.inOut',
-              onComplete: () => {
-                detail.open = false
-                answer.style.height = ''
-                answer.style.opacity = ''
-              },
-            })
-          } else {
-            // Animating open
-            if (chevron) {
-              gsap.to(chevron, { rotate: 180, duration: 0.35, ease: 'back.out(1.7)' })
-            }
-            const naturalHeight = answer.scrollHeight
-            gsap.fromTo(
-              answer,
-              { height: 0, opacity: 0 },
-              {
-                height: naturalHeight,
-                opacity: 1,
-                duration: 0.4,
-                ease: 'power3.out',
-                onComplete: () => {
-                  answer.style.height = ''
-                },
-              }
-            )
-          }
-        })
-      }
-    })
-  }
-
-  // --------------------------------------------------------------------------
-  // SECTION: CALL TO ACTION BANNER (#cta)
-  // --------------------------------------------------------------------------
-  const ctaSection = document.querySelector<HTMLElement>('section#cta')
-  if (ctaSection) {
-    const ctaContent = ctaSection.querySelector<HTMLElement>('.section-content')
-    const ctaH2 = ctaSection.querySelector<HTMLElement>('h2')
-    const ctaP = ctaSection.querySelector<HTMLElement>('p')
-    const ctaActions = ctaSection.querySelectorAll<HTMLElement>('.actions a')
-    const ctaImgs = ctaSection.querySelectorAll<HTMLElement>('.cta-background')
-
-    const ctaTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ctaSection,
-        start: 'top 82%',
-        toggleActions: 'play none none none',
-        once: true,
-      },
-    })
-
-    if (ctaContent) {
-      ctaTl.from(ctaContent, {
-        scale: 0.95,
-        y: 45,
-        opacity: 0,
-        duration: 0.95,
-        ease: 'power4.out',
-      }, 0)
-    }
-
-    if (ctaImgs.length > 0) {
-      ctaTl.from(ctaImgs, {
-        scale: 1.15,
-        opacity: 0,
-        duration: 1.2,
-        ease: 'power2.out',
-      }, 0)
-    }
-
-    if (ctaH2) {
-      ctaTl.from(ctaH2, {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-      }, 0.2)
-    }
-
-    if (ctaP) {
-      ctaTl.from(ctaP, {
-        y: 25,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-      }, 0.32)
-    }
-
-    if (ctaActions.length > 0) {
-      ctaTl.from(ctaActions, {
-        scale: 0.88,
-        y: 20,
-        opacity: 0,
-        stagger: 0.12,
-        duration: 0.75,
-        ease: 'back.out(1.5)',
-      }, 0.44)
-    }
-  }
-
-  // --------------------------------------------------------------------------
-  // SECTION: FOOTER VIEWPORT ENTRANCE (footer)
-  // --------------------------------------------------------------------------
-  const footerEl = document.querySelector<HTMLElement>('footer')
-  if (footerEl) {
-    const footerCols = footerEl.querySelectorAll<HTMLElement>('.footer-content li')
-    if (footerCols.length > 0) {
-      gsap.from(footerCols, {
-        scrollTrigger: {
-          trigger: footerEl,
-          start: 'top 92%',
-          toggleActions: 'play none none none',
-          once: true,
-        },
-        y: 30,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.8,
-        ease: 'power3.out',
-      })
-    }
-  }
+  })
 
   // Recalculate trigger coordinates
   ScrollTrigger.refresh()
 }
 
+// Backward-compatible alias
+export const initSectionViewportMotion = initFastSectionMotion
+
 // ============================================================================
-// 9. MASTER INITIALIZER
+// 6. MASTER INITIALIZER
 // ============================================================================
 export function initAwwwardsMotion() {
   initKeyboardCanvas()
@@ -737,12 +246,9 @@ export function initAwwwardsMotion() {
   initShowcaseReel()
   initSmoothScroll()
   initScrollProgressBar()
-  initAmbientSpotlight()
-  initMagneticButtons()
-  init3DCardTilt()
   initReelDrag()
-  initHeroFloating()
-  initSectionViewportMotion()
+  initFaqAccordion()
+  initFastSectionMotion()
 
   // Recalculate triggers after full page load and font hydration
   window.addEventListener('load', () => {

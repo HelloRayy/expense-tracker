@@ -2,9 +2,24 @@
   --header-height: 72px;
 }
 
-/* Awwwards Smooth Hover and Transitions */
+/* Disable all pulse and infinite distracting animations */
+.click-area,
+.pulse,
+[class*="pulse"],
+figure .click-area {
+  animation: none !important;
+  box-shadow: none !important;
+}
+
+/* Ensure no element is ever hidden by legacy attributes */
+[data-sal] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Clean, snappy transitions on interactive elements */
 .button, button, .raycast-card, .raycast-category-pill, .card, .faq-item {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
 }
 
 /* Specular Glare Effect on Cards */
