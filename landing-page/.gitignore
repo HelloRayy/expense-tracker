@@ -23,6 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# Playwright
+# Playwright & Visual Diff Artifacts
 test-results/
 playwright-report/
+tests/diff*.png
+tests/local*.png

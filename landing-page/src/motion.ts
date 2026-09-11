@@ -2,6 +2,17 @@ import Lenis from 'lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
+// Modular stylesheets
+import './styles/motion-interactive.css'
+import './styles/raycast-download.css'
+import './styles/raycast-showcase.css'
+import './styles/pen-dev-utilities.css'
+
+// Subsystem controllers
+import { initKeyboardCanvas } from './components/keyboard-canvas'
+import { initHeroSwitcher } from './hero'
+import { initShowcaseReel } from './showcase'
+
 gsap.registerPlugin(ScrollTrigger)
 
 // Check for reduced motion preference
@@ -99,76 +110,71 @@ export function initAmbientSpotlight() {
       position: fixed;
       top: 0;
       left: 0;
-      width: 600px;
-      height: 600px;
-      margin-left: -300px;
-      margin-top: -300px;
+      width: 500px;
+      height: 500px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(110, 206, 157, 0.08) 0%, rgba(129, 140, 248, 0.03) 40%, transparent 70%);
+      background: radial-gradient(circle, rgba(110, 206, 157, 0.07) 0%, rgba(129, 140, 248, 0.04) 40%, transparent 70%);
       pointer-events: none;
       z-index: 1;
+      transform: translate(-50%, -50%);
       opacity: 0;
-      transition: opacity 0.6s ease;
-      will-change: transform;
+      transition: opacity 0.5s ease;
     `
     document.body.appendChild(spotlight)
   }
 
-  let mouseX = window.innerWidth / 2
-  let mouseY = window.innerHeight / 2
-  let curX = mouseX
-  let curY = mouseY
-  let active = false
+  let mouseX = -500
+  let mouseY = -500
+  let currentX = -500
+  let currentY = -500
 
   window.addEventListener('mousemove', (e) => {
     mouseX = e.clientX
     mouseY = e.clientY
-    if (!active && spotlight) {
-      active = true
+    if (spotlight && spotlight.style.opacity === '0') {
       spotlight.style.opacity = '1'
     }
   }, { passive: true })
 
-  window.addEventListener('mouseleave', () => {
+  document.addEventListener('mouseleave', () => {
     if (spotlight) spotlight.style.opacity = '0'
-    active = false
   })
 
-  // Smooth lerp loop for the cursor spotlight
-  function loop() {
-    curX += (mouseX - curX) * 0.08
-    curY += (mouseY - curY) * 0.08
+  // Smooth trailing physics
+  function animateSpotlight() {
+    currentX += (mouseX - currentX) * 0.12
+    currentY += (mouseY - currentY) * 0.12
     if (spotlight) {
-      spotlight.style.transform = `translate3d(${curX}px, ${curY}px, 0)`
+      spotlight.style.transform = `translate3d(${currentX - 250}px, ${currentY - 250}px, 0)`
     }
-    requestAnimationFrame(loop)
+    requestAnimationFrame(animateSpotlight)
   }
-  requestAnimationFrame(loop)
+  requestAnimationFrame(animateSpotlight)
 }
 
 // ============================================================================
-// 4. MAGNETIC BUTTONS & LINKS (SPRING MICRO-INTERACTION)
+// 4. MAGNETIC SPRING BUTTONS (SPRING PHYSICS ON HOVER)
 // ============================================================================
 export function initMagneticButtons() {
-  if (prefersReducedMotion || window.innerWidth < 1024) return
+  if (prefersReducedMotion || window.innerWidth < 768) return
 
-  const magneticTargets = document.querySelectorAll<HTMLElement>(
-    'button:not(.theme-switch), .button, .raycast-browse-link, a.card, .raycast-category-pill, [data-pencil-name="Download Button"]'
-  )
+  const magneticElements = document.querySelectorAll<HTMLElement>('.button, .raycast-nav-btn, .theme-switch')
 
-  magneticTargets.forEach((el) => {
-    el.style.willChange = 'transform'
+  magneticElements.forEach((el) => {
+    let boundRect: DOMRect | null = null
+
+    el.addEventListener('mouseenter', () => {
+      boundRect = el.getBoundingClientRect()
+    })
 
     el.addEventListener('mousemove', (e) => {
-      const rect = el.getBoundingClientRect()
-      const centerX = rect.left + rect.width / 2
-      const centerY = rect.top + rect.height / 2
-      const deltaX = (e.clientX - centerX) * 0.22
-      const deltaY = (e.clientY - centerY) * 0.22
+      if (!boundRect) boundRect = el.getBoundingClientRect()
+      const x = e.clientX - boundRect.left - boundRect.width / 2
+      const y = e.clientY - boundRect.top - boundRect.height / 2
 
       gsap.to(el, {
-        x: deltaX,
-        y: deltaY,
+        x: x * 0.28,
+        y: y * 0.28,
         duration: 0.35,
         ease: 'power3.out',
       })
@@ -179,158 +185,104 @@ export function initMagneticButtons() {
         x: 0,
         y: 0,
         duration: 0.7,
-        ease: 'elastic.out(1, 0.4)',
+        ease: 'elastic.out(1.2, 0.4)',
       })
+      boundRect = null
     })
   })
 }
 
 // ============================================================================
-// 5. 3D PERSPECTIVE TILT & SPECULAR GLARE ON CARDS
+// 5. 3D CARD PERSPECTIVE TILT WITH SPECULAR GLARE
 // ============================================================================
 export function init3DCardTilt() {
-  if (prefersReducedMotion || window.innerWidth < 1024) return
+  if (prefersReducedMotion || window.innerWidth < 768) return
 
-  const cards = document.querySelectorAll<HTMLElement>(
-    '.raycast-card, .card, .faq-item, [data-pencil-name="Download Section Content"]'
-  )
+  const cards = document.querySelectorAll<HTMLElement>('.raycast-card, .card')
 
   cards.forEach((card) => {
-    card.style.transformStyle = 'preserve-3d'
-    card.style.perspective = '1000px'
-    card.style.willChange = 'transform, box-shadow'
+    let cardRect: DOMRect | null = null
+
+    card.addEventListener('mouseenter', () => {
+      cardRect = card.getBoundingClientRect()
+    })
 
     card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
-      const centerX = rect.width / 2
-      const centerY = rect.height / 2
+      if (!cardRect) cardRect = card.getBoundingClientRect()
+      const x = e.clientX - cardRect.left
+      const y = e.clientY - cardRect.top
 
-      const rotateX = ((y - centerY) / centerY) * -5
-      const rotateY = ((x - centerX) / centerX) * 5
+      // Calculate percentage for specular gradient
+      const percentX = (x / cardRect.width) * 100
+      const percentY = (y / cardRect.height) * 100
+      card.style.setProperty('--card-mouse-x', `${percentX}%`)
+      card.style.setProperty('--card-mouse-y', `${percentY}%`)
+
+      // Perspective tilt rotation (-5 to +5 deg)
+      const rotX = ((y / cardRect.height) - 0.5) * -8
+      const rotY = ((x / cardRect.width) - 0.5) * 8
 
       gsap.to(card, {
-        rotateX: rotateX,
-        rotateY: rotateY,
-        scale: 1.015,
-        duration: 0.35,
-        ease: 'power2.out',
+        rotateX: rotX,
+        rotateY: rotY,
         transformPerspective: 1000,
+        duration: 0.25,
+        ease: 'power2.out',
       })
-
-      // Pass coordinates for dynamic CSS specular border/glare
-      card.style.setProperty('--card-mouse-x', `${x}px`)
-      card.style.setProperty('--card-mouse-y', `${y}px`)
     })
 
     card.addEventListener('mouseleave', () => {
       gsap.to(card, {
         rotateX: 0,
         rotateY: 0,
-        scale: 1,
         duration: 0.6,
         ease: 'power3.out',
       })
+      cardRect = null
     })
   })
 }
 
 // ============================================================================
-// 6. DRAGGABLE REEL TRACK WITH MOMENTUM (DESKTOP HORIZONTAL DRAG)
+// 6. DRAGGABLE MOMENTUM CAROUSEL REEL TRACK
 // ============================================================================
 export function initReelDrag() {
-  const track = document.getElementById('showcaseTrack') as HTMLElement | null
+  const track = document.getElementById('showcaseTrack')
   if (!track) return
 
   let isDown = false
   let startX = 0
   let scrollLeft = 0
-  let velocity = 0
-  let lastX = 0
-  let lastTime = 0
 
   track.style.cursor = 'grab'
-  track.style.userSelect = 'none'
 
   track.addEventListener('mousedown', (e) => {
-    // Only left click
-    if (e.button !== 0) return
     isDown = true
     track.style.cursor = 'grabbing'
-    track.style.scrollBehavior = 'auto' // Instant tracking while dragging
+    track.style.scrollBehavior = 'auto'
     startX = e.pageX - track.offsetLeft
     scrollLeft = track.scrollLeft
-    lastX = e.pageX
-    lastTime = performance.now()
-    velocity = 0
   })
 
   window.addEventListener('mouseup', () => {
-    if (!isDown) return
-    isDown = false
-    track.style.cursor = 'grab'
-    track.style.scrollBehavior = 'smooth'
-
-    // Apply momentum glide
-    if (Math.abs(velocity) > 0.25) {
-      const momentumTarget = track.scrollLeft - velocity * 180
-      track.scrollTo({ left: momentumTarget, behavior: 'smooth' })
+    if (isDown) {
+      isDown = false
+      track.style.cursor = 'grab'
+      track.style.scrollBehavior = 'smooth'
     }
   })
 
   track.addEventListener('mousemove', (e) => {
     if (!isDown) return
     e.preventDefault()
-    const now = performance.now()
-    const dt = Math.max(1, now - lastTime)
     const x = e.pageX - track.offsetLeft
-    const walk = (x - startX) * 1.3
-    const deltaX = e.pageX - lastX
-
-    velocity = deltaX / dt
-    lastX = e.pageX
-    lastTime = now
-
+    const walk = (x - startX) * 1.5 // Drag sensitivity
     track.scrollLeft = scrollLeft - walk
   })
 }
 
 // ============================================================================
-// 7. KEYBOARD CANVAS TACTILE PRESS & PARALLAX
-// ============================================================================
-export function initKeyboardCanvas() {
-  const keys = document.querySelectorAll<HTMLElement>('.GetYourTimeBack-module__o1EREW__keyboard [data-pencil-name="div"]')
-  keys.forEach((key) => {
-    key.style.cursor = 'pointer'
-    key.style.transition = 'transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease'
-
-    key.addEventListener('mouseenter', () => {
-      if (parseFloat(window.getComputedStyle(key).opacity) <= 0.3) {
-        key.style.opacity = '0.5'
-      }
-      key.style.transform = 'translateY(-2px) scale(1.03)'
-    })
-
-    key.addEventListener('mouseleave', () => {
-      if (parseFloat(key.style.opacity) === 0.5) {
-        key.style.opacity = ''
-      }
-      key.style.transform = ''
-    })
-
-    key.addEventListener('mousedown', () => {
-      key.style.transform = 'translateY(1px) scale(0.96)'
-    })
-
-    key.addEventListener('mouseup', () => {
-      key.style.transform = 'translateY(-2px) scale(1.03)'
-    })
-  })
-}
-
-// ============================================================================
-// 8. HERO MOCKUP AMBIENT FLOATING & PULSE
+// 7. HERO MOCKUP AMBIENT FLOATING & PULSE
 // ============================================================================
 export function initHeroFloating() {
   if (prefersReducedMotion) return
@@ -361,7 +313,7 @@ export function initHeroFloating() {
 }
 
 // ============================================================================
-// 9. KINETIC SCROLLTRIGGER REVEALS & PARALLAX
+// 8. KINETIC SCROLLTRIGGER REVEALS & PARALLAX
 // ============================================================================
 export function initScrollTriggerAnimations() {
   if (prefersReducedMotion) return
@@ -401,105 +353,120 @@ export function initScrollTriggerAnimations() {
     })
   }
 
-  // Section titles masked slide-in
-  const sectionHeaders = document.querySelectorAll('section:not(.hero) .nummeration, section:not(.hero) h2')
-  sectionHeaders.forEach((el) => {
-    gsap.from(el, {
+  // Section Headers Reveal
+  const sectionHeaders = document.querySelectorAll('section:not(.hero) h2, .raycast-title-group h2')
+  sectionHeaders.forEach((header) => {
+    gsap.from(header, {
       scrollTrigger: {
-        trigger: el,
+        trigger: header,
         start: 'top 88%',
         toggleActions: 'play none none none',
       },
       y: 35,
       opacity: 0,
-      duration: 0.85,
+      duration: 0.9,
       ease: 'power3.out',
     })
   })
 
-  // Raycast Extension Highlight Section Cards Entrance
+  // Raycast Cards Stagger Kinetic Entrance
   const raycastCards = document.querySelectorAll('.raycast-card')
   if (raycastCards.length > 0) {
     gsap.from(raycastCards, {
       scrollTrigger: {
-        trigger: '#fitur',
-        start: 'top 75%',
+        trigger: '#showcaseTrack',
+        start: 'top 82%',
         toggleActions: 'play none none none',
       },
-      y: 50,
+      y: 60,
       opacity: 0,
-      stagger: 0.08,
-      duration: 0.9,
-      ease: 'power3.out',
+      scale: 0.94,
+      stagger: 0.12,
+      duration: 1.0,
+      ease: 'power4.out',
     })
   }
 
-  // FAQ Details Accordion Smooth Open/Close Animation
-  const faqDetails = document.querySelectorAll<HTMLDetailsElement>('.faq-item')
-  faqDetails.forEach((detail) => {
-    const summary = detail.querySelector('.faq-question') as HTMLElement | null
-    const answer = detail.querySelector('.faq-answer') as HTMLElement | null
-    const chevron = detail.querySelector('.faq-chevron') as HTMLElement | null
+  // FAQ Accordions Smooth Stagger & Fluid Spring Open
+  const faqItems = document.querySelectorAll<HTMLDetailsElement>('details.faq-item')
+  if (faqItems.length > 0) {
+    gsap.from(faqItems, {
+      scrollTrigger: {
+        trigger: '.faq-accordion-container',
+        start: 'top 85%',
+        toggleActions: 'play none none none',
+      },
+      y: 25,
+      opacity: 0,
+      stagger: 0.08,
+      duration: 0.75,
+      ease: 'power3.out',
+    })
 
-    if (summary && answer) {
-      summary.addEventListener('click', (e) => {
-        e.preventDefault()
+    // Fluid height transition for details accordion
+    faqItems.forEach((detail) => {
+      const summary = detail.querySelector('summary')
+      const answer = detail.querySelector<HTMLElement>('.faq-answer')
+      const chevron = detail.querySelector('.faq-chevron')
 
-        const isOpen = detail.hasAttribute('open')
-
-        if (isOpen) {
-          // Animate closing
-          if (chevron) {
-            gsap.to(chevron, { rotate: 0, duration: 0.35, ease: 'power2.out' })
-          }
-          gsap.to(answer, {
-            height: 0,
-            opacity: 0,
-            duration: 0.35,
-            ease: 'power3.inOut',
-            onComplete: () => {
-              detail.removeAttribute('open')
-              answer.style.height = ''
-              answer.style.opacity = ''
-            },
-          })
-        } else {
-          // Open
-          detail.setAttribute('open', '')
-          if (chevron) {
-            gsap.to(chevron, { rotate: 180, duration: 0.35, ease: 'back.out(1.7)' })
-          }
-          const naturalHeight = answer.scrollHeight
-          gsap.fromTo(
-            answer,
-            { height: 0, opacity: 0 },
-            {
-              height: naturalHeight,
-              opacity: 1,
-              duration: 0.4,
-              ease: 'power3.out',
-              onComplete: () => {
-                answer.style.height = ''
-              },
+      if (summary && answer) {
+        summary.addEventListener('click', (e) => {
+          if (detail.open) {
+            // Animating close
+            e.preventDefault()
+            if (chevron) {
+              gsap.to(chevron, { rotate: 0, duration: 0.3, ease: 'power2.out' })
             }
-          )
-        }
-      })
-    }
-  })
+            gsap.to(answer, {
+              height: 0,
+              opacity: 0,
+              duration: 0.3,
+              ease: 'power2.inOut',
+              onComplete: () => {
+                detail.open = false
+                answer.style.height = ''
+                answer.style.opacity = ''
+              },
+            })
+          } else {
+            // Animating open
+            if (chevron) {
+              gsap.to(chevron, { rotate: 180, duration: 0.35, ease: 'back.out(1.7)' })
+            }
+            const naturalHeight = answer.scrollHeight
+            gsap.fromTo(
+              answer,
+              { height: 0, opacity: 0 },
+              {
+                height: naturalHeight,
+                opacity: 1,
+                duration: 0.4,
+                ease: 'power3.out',
+                onComplete: () => {
+                  answer.style.height = ''
+                },
+              }
+            )
+          }
+        })
+      }
+    })
+  }
 }
 
 // ============================================================================
-// 10. MASTER INITIALIZER
+// 9. MASTER INITIALIZER
 // ============================================================================
 export function initAwwwardsMotion() {
+  initKeyboardCanvas()
+  initHeroSwitcher()
+  initShowcaseReel()
   initSmoothScroll()
   initScrollProgressBar()
   initAmbientSpotlight()
   initMagneticButtons()
   init3DCardTilt()
   initReelDrag()
-  initKeyboardCanvas()
   initHeroFloating()
   initScrollTriggerAnimations()
 }
