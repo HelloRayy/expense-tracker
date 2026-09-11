@@ -26,13 +26,13 @@ const newFiturSection = `<!-- Raycast Section 2: ExtensionHighlight Reel & Categ
                         <div class="raycast-category-pill active" onclick="selectShowcaseCategory(0, 0, this)">
                             Widget Cepat
                         </div>
-                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(416, 1, this)">
+                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(372, 1, this)">
                             Smart Nudge
                         </div>
-                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(832, 2, this)">
+                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(744, 2, this)">
                             Amplop Mental
                         </div>
-                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(1248, 3, this)">
+                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(1116, 3, this)">
                             Privasi SQLite
                         </div>
                     </div>
@@ -41,7 +41,7 @@ const newFiturSection = `<!-- Raycast Section 2: ExtensionHighlight Reel & Categ
 
             <!-- Comment #1: .ExtensionHighlight-module__3Yq4tG__reelContainer (Cards Reel Track) -->
             <div class="raycast-reel-container" id="showcaseTrack">
-                <div class="raycast-reel-track">
+                <div class="raycast-reel-track gap-3">
                     <!-- Card 1: Widget 4x2 Interaktif (Linear Theme Style) -->
                     <div class="raycast-card raycast-card-1" id="card-widget-4x2">
                         <div class="raycast-card-header">
@@ -248,8 +248,10 @@ const newFiturSection = `<!-- Raycast Section 2: ExtensionHighlight Reel & Categ
         <script>
             function selectShowcaseCategory(scrollPos, pillIndex, pillEl) {
                 const track = document.getElementById("showcaseTrack");
+                const cards = document.querySelectorAll(".raycast-card");
                 if (track) {
-                    track.scrollTo({ left: scrollPos, behavior: "smooth" });
+                    const targetPos = (cards && cards[pillIndex]) ? (cards[pillIndex].offsetLeft - cards[0].offsetLeft) : scrollPos;
+                    track.scrollTo({ left: targetPos, behavior: "smooth" });
                 }
                 const pills = document.querySelectorAll(".raycast-category-pill");
                 pills.forEach(p => p.classList.remove("active"));
@@ -269,7 +271,7 @@ const newFiturSection = `<!-- Raycast Section 2: ExtensionHighlight Reel & Categ
             function scrollShowcaseStep(direction) {
                 const track = document.getElementById("showcaseTrack");
                 if (track) {
-                    const step = 416; // 360px card + 56px gap
+                    const step = 372; // 360px card + 12px gap
                     track.scrollBy({ left: direction * step, behavior: "smooth" });
                 }
             }
@@ -435,7 +437,7 @@ const raycastCSS = `
         box-sizing: border-box;
         display: inline-flex;
         flex-direction: row;
-        gap: 56px;
+        gap: 12px;
         padding: 0 24px;
         margin: 0;
       }
