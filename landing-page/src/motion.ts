@@ -158,7 +158,7 @@ export function initAmbientSpotlight() {
 export function initMagneticButtons() {
   if (prefersReducedMotion || window.innerWidth < 768) return
 
-  const magneticElements = document.querySelectorAll<HTMLElement>('.button, .raycast-nav-btn, .theme-switch')
+  const magneticElements = document.querySelectorAll<HTMLElement>('.button, .raycast-nav-btn')
 
   magneticElements.forEach((el) => {
     let boundRect: DOMRect | null = null

@@ -3,7 +3,7 @@
 }
 
 /* Awwwards Smooth Hover and Transitions */
-.button, button:not(.theme-switch), .raycast-card, .raycast-category-pill, .card, .faq-item {
+.button, button, .raycast-card, .raycast-category-pill, .card, .faq-item {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
 }
 
