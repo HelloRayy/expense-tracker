@@ -337,11 +337,13 @@
         width: 100%;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       }
+      #fitur,
       #download {
         display: block !important;
         padding-left: 0 !important;
         padding-right: 0 !important;
       }
+      #fitur .section-content,
       #download .section-content {
         display: block !important;
         grid-column: auto !important;
@@ -927,36 +929,58 @@
         box-sizing: border-box;
         width: 100%;
         max-width: 1204px;
-        padding: 0 24px;
+        margin: 0 auto;
+        padding: 0 32px;
         display: flex;
-        flex-wrap: wrap;
+        flex-direction: row;
+        flex-wrap: nowrap;
         justify-content: space-between;
         align-items: center;
         gap: 24px;
       }
+      .raycast-title-group {
+        flex: 1 1 auto;
+        max-width: 520px;
+        text-align: left;
+      }
       .raycast-title-group h2 {
-        font-size: 28px;
+        font-size: 26px;
         font-weight: 600;
-        letter-spacing: -0.5px;
+        letter-spacing: -0.4px;
         color: #ffffff;
-        line-height: 1.2;
+        line-height: 1.25;
         margin: 0 0 6px 0;
+        text-align: left;
       }
       .raycast-title-group p {
-        font-size: 16px;
+        font-size: 15px;
         color: #8f9099;
         margin: 0;
         line-height: 1.4;
+        text-align: left;
       }
       .raycast-categories-container {
-        max-width: 100%;
+        flex-shrink: 0;
         padding: 0;
         display: flex;
-        overflow-x: auto;
-        scrollbar-width: none;
+        align-items: center;
       }
-      .raycast-categories-container::-webkit-scrollbar {
-        display: none;
+      @media (max-width: 860px) {
+        .raycast-top-bar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 20px;
+          padding: 0 20px;
+        }
+        .raycast-categories-container {
+          width: 100%;
+          overflow-x: auto;
+          scrollbar-width: none;
+          -webkit-overflow-scrolling: touch;
+        }
+        .raycast-categories-container::-webkit-scrollbar {
+          display: none;
+        }
       }
       .raycast-categories {
         height: 63px;
@@ -3637,18 +3661,15 @@
                     <div class="raycast-categories" id="raycastCategories">
                         <div class="raycast-active-backdrop" id="activeBackdrop"></div>
                         <div class="raycast-category-pill active" onclick="selectShowcaseCategory(0, 0, this)">
-                            Semua Fitur
-                        </div>
-                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(0, 1, this)">
                             Widget Cepat
                         </div>
-                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(416, 2, this)">
+                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(416, 1, this)">
                             Smart Nudge
                         </div>
-                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(832, 3, this)">
+                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(832, 2, this)">
                             Amplop Mental
                         </div>
-                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(1248, 4, this)">
+                        <div class="raycast-category-pill" onclick="selectShowcaseCategory(1248, 3, this)">
                             Privasi SQLite
                         </div>
                     </div>
