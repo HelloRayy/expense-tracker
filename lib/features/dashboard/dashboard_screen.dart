@@ -9,13 +9,11 @@ import '../settings/screens/budget_settings_detail_screen.dart';
 import '../settings/screens/settings_screen.dart';
 import '../settings/screens/shopee_settings_screen.dart';
 import 'widgets/ambient_glow_background.dart';
-import 'widgets/category_section.dart';
+import 'widgets/dashboard_action_bar.dart';
 import 'widgets/dashboard_header.dart';
 import 'widgets/expense_list_item.dart';
 import 'widgets/floating_capsule_navbar.dart';
 import 'widgets/hero_balance_card.dart';
-import 'widgets/nudge_banner.dart';
-import 'widgets/savings_goal_card.dart';
 import 'widgets/weekly_budget_input_sheet.dart';
 import 'widgets/weekly_rollover_banner.dart';
 
@@ -238,46 +236,28 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             onTapPeriod: _openBudgetDetail,
                             onTapMenu: _openSettings,
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 14),
 
-                          // Secondary Nudge & Action Card
-                          NudgeBanner(
-                            weeklyIncome: widget.repository.weeklyIncome,
-                            dailyAllowance: dailyAllowance,
-                            isOverBudget: isOverBudget,
-                            pendingCount: widget.repository.pendingCount,
-                            cardColor: cardColor,
-                            borderColor: borderColor,
-                            textPrimary: textPrimary,
-                            isDark: isDark,
-                            onConfigureBudget: _openBudgetDetail,
-                            onQuickLog: _openQuickLog,
-                            onTapPending: _openPendingQuickLog,
-                          ),
-                          const SizedBox(height: 16),
-                          // Savings Items Card matching Wireframe 3
-                          SavingsGoalCard(
+                          // 3-Action Quick Bar (Tabungan, Kategori, Catat)
+                          DashboardActionBar(
                             weeklySavingsTarget: widget.repository.weeklySavingsTarget,
-                            currentSaved: (widget.repository.weeklySavingsTarget - (widget.repository.totalSpent > widget.repository.spendableBudget ? (widget.repository.totalSpent - widget.repository.spendableBudget) : 0)).clamp(0, widget.repository.weeklySavingsTarget),
+                            currentSaved: (widget.repository.weeklySavingsTarget -
+                                    (widget.repository.totalSpent > widget.repository.spendableBudget
+                                        ? (widget.repository.totalSpent - widget.repository.spendableBudget)
+                                        : 0))
+                                .clamp(0, widget.repository.weeklySavingsTarget),
+                            pendingCount: widget.repository.pendingCount,
                             isDark: isDark,
                             cardColor: cardColor,
-                            borderColor: borderColor,
                             textPrimary: textPrimary,
                             textSecondary: textSecondary,
-                            onConfigure: _openBudgetDetail,
+                            onTapSavings: _openBudgetDetail,
+                            onTapCategory: () => _openCategoryAssignment(ExpenseCategory.all.first.id),
+                            onTapQuickLog: widget.repository.pendingCount > 0
+                                ? _openPendingQuickLog
+                                : _openQuickLog,
                           ),
-                          const SizedBox(height: 24),
-
-                          // Spending by Category (Horizontal Scroll)
-                          CategorySection(
-                            expenses: expenses,
-                            cardColor: cardColor,
-                            borderColor: borderColor,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            onSelectCategory: _openCategoryAssignment,
-                          ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 22),
 
                           // Recent Activity / Transaksi Terbaru Section Header (with See all)
                           Row(
