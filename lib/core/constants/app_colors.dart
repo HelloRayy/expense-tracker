@@ -17,11 +17,11 @@ class PirschColors {
   static const Color beige = Color(0xFFF4F5FA);        // Clean Soft Grey-Lavender for Light Mode
 
   // Calibrated WCAG 2.1 AA Tokens
-  static const Color accessibleGreen = Color(0xFF4E5EAA);
+  static const Color accessibleGreen = Color(0xFF1D7A4A);
   static const Color accessibleAmber = Color(0xFF996100);
   static const Color accessibleCrimson = Color(0xFFDC2626);
 
-  // Dark Theme Tokens (Deep Onyx + Matte Surfaces #18181B / #1C1C1E)
+  // Dark Theme Tokens (Deep Onyx #0C0C0C + Elevated Cards #242424)
   static const Color darkBg = Color(0xFF0C0C0E);
   static const Color darkCard = Color(0xFF18181B);
   static const Color darkCardElevated = Color(0xFF222226);
@@ -53,7 +53,7 @@ class PirschColors {
   static Color pillText(bool isDark) => isDark ? const Color(0xFF0C0C0C) : const Color(0xFFFFFFFF);
 
   // Dynamic Semantic Colors
-  static Color green(bool isDark) => isDark ? primaryBlue : accessibleGreen;
+  static Color green(bool isDark) => isDark ? incomeGreen : accessibleGreen;
   static Color yellow(bool isDark) => isDark ? warmYellow : accessibleAmber;
   static Color red(bool isDark) => isDark ? roseRed : accessibleCrimson;
 
@@ -88,6 +88,6 @@ class AppColors {
 
   static const Color danger = PirschColors.roseRed;
   static const Color warning = PirschColors.warmYellow;
-  static const Color success = PirschColors.primaryBlue;
+  static const Color success = PirschColors.incomeGreen;
 }
 
