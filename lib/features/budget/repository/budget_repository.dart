@@ -24,11 +24,13 @@ class BudgetRepository extends ChangeNotifier {
 
   int get weeklyIncome => _budget?.weeklyIncome ?? 0;
   int get weeklySavingsTarget => _budget?.weeklySavingsTarget ?? 0;
+  int get carryoverBalance => _budget?.carryoverBalance ?? 0;
+  bool get isPeriodConfirmed => _budget?.isPeriodConfirmed ?? true;
   int get spendableBudget => _budget?.spendableBudget ?? 0;
 
-  /// Sisa seluruh uang yang dipegang (termasuk tabungan)
+  /// Sisa seluruh uang yang dipegang (termasuk tabungan + uang carryover)
   int get remainingBalance {
-    return weeklyIncome - _totalSpent;
+    return (_budget?.totalBudget ?? 0) - _totalSpent;
   }
 
   /// Sisa budget belanja mingguan yang boleh dipakai jajan
@@ -99,10 +101,21 @@ class BudgetRepository extends ChangeNotifier {
       // Check if weekly period needs roll-forward (if current date has passed Sunday 23:59:59)
       final now = DateTime.now();
       if (now.isAfter(_budget!.endDate)) {
+        // Calculate leftover surplus from the period that just ended
+        final oldExpenses = await _db.getExpensesForPeriod(
+          _budget!.startDate,
+          _budget!.endDate,
+        );
+        final oldTotalSpent = oldExpenses.fold<int>(0, (sum, e) => sum + e.amount);
+        // Only positive surplus is carried over; if overbudget, carryover is 0
+        final surplus = (_budget!.spendableBudget - oldTotalSpent).clamp(0, _budget!.spendableBudget);
+
         _budget = BudgetModel(
           id: 1,
-          weeklyIncome: _budget!.weeklyIncome,
-          weeklySavingsTarget: _budget!.weeklySavingsTarget,
+          weeklyIncome: 0, // Reset to 0 until user confirms/inputs new weekly budget
+          weeklySavingsTarget: 0,
+          carryoverBalance: surplus,
+          isPeriodConfirmed: false, // Flag that user input is needed
           startDate: BudgetModel.getMondayOfWeek(now),
           endDate: BudgetModel.getSundayOfWeek(now),
         );
@@ -216,19 +229,56 @@ class BudgetRepository extends ChangeNotifier {
     await batchAssignMultiCategories(updates);
   }
 
-  Future<void> updateBudget({
-    int? weeklyIncome,
-    int? weeklySavingsTarget,
-    int? totalBudget,
-    int? paydayDay,
+  /// Confirm / set weekly budget with optional carryover balance and savings target.
+  Future<void> confirmWeeklyBudget({
+    required int newIncome,
+    int? carryover,
+    int? savingsTarget,
   }) async {
     final now = DateTime.now();
-    final income = weeklyIncome ?? totalBudget ?? 0;
-    final savings = weeklySavingsTarget ?? (income > 0 ? (income * 0.3).round() : 0);
+    final effectiveCarryover = carryover ?? (_budget?.carryoverBalance ?? 0);
+    final income = newIncome;
+    final savings = savingsTarget ?? (income > 0 ? (income * 0.3).round() : 0);
+
     final newBudget = BudgetModel(
       id: 1,
       weeklyIncome: income,
       weeklySavingsTarget: savings,
+      carryoverBalance: effectiveCarryover,
+      isPeriodConfirmed: true,
+      startDate: BudgetModel.getMondayOfWeek(now),
+      endDate: BudgetModel.getSundayOfWeek(now),
+    );
+
+    if (kIsWeb) {
+      _budget = newBudget;
+      notifyListeners();
+      return;
+    }
+    await _db.updateBudget(newBudget);
+    await loadData();
+  }
+
+  Future<void> updateBudget({
+    int? weeklyIncome,
+    int? weeklySavingsTarget,
+    int? totalBudget,
+    int? carryoverBalance,
+    bool? isPeriodConfirmed,
+    int? paydayDay,
+  }) async {
+    final now = DateTime.now();
+    final income = weeklyIncome ?? totalBudget ?? _budget?.weeklyIncome ?? 0;
+    final savings = weeklySavingsTarget ?? (income > 0 ? (income * 0.3).round() : 0);
+    final carryover = carryoverBalance ?? _budget?.carryoverBalance ?? 0;
+    final confirmed = isPeriodConfirmed ?? _budget?.isPeriodConfirmed ?? true;
+
+    final newBudget = BudgetModel(
+      id: 1,
+      weeklyIncome: income,
+      weeklySavingsTarget: savings,
+      carryoverBalance: carryover,
+      isPeriodConfirmed: confirmed,
       startDate: BudgetModel.getMondayOfWeek(now),
       endDate: BudgetModel.getSundayOfWeek(now),
     );
@@ -247,7 +297,7 @@ class BudgetRepository extends ChangeNotifier {
     // daily_safe represents today's remaining jajan allowance
     await _nativeBridge.syncBalanceToNative(
       remainingBalance: remainingBalance,
-      totalBudget: _budget!.weeklyIncome,
+      totalBudget: _budget!.totalBudget,
       weeklyIncome: _budget!.weeklyIncome,
       dailySafe: remainingToday,
       dailyAllowance: dailyAllowance,

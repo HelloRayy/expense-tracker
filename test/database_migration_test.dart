@@ -25,12 +25,12 @@ void main() {
       }
     });
 
-    test('Fresh DB creation initializes all columns including total_budget and default 0 budget', () async {
+    test('Fresh DB creation initializes all columns including total_budget, carryover_balance, and default 0 budget', () async {
       final dbPath = p.join(testDbDir, 'fresh.db');
 
       final db = await openDatabase(
         dbPath,
-        version: 4,
+        version: 6,
         onCreate: (db, version) async {
           await db.execute('''
             CREATE TABLE IF NOT EXISTS budget (
@@ -39,6 +39,8 @@ void main() {
               weekly_savings_target INTEGER NOT NULL DEFAULT 0,
               total_budget INTEGER NOT NULL DEFAULT 0,
               payday_day INTEGER NOT NULL DEFAULT 25,
+              carryover_balance INTEGER NOT NULL DEFAULT 0,
+              is_period_confirmed INTEGER NOT NULL DEFAULT 1,
               start_date TEXT NOT NULL,
               end_date TEXT NOT NULL
             )
@@ -56,6 +58,12 @@ void main() {
           try {
             await db.execute('ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
           } catch (_) {}
+          try {
+            await db.execute('ALTER TABLE budget ADD COLUMN carryover_balance INTEGER NOT NULL DEFAULT 0');
+          } catch (_) {}
+          try {
+            await db.execute('ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
+          } catch (_) {}
 
           final defaultBudget = BudgetModel.createDefault();
           await db.insert('budget', defaultBudget.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
@@ -69,17 +77,21 @@ void main() {
       expect(row.containsKey('weekly_savings_target'), isTrue);
       expect(row.containsKey('total_budget'), isTrue);
       expect(row.containsKey('payday_day'), isTrue);
+      expect(row.containsKey('carryover_balance'), isTrue);
+      expect(row.containsKey('is_period_confirmed'), isTrue);
       expect(row['weekly_income'], 0);
       expect(row['weekly_savings_target'], 0);
       expect(row['total_budget'], 0);
+      expect(row['carryover_balance'], 0);
+      expect(row['is_period_confirmed'], 1);
 
       await db.close();
     });
 
-    test('Migration from v3 (lacking total_budget column) upgrades to v4 seamlessly', () async {
+    test('Migration from v3 (lacking total_budget & carryover columns) upgrades to v6 seamlessly', () async {
       final dbPath = p.join(testDbDir, 'upgrade_v3.db');
 
-      // Create v3 table without total_budget column (the exact bug scenario)
+      // Create v3 table without total_budget or carryover columns
       var db = await openDatabase(
         dbPath,
         version: 3,
@@ -105,10 +117,10 @@ void main() {
       );
       await db.close();
 
-      // Now open with v4 upgrade logic and onOpen
+      // Now open with v6 upgrade logic and onOpen
       db = await openDatabase(
         dbPath,
-        version: 4,
+        version: 6,
         onUpgrade: (db, oldVersion, newVersion) async {
           if (oldVersion < 4) {
             try {
@@ -118,6 +130,14 @@ void main() {
               await db.execute('ALTER TABLE budget ADD COLUMN payday_day INTEGER NOT NULL DEFAULT 25');
             } catch (_) {}
           }
+          if (oldVersion < 6) {
+            try {
+              await db.execute('ALTER TABLE budget ADD COLUMN carryover_balance INTEGER NOT NULL DEFAULT 0');
+            } catch (_) {}
+            try {
+              await db.execute('ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
+            } catch (_) {}
+          }
         },
         onOpen: (db) async {
           try {
@@ -125,6 +145,12 @@ void main() {
           } catch (_) {}
           try {
             await db.execute('ALTER TABLE budget ADD COLUMN payday_day INTEGER NOT NULL DEFAULT 25');
+          } catch (_) {}
+          try {
+            await db.execute('ALTER TABLE budget ADD COLUMN carryover_balance INTEGER NOT NULL DEFAULT 0');
+          } catch (_) {}
+          try {
+            await db.execute('ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
           } catch (_) {}
         },
       );
@@ -138,6 +164,7 @@ void main() {
       final rows = await db.query('budget');
       expect(rows.length, 1);
       expect(rows.first['total_budget'], 0);
+      expect(rows.first['carryover_balance'], 0);
 
       await db.close();
     });
@@ -174,6 +201,12 @@ void main() {
           try {
             await db.execute('ALTER TABLE budget ADD COLUMN payday_day INTEGER NOT NULL DEFAULT 25');
           } catch (_) {}
+          try {
+            await db.execute('ALTER TABLE budget ADD COLUMN carryover_balance INTEGER NOT NULL DEFAULT 0');
+          } catch (_) {}
+          try {
+            await db.execute('ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
+          } catch (_) {}
         },
       );
 
@@ -190,7 +223,7 @@ void main() {
       final dbPath = p.join(testDbDir, 'isolated_budget.db');
       final db = await openDatabase(
         dbPath,
-        version: 4,
+        version: 6,
         onCreate: (db, version) async {
           await db.execute('''
             CREATE TABLE IF NOT EXISTS budget (
@@ -199,6 +232,8 @@ void main() {
               weekly_savings_target INTEGER NOT NULL DEFAULT 0,
               total_budget INTEGER NOT NULL DEFAULT 0,
               payday_day INTEGER NOT NULL DEFAULT 25,
+              carryover_balance INTEGER NOT NULL DEFAULT 0,
+              is_period_confirmed INTEGER NOT NULL DEFAULT 1,
               start_date TEXT NOT NULL,
               end_date TEXT NOT NULL
             )
@@ -212,14 +247,16 @@ void main() {
       final budget = BudgetModel.fromMap(res.first);
       expect(budget.weeklyIncome, equals(0));
       expect(budget.weeklySavingsTarget, equals(0));
+      expect(budget.carryoverBalance, equals(0));
 
-      final updated = budget.copyWith(weeklyIncome: 200000, weeklySavingsTarget: 50000);
+      final updated = budget.copyWith(weeklyIncome: 200000, weeklySavingsTarget: 50000, carryoverBalance: 25000);
       await db.insert('budget', updated.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
 
       final fetched = BudgetModel.fromMap((await db.query('budget', where: 'id = ?', whereArgs: [1])).first);
       expect(fetched.weeklyIncome, equals(200000));
       expect(fetched.weeklySavingsTarget, equals(50000));
-      expect(fetched.spendableBudget, equals(150000));
+      expect(fetched.carryoverBalance, equals(25000));
+      expect(fetched.spendableBudget, equals(175000));
 
       await db.close();
     });

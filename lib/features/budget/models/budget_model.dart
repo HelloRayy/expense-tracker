@@ -2,8 +2,10 @@ import 'package:intl/intl.dart';
 
 class BudgetModel {
   final int id;
-  final int weeklyIncome; // uangMingguan
+  final int weeklyIncome; // uangMingguan baru
   final int weeklySavingsTarget; // nabungMinggu
+  final int carryoverBalance; // sisa uang jajan minggu lalu
+  final bool isPeriodConfirmed; // apakah user sudah input/konfirmasi budget minggu ini
   final DateTime startDate; // Monday 00:00:00
   final DateTime endDate; // Sunday 23:59:59
 
@@ -13,6 +15,8 @@ class BudgetModel {
     int? weeklySavingsTarget,
     int? totalBudget,
     int? paydayDay,
+    this.carryoverBalance = 0,
+    this.isPeriodConfirmed = true,
     required this.startDate,
     required this.endDate,
   })  : weeklyIncome = weeklyIncome ?? totalBudget ?? 0,
@@ -21,11 +25,12 @@ class BudgetModel {
                 ? ((weeklyIncome ?? totalBudget ?? 0) * 0.3).round()
                 : 0);
 
-  /// Backward-compatible alias for total weekly money
-  int get totalBudget => weeklyIncome;
+  /// Total money held for the week (new income + carryover from last week)
+  int get totalBudget => weeklyIncome + carryoverBalance;
 
-  /// Total budget available for spending across the week
-  int get spendableBudget => (weeklyIncome - weeklySavingsTarget).clamp(0, weeklyIncome);
+  /// Total budget available for spending across the week: (income - savings + carryover)
+  int get spendableBudget =>
+      ((weeklyIncome - weeklySavingsTarget) + carryoverBalance).clamp(0, totalBudget);
 
   /// Day index in the week (1 = Monday, ..., 7 = Sunday)
   int get dayOfWeek {
@@ -89,6 +94,8 @@ class BudgetModel {
       'weekly_savings_target': weeklySavingsTarget,
       'total_budget': spendableBudget,
       'payday_day': 25,
+      'carryover_balance': carryoverBalance,
+      'is_period_confirmed': isPeriodConfirmed ? 1 : 0,
       'start_date': startDate.toIso8601String(),
       'end_date': endDate.toIso8601String(),
     };
@@ -97,11 +104,15 @@ class BudgetModel {
   factory BudgetModel.fromMap(Map<String, dynamic> map) {
     final income = map['weekly_income'] as int? ?? map['total_budget'] as int? ?? 0;
     final savings = map['weekly_savings_target'] as int? ?? 0;
+    final carryover = map['carryover_balance'] as int? ?? 0;
+    final confirmed = (map['is_period_confirmed'] as int? ?? 1) == 1;
 
     return BudgetModel(
       id: map['id'] as int? ?? 1,
       weeklyIncome: income,
       weeklySavingsTarget: savings,
+      carryoverBalance: carryover,
+      isPeriodConfirmed: confirmed,
       startDate: DateTime.tryParse(map['start_date'] as String? ?? '') ?? getMondayOfWeek(DateTime.now()),
       endDate: DateTime.tryParse(map['end_date'] as String? ?? '') ?? getSundayOfWeek(DateTime.now()),
     );
@@ -111,6 +122,8 @@ class BudgetModel {
     int? id,
     int? weeklyIncome,
     int? weeklySavingsTarget,
+    int? carryoverBalance,
+    bool? isPeriodConfirmed,
     DateTime? startDate,
     DateTime? endDate,
   }) {
@@ -118,6 +131,8 @@ class BudgetModel {
       id: id ?? this.id,
       weeklyIncome: weeklyIncome ?? this.weeklyIncome,
       weeklySavingsTarget: weeklySavingsTarget ?? this.weeklySavingsTarget,
+      carryoverBalance: carryoverBalance ?? this.carryoverBalance,
+      isPeriodConfirmed: isPeriodConfirmed ?? this.isPeriodConfirmed,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
     );
@@ -141,11 +156,15 @@ class BudgetModel {
     int? savings,
     int? total,
     int? payday,
+    int? carryover,
+    bool isConfirmed = true,
   }) {
     final now = DateTime.now();
     return BudgetModel(
       weeklyIncome: income ?? total ?? 0,
       weeklySavingsTarget: savings ?? 0,
+      carryoverBalance: carryover ?? 0,
+      isPeriodConfirmed: isConfirmed,
       startDate: getMondayOfWeek(now),
       endDate: getSundayOfWeek(now),
     );

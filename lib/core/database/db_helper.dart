@@ -30,7 +30,7 @@ class DbHelper {
 
     return await openDatabase(
       path,
-      version: 5,
+      version: 6,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE IF NOT EXISTS budget (
@@ -39,6 +39,8 @@ class DbHelper {
             weekly_savings_target INTEGER NOT NULL DEFAULT 0,
             total_budget INTEGER NOT NULL DEFAULT 0,
             payday_day INTEGER NOT NULL DEFAULT 25,
+            carryover_balance INTEGER NOT NULL DEFAULT 0,
+            is_period_confirmed INTEGER NOT NULL DEFAULT 1,
             start_date TEXT NOT NULL,
             end_date TEXT NOT NULL
           )
@@ -49,6 +51,8 @@ class DbHelper {
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN payday_day INTEGER NOT NULL DEFAULT 25');
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN weekly_income INTEGER NOT NULL DEFAULT 0');
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
+        await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN carryover_balance INTEGER NOT NULL DEFAULT 0');
+        await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
 
         await db.execute('''
           CREATE TABLE IF NOT EXISTS expenses (
@@ -97,12 +101,18 @@ class DbHelper {
           await _safeExecute(db, 'ALTER TABLE expenses ADD COLUMN category_id TEXT DEFAULT NULL');
           await _safeExecute(db, 'CREATE INDEX IF NOT EXISTS idx_expenses_category_id ON expenses (category_id)');
         }
+        if (oldVersion < 6) {
+          await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN carryover_balance INTEGER NOT NULL DEFAULT 0');
+          await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
+        }
       },
       onOpen: (db) async {
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN total_budget INTEGER NOT NULL DEFAULT 0');
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN payday_day INTEGER NOT NULL DEFAULT 25');
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN weekly_income INTEGER NOT NULL DEFAULT 0');
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
+        await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN carryover_balance INTEGER NOT NULL DEFAULT 0');
+        await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
         await _safeExecute(db, 'ALTER TABLE expenses ADD COLUMN category_id TEXT DEFAULT NULL');
         await _safeExecute(db, 'CREATE INDEX IF NOT EXISTS idx_expenses_category_id ON expenses (category_id)');
       },

@@ -61,6 +61,12 @@ class MockBudgetRepo extends ChangeNotifier implements BudgetRepository {
   int get remainingWeeklySpendable => 880000;
 
   @override
+  int get carryoverBalance => 0;
+
+  @override
+  bool get isPeriodConfirmed => true;
+
+  @override
   int get spentUntilYesterday => 60000;
 
   @override
@@ -88,10 +94,19 @@ class MockBudgetRepo extends ChangeNotifier implements BudgetRepository {
   Future<void> resetAllExpenses() async {}
 
   @override
+  Future<void> confirmWeeklyBudget({
+    required int newIncome,
+    int? carryover,
+    int? savingsTarget,
+  }) async {}
+
+  @override
   Future<void> updateBudget({
     int? weeklyIncome,
     int? weeklySavingsTarget,
     int? totalBudget,
+    int? carryoverBalance,
+    bool? isPeriodConfirmed,
     int? paydayDay,
   }) async {}
 

@@ -14,6 +14,8 @@ import 'widgets/expense_list_item.dart';
 import 'widgets/floating_capsule_navbar.dart';
 import 'widgets/hero_balance_card.dart';
 import 'widgets/nudge_banner.dart';
+import 'widgets/weekly_budget_input_sheet.dart';
+import 'widgets/weekly_rollover_banner.dart';
 
 /// Main Dashboard Screen.
 /// Orchestrates top-level state, pull-to-refresh, lifecycle reloading,
@@ -182,6 +184,14 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                       sliver: SliverList(
                         delegate: SliverChildListDelegate([
                           const SizedBox(height: 8),
+
+                          // Unconfirmed period rollover prompt banner
+                          if (!widget.repository.isPeriodConfirmed)
+                            WeeklyRolloverBanner(
+                              carryoverBalance: widget.repository.carryoverBalance,
+                              isDark: isDark,
+                              onInputBudget: () => WeeklyBudgetInputSheet.show(context, widget.repository),
+                            ),
 
                           // Hero Balance Card
                           HeroBalanceCard(
