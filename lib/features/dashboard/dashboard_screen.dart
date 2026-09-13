@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../budget/repository/budget_repository.dart';
+import '../categories/models/expense_category.dart';
 import '../categories/screens/category_assignment_screen.dart';
 import '../expense_catalog/screens/expense_catalog_screen.dart';
 import '../quick_log/quick_log_dialog.dart';
@@ -81,6 +82,24 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
     QuickLogDialog.show(
       context,
       repository: widget.repository,
+      onComplete: () => setState(() {}),
+    );
+  }
+
+  void _openPendingQuickLog() {
+    if (widget.repository.pendingTransactions.isEmpty) {
+      _openQuickLog();
+      return;
+    }
+    final pending = widget.repository.pendingTransactions.first;
+    final category = ExpenseCategory.fromId(pending.source) ?? ExpenseCategory.belanja;
+
+    QuickLogDialog.show(
+      context,
+      repository: widget.repository,
+      initialAmount: pending.amount,
+      initialCategory: category,
+      pendingTransactionId: pending.id,
       onComplete: () => setState(() {}),
     );
   }
@@ -226,12 +245,14 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             weeklyIncome: widget.repository.weeklyIncome,
                             dailyAllowance: dailyAllowance,
                             isOverBudget: isOverBudget,
+                            pendingCount: widget.repository.pendingCount,
                             cardColor: cardColor,
                             borderColor: borderColor,
                             textPrimary: textPrimary,
                             isDark: isDark,
                             onConfigureBudget: _openBudgetDetail,
                             onQuickLog: _openQuickLog,
+                            onTapPending: _openPendingQuickLog,
                           ),
                           const SizedBox(height: 16),
                           // Savings Items Card matching Wireframe 3

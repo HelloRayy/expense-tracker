@@ -7,24 +7,28 @@ class NudgeBanner extends StatelessWidget {
   final int weeklyIncome;
   final int dailyAllowance;
   final bool isOverBudget;
+  final int pendingCount;
   final Color cardColor;
   final Color borderColor;
   final Color textPrimary;
   final bool isDark;
   final VoidCallback onConfigureBudget;
   final VoidCallback onQuickLog;
+  final VoidCallback? onTapPending;
 
   const NudgeBanner({
     super.key,
     required this.weeklyIncome,
     required this.dailyAllowance,
     required this.isOverBudget,
+    this.pendingCount = 0,
     required this.cardColor,
     required this.borderColor,
     required this.textPrimary,
     required this.isDark,
     required this.onConfigureBudget,
     required this.onQuickLog,
+    this.onTapPending,
   });
 
   @override
@@ -35,7 +39,12 @@ class NudgeBanner extends StatelessWidget {
     final IconData statusIcon;
     final Color statusColor;
 
-    if (isUnset) {
+    if (pendingCount > 0) {
+      message = 'Ada $pendingCount transaksi yang belum kamu catat';
+      buttonAction = onTapPending ?? onQuickLog;
+      statusIcon = Icons.notifications_active_rounded;
+      statusColor = PirschColors.coralOrange;
+    } else if (isUnset) {
       message = 'Atur budget mingguanmu';
       buttonAction = onConfigureBudget;
       statusIcon = Icons.tune_rounded;

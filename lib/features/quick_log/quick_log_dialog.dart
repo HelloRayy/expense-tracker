@@ -14,17 +14,26 @@ import 'widgets/quick_log_keypad.dart';
 class QuickLogDialog extends StatefulWidget {
   final BudgetRepository repository;
   final VoidCallback? onComplete;
+  final int? initialAmount;
+  final ExpenseCategory? initialCategory;
+  final int? pendingTransactionId;
 
   const QuickLogDialog({
     super.key,
     required this.repository,
     this.onComplete,
+    this.initialAmount,
+    this.initialCategory,
+    this.pendingTransactionId,
   });
 
   static Future<void> show(
     BuildContext context, {
     required BudgetRepository repository,
     VoidCallback? onComplete,
+    int? initialAmount,
+    ExpenseCategory? initialCategory,
+    int? pendingTransactionId,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -33,6 +42,9 @@ class QuickLogDialog extends StatefulWidget {
       builder: (ctx) => QuickLogDialog(
         repository: repository,
         onComplete: onComplete,
+        initialAmount: initialAmount,
+        initialCategory: initialCategory,
+        pendingTransactionId: pendingTransactionId,
       ),
     );
   }
@@ -52,6 +64,13 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialAmount != null && widget.initialAmount! > 0) {
+      _expression = widget.initialAmount.toString();
+      _rawCursorPos = _expression.length;
+    }
+    if (widget.initialCategory != null) {
+      _selectedCategory = widget.initialCategory!;
+    }
     _startCursorBlink();
   }
 
@@ -220,11 +239,20 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     HapticFeedback.mediumImpact();
 
     try {
-      await widget.repository.addExpense(
-        amount,
-        note: _selectedCategory.displayName,
-        categoryId: _selectedCategory.id,
-      );
+      if (widget.pendingTransactionId != null) {
+        await widget.repository.resolvePendingTransaction(
+          widget.pendingTransactionId!,
+          amount,
+          note: _selectedCategory.displayName,
+          categoryId: _selectedCategory.id,
+        );
+      } else {
+        await widget.repository.addExpense(
+          amount,
+          note: _selectedCategory.displayName,
+          categoryId: _selectedCategory.id,
+        );
+      }
 
       if (mounted) {
         widget.onComplete?.call();
