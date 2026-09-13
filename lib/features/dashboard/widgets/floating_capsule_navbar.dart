@@ -26,61 +26,71 @@ class FloatingCapsuleNavbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 64,
-      padding: const EdgeInsets.symmetric(horizontal: 14),
+      height: 70,
+      constraints: const BoxConstraints(maxWidth: 326),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF18181B) : Colors.white,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(36),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.08),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
+            color: Colors.black.withValues(alpha: isDark ? 0.55 : 0.09),
+            blurRadius: 28,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          // Nav 1: Home (Active)
-          IconButton(
-            tooltip: 'Home',
-            icon: const Icon(Icons.home_rounded, color: PirschColors.primaryBlue, size: 26),
-            onPressed: () {},
+          // Nav 1: Home (Active Pill matching reference design)
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white : const Color(0xFF0C0C0C),
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: Icon(
+              Icons.home_rounded,
+              color: isDark ? const Color(0xFF0C0C0C) : Colors.white,
+              size: 22,
+            ),
           ),
 
           // Nav 2: Shopee / Integrations
           IconButton(
             tooltip: 'Shopee & Scanner',
-            icon: Icon(Icons.storefront_rounded, color: textSecondary, size: 24),
+            icon: Icon(Icons.storefront_rounded, color: textSecondary, size: 22),
             onPressed: onTapShopee,
           ),
 
-          // Nav Center: (+) Prominent Quick Log Button (Urbanist High-Contrast White Pill style)
+          // Nav Center: (+) Quick Log Action Button
           GestureDetector(
             onTap: onTapQuickLog,
             child: Container(
-              width: 48,
-              height: 48,
+              width: 44,
+              height: 44,
               decoration: const BoxDecoration(
                 color: PirschColors.primaryBlue,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.add, color: Colors.white, size: 28),
+              child: const Icon(Icons.add, color: Colors.white, size: 26),
             ),
           ),
 
           // Nav 4: Expense Catalog Cards
           IconButton(
             tooltip: 'Katalog Kartu Jajan',
-            icon: Icon(Icons.grid_view_rounded, color: textSecondary, size: 24),
+            icon: Icon(Icons.grid_view_rounded, color: textSecondary, size: 22),
             onPressed: onTapCatalog,
           ),
 
           // Nav 5: Settings
           IconButton(
             tooltip: 'Pengaturan',
-            icon: Icon(Icons.tune_rounded, color: textSecondary, size: 24),
+            icon: Icon(Icons.tune_rounded, color: textSecondary, size: 22),
             onPressed: onTapSettings,
           ),
         ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/services/app_settings_controller.dart';
 import '../../../core/theme/theme_controller.dart';
 import '../../budget/repository/budget_repository.dart';
 import '../widgets/setting_tile.dart';
@@ -153,7 +154,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: ThemeController.instance,
+                    listenable: Listenable.merge([ThemeController.instance, AppSettingsController.instance]),
       builder: (context, _) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -241,6 +242,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             inactiveTrackColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE5E2D9),
                             onChanged: (val) {
                               ThemeController.instance.toggleDarkMode(val);
+                            },
+                          ),
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                          isDark: isDark,
+                          showDivider: true,
+                        ),
+                        SettingTile(
+                          icon: Icons.auto_awesome_rounded,
+                          title: 'Input Cepat Ribuan (Eksperimental)',
+                          subtitle: AppSettingsController.instance.autoKiloEnabled
+                              ? 'Ketik 72 otomatis terbaca 72.000'
+                              : 'Otomatisasi nominal ribuan nonaktif',
+                          onTap: () {
+                            AppSettingsController.instance.setAutoKiloEnabled(
+                              !AppSettingsController.instance.autoKiloEnabled,
+                            );
+                          },
+                          trailing: Switch.adaptive(
+                            value: AppSettingsController.instance.autoKiloEnabled,
+                            activeThumbColor: PirschColors.mintGreen,
+                            activeTrackColor: PirschColors.mintGreen.withValues(alpha: 0.35),
+                            inactiveThumbColor: isDark ? const Color(0xFFA3A3A3) : const Color(0xFF666666),
+                            inactiveTrackColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE5E2D9),
+                            onChanged: (val) {
+                              AppSettingsController.instance.setAutoKiloEnabled(val);
                             },
                           ),
                           textPrimary: textPrimary,

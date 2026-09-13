@@ -371,17 +371,19 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
               // Floating Capsule Bottom Navigation Bar
               Positioned(
-                left: 24,
-                right: 24,
+                left: 0,
+                right: 0,
                 bottom: 20 + MediaQuery.of(context).padding.bottom,
-                child: FloatingCapsuleNavbar(
-                  isDark: isDark,
-                  borderColor: borderColor,
-                  textSecondary: textSecondary,
-                  onTapShopee: _openShopee,
-                  onTapQuickLog: _openQuickLog,
-                  onTapCatalog: () => _openExpenseCatalog('Semua'),
-                  onTapSettings: _openSettings,
+                child: Center(
+                  child: FloatingCapsuleNavbar(
+                    isDark: isDark,
+                    borderColor: borderColor,
+                    textSecondary: textSecondary,
+                    onTapShopee: _openShopee,
+                    onTapQuickLog: _openQuickLog,
+                    onTapCatalog: () => _openExpenseCatalog('Semua'),
+                    onTapSettings: _openSettings,
+                  ),
                 ),
               ),
             ],

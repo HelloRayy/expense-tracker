@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'core/constants/app_colors.dart';
+import 'core/services/app_settings_controller.dart';
 import 'core/services/native_bridge.dart';
 import 'core/theme/theme_controller.dart';
 import 'features/budget/repository/budget_repository.dart';
@@ -13,6 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('id_ID', null);
   await ThemeController.instance.init();
+  await AppSettingsController.instance.init();
 
   if (!kIsWeb) {
     // Dark translucent system status bar

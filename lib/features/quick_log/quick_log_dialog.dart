@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/services/app_settings_controller.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../budget/repository/budget_repository.dart';
 import '../categories/models/expense_category.dart';
@@ -104,7 +105,10 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     _resetCursorBlink();
   }
 
-  int get _currentTotal => CalculatorEvaluator.evaluate(_expression);
+  int get _currentTotal => CalculatorEvaluator.evaluate(
+        _expression,
+        autoKilo: AppSettingsController.instance.autoKiloEnabled,
+      );
 
   bool get _hasOperator => CalculatorEvaluator.hasOperator(_expression);
 
@@ -341,6 +345,24 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
+                            if (AppSettingsController.instance.autoKiloEnabled) ...[
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: PirschColors.mintGreen.withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: const Text(
+                                  'Auto-000',
+                                  style: TextStyle(
+                                    color: PirschColors.mintGreen,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -383,7 +405,11 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                           const SizedBox(height: 10),
                           SizedBox(
                             height: 30,
-                            child: _hasOperator && _currentTotal > 0
+                            child: ((_hasOperator ||
+                                        (AppSettingsController.instance.autoKiloEnabled &&
+                                            _expression.isNotEmpty &&
+                                            _currentTotal != CalculatorEvaluator.evaluate(_expression, autoKilo: false))) &&
+                                    _currentTotal > 0)
                                 ? Text(
                                     CurrencyFormatter.format(_currentTotal).replaceAll('Rp ', ''),
                                     style: TextStyle(
