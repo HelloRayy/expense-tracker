@@ -69,32 +69,24 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
                 maximumFractionDigits = 0
             }
 
+            fun formatRupiah(amount: Int): String {
+                val formatted = try {
+                    formatter.format(amount)
+                } catch (_: Exception) {
+                    "Rp $amount"
+                }
+                return formatted.replace("Rp", "Rp ").replace("Rp  ", "Rp ")
+            }
+
             val isAllowanceNegative = dailyAllowance < 0
             val dailyStr = if (isAllowanceNegative) {
-                try {
-                    "-${formatter.format(Math.abs(dailyAllowance))}"
-                } catch (_: Exception) {
-                    "-Rp ${Math.abs(dailyAllowance)}"
-                }
+                "-${formatRupiah(Math.abs(dailyAllowance))}"
             } else {
-                try {
-                    formatter.format(dailyAllowance)
-                } catch (_: Exception) {
-                    "Rp $dailyAllowance"
-                }
+                formatRupiah(dailyAllowance)
             }
 
-            val weeklyIncomeStr = try {
-                formatter.format(weeklyIncome)
-            } catch (_: Exception) {
-                "Rp $weeklyIncome"
-            }
-
-            val totalSpentStr = try {
-                formatter.format(totalSpent)
-            } catch (_: Exception) {
-                "Rp $totalSpent"
-            }
+            val weeklyIncomeStr = formatRupiah(weeklyIncome)
+            val totalSpentStr = formatRupiah(totalSpent)
 
             val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE

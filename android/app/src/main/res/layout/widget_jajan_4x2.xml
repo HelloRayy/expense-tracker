@@ -4,14 +4,14 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_widget_dark_4x2">
 
-    <!-- Coins Illustration from pen.dev (Aligned to bottom-right, clipped within container) -->
+    <!-- Coins Illustration from pen.dev (Aligned to top-right with matching scale & offset) -->
     <ImageView
         android:id="@+id/iv_widget_coins"
-        android:layout_width="165dp"
-        android:layout_height="145dp"
-        android:layout_gravity="end|bottom"
-        android:layout_marginEnd="-25dp"
-        android:layout_marginBottom="-15dp"
+        android:layout_width="215dp"
+        android:layout_height="185dp"
+        android:layout_gravity="end|top"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="-45dp"
         android:contentDescription="Coins Illustration"
         android:scaleType="fitCenter"
         android:src="@drawable/coins_illustration" />
