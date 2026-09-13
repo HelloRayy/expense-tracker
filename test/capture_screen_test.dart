@@ -753,6 +753,13 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     final GlobalKey boundaryKey = GlobalKey();
+    final imageBytes = File('assets/images/coins_illustration.png').readAsBytesSync();
+    ui.Image? decodedCoinsImage;
+    await tester.runAsync(() async {
+      final codec = await ui.instantiateImageCodec(imageBytes);
+      final frame = await codec.getNextFrame();
+      decodedCoinsImage = frame.image;
+    });
 
     await tester.pumpWidget(
       MaterialApp(
@@ -769,12 +776,13 @@ void main() {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: RepaintBoundary(
                 key: boundaryKey,
-                child: const HomeWidget4x2Card(
+                child: HomeWidget4x2Card(
                   userName: 'Raditya Rayhan',
                   dailyAllowance: 50000,
                   weeklyIncome: 1500000,
                   totalSpent: 205000,
                   isDark: true,
+                  rawCoinsImage: decodedCoinsImage,
                 ),
               ),
             ),
@@ -783,7 +791,7 @@ void main() {
       ),
     );
 
-    await tester.pumpAndSettle();
+    await tester.pump();
 
     await tester.runAsync(() async {
       final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
@@ -804,6 +812,13 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     final GlobalKey boundaryKey = GlobalKey();
+    final imageBytes = File('assets/images/coins_illustration.png').readAsBytesSync();
+    ui.Image? decodedCoinsImage;
+    await tester.runAsync(() async {
+      final codec = await ui.instantiateImageCodec(imageBytes);
+      final frame = await codec.getNextFrame();
+      decodedCoinsImage = frame.image;
+    });
 
     await tester.pumpWidget(
       MaterialApp(
@@ -820,12 +835,13 @@ void main() {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: RepaintBoundary(
                 key: boundaryKey,
-                child: const HomeWidget4x2Card(
+                child: HomeWidget4x2Card(
                   userName: 'Raditya Rayhan',
                   dailyAllowance: 50000,
                   weeklyIncome: 1500000,
                   totalSpent: 205000,
                   isDark: false,
+                  rawCoinsImage: decodedCoinsImage,
                 ),
               ),
             ),
@@ -834,7 +850,7 @@ void main() {
       ),
     );
 
-    await tester.pumpAndSettle();
+    await tester.pump();
 
     await tester.runAsync(() async {
       final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;

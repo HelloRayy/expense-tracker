@@ -80,78 +80,104 @@ export function HomeWidget4x2({
   totalSpent = ${totalSpent},
   isDark = true,
 }: HomeWidget4x2Props) {
-  const bg = isDark ? '#0C0C0E' : '#F5F6FA'
+  const bg = isDark ? '#0C0D10' : '#FFFFFF'
+  const border = isDark ? 'rgba(39, 39, 42, 0.5)' : '#E4E4E7'
   const shadow = isDark ? '0 6px 16px rgba(0,0,0,0.35)' : '0 6px 16px rgba(0,0,0,0.06)'
-  const textPrimary = isDark ? '#EDEDED' : '#0C0C0C'
-  const textSecondary = isDark ? '#A1A1AA' : '#6B7280'
-  const greenColor = isDark ? '#4ADE80' : '#1D7A4A'
+  const textPrimary = isDark ? '#EDEDED' : '#0C0C0E'
+  const textSecondary = isDark ? '#A1A1AA' : '#71717A'
+  const greenColor = isDark ? '#4ADE80' : '#16A34A'
   const redColor = isDark ? '#F87171' : '#DC2626'
 
   return (
     <div
-      style={{ backgroundColor: bg, boxShadow: shadow }}
-      className="w-full max-w-[360px] h-[180px] rounded-[24px] px-[22px] py-[20px] flex flex-col justify-between font-sans select-none"
+      style={{ backgroundColor: bg, boxShadow: shadow, borderColor: border }}
+      className="relative w-full max-w-[360px] h-[180px] rounded-[24px] border overflow-hidden select-none font-sans"
     >
-      <div>
-        <div style={{ color: textPrimary }} className="text-[16px] font-semibold tracking-[-0.2px] leading-tight">
-          Hi, {userName}
-        </div>
-        <div style={{ color: textSecondary }} className="text-[13px] font-normal mt-[2px] leading-tight">
-          Batas jajan hari ini
-        </div>
-      </div>
+      {/* 1. Radial Coin Glow */}
+      <div
+        className="absolute -top-[26px] -right-[35px] w-[219px] h-[219px] rounded-full pointer-events-none"
+        style={{
+          background: isDark
+            ? 'radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(0, 0, 0, 0) 70%)'
+            : 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, rgba(0, 0, 0, 0) 70%)',
+        }}
+      />
 
-      <div className="flex items-baseline gap-2">
-        <span style={{ color: textPrimary }} className="text-[36px] font-bold tracking-[-0.8px] leading-none">
-          {formatRupiah(dailyAllowance)}
-        </span>
-        <span style={{ color: textSecondary }} className="text-[15px] font-medium leading-none">
-          /hari
-        </span>
-      </div>
+      {/* 2. Coins Illustration (pen.dev) */}
+      <img
+        src="/images/coins_illustration.png"
+        alt="Coins illustration"
+        className="absolute top-[19px] -right-[60px] w-[221px] h-[195px] object-contain pointer-events-none select-none"
+      />
 
-      <div className="flex items-center gap-5">
-        <div className="inline-flex items-center gap-1" style={{ color: greenColor }}>
-          <ArrowDown size={15} strokeWidth={2.4} />
-          <span className="text-[15px] font-semibold tracking-[-0.2px] leading-none">
-            {formatRupiah(weeklyIncome)}
+      {/* 3. Left Content */}
+      <div className="relative z-10 w-full h-full px-[20px] py-[22px] flex flex-col justify-between">
+        <div>
+          <div style={{ color: textPrimary }} className="text-[16px] font-semibold tracking-[-0.2px] leading-tight">
+            Hi, {userName}
+          </div>
+          <div style={{ color: textSecondary }} className="text-[13px] font-normal mt-1 leading-tight">
+            Batas jajan hari ini
+          </div>
+        </div>
+
+        <div className="flex items-baseline gap-1">
+          <span style={{ color: textPrimary }} className="text-[32px] font-bold tracking-[-0.8px] leading-none">
+            {formatRupiah(dailyAllowance)}
+          </span>
+          <span style={{ color: textSecondary }} className="text-[15px] font-medium leading-none">
+            /hari
           </span>
         </div>
-        <div className="inline-flex items-center gap-1" style={{ color: redColor }}>
-          <ArrowUp size={15} strokeWidth={2.4} />
-          <span className="text-[15px] font-semibold tracking-[-0.2px] leading-none">
-            {formatRupiah(totalSpent)}
-          </span>
+
+        <div className="flex items-center gap-3">
+          <div className="inline-flex items-center gap-1" style={{ color: greenColor }}>
+            <ArrowDown size={15} strokeWidth={2.4} />
+            <span className="text-[15px] font-semibold tracking-[-0.2px] leading-none">
+              {formatRupiah(weeklyIncome)}
+            </span>
+          </div>
+          <div className="inline-flex items-center gap-1" style={{ color: redColor }}>
+            <ArrowUp size={15} strokeWidth={2.4} />
+            <span className="text-[15px] font-semibold tracking-[-0.2px] leading-none">
+              {formatRupiah(totalSpent)}
+            </span>
+          </div>
         </div>
       </div>
     </div>
   )
 }`
 
-  const tailwindHtml = `<!-- 4x2 Android Widget (Dark Mode - Anti-Glare WCAG AAA) -->
-<div class="w-full max-w-[360px] h-[180px] rounded-[24px] bg-[#0C0C0E] shadow-[0_6px_16px_rgba(0,0,0,0.35)] px-[22px] py-[20px] flex flex-col justify-between select-none font-sans">
-  <div>
-    <div class="text-[#EDEDED] text-[16px] font-semibold tracking-[-0.2px] leading-tight">Hi, ${userName}</div>
-    <div class="text-[#A1A1AA] text-[13px] font-normal mt-[2px] leading-tight">Batas jajan hari ini</div>
-  </div>
+  const tailwindHtml = `<!-- 4x2 Android Widget (pen.dev E7Zt3L Replica) -->
+<div class="relative w-full max-w-[360px] h-[180px] rounded-[24px] bg-[#0C0D10] border border-[#27272A]/50 shadow-[0_6px_16px_rgba(0,0,0,0.35)] overflow-hidden select-none font-sans">
+  <div class="absolute -top-[26px] -right-[35px] w-[219px] h-[219px] rounded-full pointer-events-none bg-[radial-gradient(circle,rgba(59,130,246,0.12)_0%,transparent_70%)]"></div>
+  <img src="/images/coins_illustration.png" class="absolute top-[19px] -right-[60px] w-[221px] h-[195px] object-contain pointer-events-none" />
 
-  <div class="flex items-baseline gap-2">
-    <span class="text-[#EDEDED] text-[36px] font-bold tracking-[-0.8px] leading-none">Rp ${(dailyAllowance).toLocaleString('id-ID')}</span>
-    <span class="text-[#A1A1AA] text-[15px] font-medium leading-none">/hari</span>
-  </div>
-
-  <div class="flex items-center gap-5">
-    <div class="inline-flex items-center gap-1 text-[#4ADE80]">
-      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 5v14M19 12l-7 7-7-7"/>
-      </svg>
-      <span class="text-[15px] font-semibold tracking-[-0.2px] leading-none">Rp ${(weeklyIncome).toLocaleString('id-ID')}</span>
+  <div class="relative z-10 w-full h-full px-[20px] py-[22px] flex flex-col justify-between">
+    <div>
+      <div class="text-[#EDEDED] text-[16px] font-semibold tracking-[-0.2px] leading-tight">Hi, ${userName}</div>
+      <div class="text-[#A1A1AA] text-[13px] font-normal mt-1 leading-tight">Batas jajan hari ini</div>
     </div>
-    <div class="inline-flex items-center gap-1 text-[#F87171]">
-      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 19V5M5 12l7-7 7 7"/>
-      </svg>
-      <span class="text-[15px] font-semibold tracking-[-0.2px] leading-none">Rp ${(totalSpent).toLocaleString('id-ID')}</span>
+
+    <div class="flex items-baseline gap-1">
+      <span class="text-[#EDEDED] text-[32px] font-bold tracking-[-0.8px] leading-none">Rp ${(dailyAllowance).toLocaleString('id-ID')}</span>
+      <span class="text-[#A1A1AA] text-[15px] font-medium leading-none">/hari</span>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <div class="inline-flex items-center gap-1 text-[#4ADE80]">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14M19 12l-7 7-7-7"/>
+        </svg>
+        <span class="text-[15px] font-semibold tracking-[-0.2px] leading-none">Rp ${(weeklyIncome).toLocaleString('id-ID')}</span>
+      </div>
+      <div class="inline-flex items-center gap-1 text-[#F87171]">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 19V5M5 12l7-7 7 7"/>
+        </svg>
+        <span class="text-[15px] font-semibold tracking-[-0.2px] leading-none">Rp ${(totalSpent).toLocaleString('id-ID')}</span>
+      </div>
     </div>
   </div>
 </div>`
