@@ -69,7 +69,7 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
                 maximumFractionDigits = 0
             }
 
-            fun formatRupiah(amount: Int): String {
+            fun formatRupiah(amount: Long): String {
                 val formatted = try {
                     formatter.format(amount)
                 } catch (_: Exception) {
