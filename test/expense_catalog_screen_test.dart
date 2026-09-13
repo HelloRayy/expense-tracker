@@ -193,8 +193,8 @@ void main() {
     await tester.tap(find.widgetWithText(ChoiceChip, 'Makanan / Minuman'));
     await tester.pumpAndSettle();
 
-    // 'Nasi Padang' should be visible, 'Kopi Kenangan' should not
+    // 'Nasi Padang' should be visible, 'Ojek Online' should not
     expect(find.text('Nasi Padang'), findsOneWidget);
-    expect(find.text('Kopi Kenangan'), findsNothing);
+    expect(find.text('Ojek Online'), findsNothing);
   });
 }

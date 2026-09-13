@@ -151,14 +151,14 @@ void main() {
         id: 1,
         amount: 25000,
         note: 'Nasi Padang',
-        categoryId: 'Makanan',
+        categoryId: 'Makanan / Minuman',
         createdAt: DateTime.now().subtract(const Duration(hours: 2)),
       ),
       ExpenseModel(
         id: 2,
         amount: 18000,
         note: 'Kopi Kenangan',
-        categoryId: 'Kopi & Minum',
+        categoryId: 'Transportasi',
         createdAt: DateTime.now().subtract(const Duration(hours: 4)),
       ),
       ExpenseModel(
@@ -184,22 +184,22 @@ void main() {
         theme: ThemeData.dark(),
         home: CategoryAssignmentScreen(
           repository: repo,
-          selectedCategoryId: 'Makanan',
+          selectedCategoryId: 'Makanan / Minuman',
         ),
       ),
     );
 
     // Header & Tab checks
     expect(find.byType(TabBar), findsOneWidget);
-    expect(find.widgetWithText(Tab, 'Makanan'), findsOneWidget);
-    expect(find.widgetWithText(Tab, 'Kopi & Minum'), findsOneWidget);
+    expect(find.widgetWithText(Tab, 'Makanan / Minuman'), findsOneWidget);
+    expect(find.widgetWithText(Tab, 'Transportasi'), findsOneWidget);
     expect(find.text('Centang transaksi untuk memasukkan ke kategori ini.'), findsOneWidget);
     expect(find.text('Total: Rp 25rb'), findsOneWidget);
 
     // Transaction rows
     expect(find.text('Nasi Padang'), findsOneWidget);
     expect(find.text('Kopi Kenangan'), findsOneWidget);
-    expect(find.text('• Kopi & Minum'), findsOneWidget);
+    expect(find.text('• Transportasi'), findsOneWidget);
     expect(find.text('Bensin Motor'), findsOneWidget);
 
     // Save CTA button is initially hidden when there are no changes
@@ -219,7 +219,7 @@ void main() {
         theme: ThemeData.dark(),
         home: CategoryAssignmentScreen(
           repository: repo,
-          selectedCategoryId: 'Makanan',
+          selectedCategoryId: 'Makanan / Minuman',
         ),
       ),
     );
@@ -229,7 +229,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Reassign badge should appear
-    expect(find.text('Pindah dari Kopi & Minum'), findsOneWidget);
+    expect(find.text('Pindah dari Transportasi'), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, 'Simpan (1 Perubahan)'), findsOneWidget);
     expect(find.text('Total: Rp 43rb'), findsOneWidget); // 25k + 18k
     expect(repo.batchAssignCallCount, 0); // zero auto-save!
@@ -274,7 +274,7 @@ void main() {
                     MaterialPageRoute(
                       builder: (_) => CategoryAssignmentScreen(
                         repository: repo,
-                        selectedCategoryId: 'Makanan',
+                        selectedCategoryId: 'Makanan / Minuman',
                       ),
                     ),
                   );
@@ -291,11 +291,11 @@ void main() {
     await tester.tap(find.text('Open Assignment'));
     await tester.pumpAndSettle();
 
-    // Assign 'Bensin Motor' (id: 3) to 'Makanan'
+    // Assign 'Bensin Motor' (id: 3) to 'Makanan / Minuman'
     await tester.tap(find.text('Bensin Motor'));
     await tester.pumpAndSettle();
 
-    // Unassign 'Nasi Padang' (id: 1) from 'Makanan'
+    // Unassign 'Nasi Padang' (id: 1) from 'Makanan / Minuman'
     await tester.tap(find.text('Nasi Padang'));
     await tester.pumpAndSettle();
 
@@ -308,7 +308,7 @@ void main() {
     // Verify repository was called with exact minimal diff
     expect(repo.batchAssignCallCount, 1);
     expect(repo.lastMultiCategoryUpdates, {
-      3: 'Makanan',
+      3: 'Makanan / Minuman',
       1: null,
     });
 
@@ -337,7 +337,7 @@ void main() {
                     MaterialPageRoute(
                       builder: (_) => CategoryAssignmentScreen(
                         repository: repo,
-                        selectedCategoryId: 'Makanan',
+                        selectedCategoryId: 'Makanan / Minuman',
                       ),
                     ),
                   );

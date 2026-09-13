@@ -4,28 +4,27 @@ import 'package:jajan_tracker/features/categories/models/expense_category.dart';
 
 void main() {
   group('ExpenseCategory Model & Normalizer Tests', () {
-    test('all contains 4 canonical categories with expected ids', () {
-      expect(ExpenseCategory.all.length, 4);
+    test('all contains 3 canonical categories with expected ids', () {
+      expect(ExpenseCategory.all.length, 3);
       expect(ExpenseCategory.all.map((c) => c.id).toList(), [
-        'Makanan',
-        'Kopi & Minum',
-        'Transport',
-        'Belanja',
+        'Makanan / Minuman',
+        'Transportasi',
+        'Lainnya',
       ]);
     });
 
     test('fromId normalizes aliases and casing accurately', () {
-      expect(ExpenseCategory.fromId('Makanan'), ExpenseCategory.makanan);
-      expect(ExpenseCategory.fromId('makanan'), ExpenseCategory.makanan);
-      expect(ExpenseCategory.fromId('Kopi'), ExpenseCategory.kopi);
-      expect(ExpenseCategory.fromId('Kopi & Minum'), ExpenseCategory.kopi);
-      expect(ExpenseCategory.fromId('minum'), ExpenseCategory.kopi);
-      expect(ExpenseCategory.fromId('Transport'), ExpenseCategory.transport);
-      expect(ExpenseCategory.fromId('transpor'), ExpenseCategory.transport);
-      expect(ExpenseCategory.fromId('Belanja'), ExpenseCategory.belanja);
-      expect(ExpenseCategory.fromId('Belanja/QRIS'), ExpenseCategory.belanja);
-      expect(ExpenseCategory.fromId('qris'), ExpenseCategory.belanja);
-      expect(ExpenseCategory.fromId('Lainnya'), isNull);
+      expect(ExpenseCategory.fromId('Makanan'), ExpenseCategory.makananMinuman);
+      expect(ExpenseCategory.fromId('makanan'), ExpenseCategory.makananMinuman);
+      expect(ExpenseCategory.fromId('Kopi'), ExpenseCategory.makananMinuman);
+      expect(ExpenseCategory.fromId('Kopi & Minum'), ExpenseCategory.makananMinuman);
+      expect(ExpenseCategory.fromId('minum'), ExpenseCategory.makananMinuman);
+      expect(ExpenseCategory.fromId('Transport'), ExpenseCategory.transportasi);
+      expect(ExpenseCategory.fromId('transpor'), ExpenseCategory.transportasi);
+      expect(ExpenseCategory.fromId('Belanja'), ExpenseCategory.lainnya);
+      expect(ExpenseCategory.fromId('Belanja/QRIS'), ExpenseCategory.lainnya);
+      expect(ExpenseCategory.fromId('qris'), ExpenseCategory.lainnya);
+      expect(ExpenseCategory.fromId('Lainnya'), ExpenseCategory.lainnya);
       expect(ExpenseCategory.fromId(null), isNull);
     });
   });
