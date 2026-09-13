@@ -114,18 +114,18 @@ class QuickLogKeypad extends StatelessWidget {
           child: Center(
             child: type == 'backspace'
                 ? Icon(Icons.backspace_outlined, color: textColor, size: 22)
-                : Text(
-                    label,
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: isSubmit
-                          ? 32
-                          : (isOperator ? 24 : (type == 'action' ? 18 : 24)),
-                      fontWeight: (isSubmit || type == 'digit' || type == 'clear' || isOperator)
-                          ? FontWeight.w600
-                          : FontWeight.w500,
-                    ),
-                  ),
+                : (type == 'submit'
+                    ? const Icon(Icons.check_rounded, color: Colors.white, size: 28)
+                    : Text(
+                        label,
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: isOperator ? 24 : (type == 'action' ? 18 : 24),
+                          fontWeight: (type == 'digit' || type == 'clear' || isOperator)
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                        ),
+                      )),
           ),
         ),
       ),

@@ -54,7 +54,7 @@ class FloatingCapsuleNavbar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 60,
-      padding: const EdgeInsets.fromLTRB(6, 6, 8, 6),
+      padding: const EdgeInsets.fromLTRB(6, 6, 9, 6),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF161618) : Colors.white,
         borderRadius: BorderRadius.circular(30),
@@ -85,7 +85,7 @@ class FloatingCapsuleNavbar extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(width: 5),
+          const SizedBox(width: 12),
 
           // Nav 2: Shopee / Integrations
           _buildNavItem(
@@ -94,7 +94,7 @@ class FloatingCapsuleNavbar extends StatelessWidget {
             onTap: onTapShopee,
           ),
 
-          const SizedBox(width: 5),
+          const SizedBox(width: 12),
 
           // Nav Center: (+) Quick Log Action Button
           GestureDetector(
@@ -114,7 +114,7 @@ class FloatingCapsuleNavbar extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(width: 5),
+          const SizedBox(width: 12),
 
           // Nav 4: Expense Catalog Cards
           _buildNavItem(
@@ -123,7 +123,7 @@ class FloatingCapsuleNavbar extends StatelessWidget {
             onTap: onTapCatalog,
           ),
 
-          const SizedBox(width: 5),
+          const SizedBox(width: 12),
 
           // Nav 5: Settings
           _buildNavItem(

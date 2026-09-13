@@ -154,7 +154,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    Finder keyBtn(String text) => find.widgetWithText(InkWell, text);
+    Finder keyBtn(String text) => text == '='
+        ? find.byIcon(Icons.check_rounded)
+        : find.widgetWithText(InkWell, text);
 
     // 25.000 × 2 = 50.000
     await tester.tap(keyBtn('2'));
@@ -198,7 +200,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    Finder keyBtn(String text) => find.widgetWithText(InkWell, text);
+    Finder keyBtn(String text) => text == '='
+        ? find.byIcon(Icons.check_rounded)
+        : find.widgetWithText(InkWell, text);
 
     // Type 50.000 ÷ 2
     await tester.tap(keyBtn('5'));
