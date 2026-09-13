@@ -336,7 +336,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                             const SizedBox(width: 8),
                             Flexible(
                               child: Text(
-                                'Kalkulator Jajan',
+                                'Kalkulator',
                                 style: TextStyle(
                                   color: textPrimary,
                                   fontSize: 16,
@@ -350,13 +350,13 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: PirschColors.mintGreen.withValues(alpha: 0.15),
+                                  color: PirschColors.primaryBlue.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: const Text(
-                                  'Auto-000',
+                                  'Experimental',
                                   style: TextStyle(
-                                    color: PirschColors.mintGreen,
+                                    color: PirschColors.primaryBlue,
                                     fontSize: 10,
                                     fontWeight: FontWeight.w700,
                                   ),
