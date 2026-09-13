@@ -29,7 +29,7 @@ class FloatingCapsuleNavbar extends StatelessWidget {
     required IconData icon,
     required String tooltip,
     required VoidCallback onTap,
-    double iconSize = 22,
+    double iconSize = 23,
   }) {
     return Tooltip(
       message: tooltip,
@@ -38,12 +38,12 @@ class FloatingCapsuleNavbar extends StatelessWidget {
           HapticFeedback.selectionClick();
           onTap();
         },
-        radius: 20,
+        radius: 22,
         splashColor: Colors.transparent,
         highlightColor: isDark ? Colors.white10 : Colors.black12,
         child: SizedBox(
-          width: 40,
-          height: 44,
+          width: 42,
+          height: 48,
           child: Icon(icon, color: textSecondary, size: iconSize),
         ),
       ),
@@ -53,11 +53,11 @@ class FloatingCapsuleNavbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 52,
-      padding: const EdgeInsets.fromLTRB(4, 4, 6, 4),
+      height: 60,
+      padding: const EdgeInsets.fromLTRB(6, 6, 8, 6),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF161618) : Colors.white,
-        borderRadius: BorderRadius.circular(26),
+        borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.12),
@@ -71,8 +71,8 @@ class FloatingCapsuleNavbar extends StatelessWidget {
         children: [
           // Nav 1: Home (Active Pill matching reference design)
           Container(
-            width: 44,
-            height: 44,
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
               color: isDark ? Colors.white : const Color(0xFF0C0C0C),
               shape: BoxShape.circle,
@@ -81,11 +81,11 @@ class FloatingCapsuleNavbar extends StatelessWidget {
             child: Icon(
               Icons.home_rounded,
               color: isDark ? const Color(0xFF0C0C0C) : Colors.white,
-              size: 22,
+              size: 24,
             ),
           ),
 
-          const SizedBox(width: 4),
+          const SizedBox(width: 5),
 
           // Nav 2: Shopee / Integrations
           _buildNavItem(
@@ -94,7 +94,7 @@ class FloatingCapsuleNavbar extends StatelessWidget {
             onTap: onTapShopee,
           ),
 
-          const SizedBox(width: 4),
+          const SizedBox(width: 5),
 
           // Nav Center: (+) Quick Log Action Button
           GestureDetector(
@@ -103,18 +103,18 @@ class FloatingCapsuleNavbar extends StatelessWidget {
               onTapQuickLog();
             },
             child: Container(
-              width: 44,
-              height: 44,
+              width: 48,
+              height: 48,
               decoration: const BoxDecoration(
                 color: PirschColors.primaryBlue,
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
-              child: const Icon(Icons.add_rounded, color: Colors.white, size: 26),
+              child: const Icon(Icons.add_rounded, color: Colors.white, size: 28),
             ),
           ),
 
-          const SizedBox(width: 4),
+          const SizedBox(width: 5),
 
           // Nav 4: Expense Catalog Cards
           _buildNavItem(
@@ -123,7 +123,7 @@ class FloatingCapsuleNavbar extends StatelessWidget {
             onTap: onTapCatalog,
           ),
 
-          const SizedBox(width: 4),
+          const SizedBox(width: 5),
 
           // Nav 5: Settings
           _buildNavItem(

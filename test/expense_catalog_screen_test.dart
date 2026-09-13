@@ -189,8 +189,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Filter to 'Makanan'
-    await tester.tap(find.widgetWithText(ChoiceChip, 'Makanan'));
+    // Filter to 'Makanan / Minuman'
+    await tester.tap(find.widgetWithText(ChoiceChip, 'Makanan / Minuman'));
     await tester.pumpAndSettle();
 
     // 'Nasi Padang' should be visible, 'Kopi Kenangan' should not

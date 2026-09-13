@@ -167,7 +167,7 @@ class _CatalogPresetCardState extends State<CatalogPresetCard> with SingleTicker
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
+                        Flexible(
                           child: Text(
                             '- ${CurrencyFormatter.format(widget.preset.amount)}',
                             style: TextStyle(
@@ -181,12 +181,16 @@ class _CatalogPresetCardState extends State<CatalogPresetCard> with SingleTicker
                           ),
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          widget.preset.category,
-                          style: TextStyle(
-                            color: textSecondary,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
+                        Flexible(
+                          child: Text(
+                            widget.preset.category,
+                            style: TextStyle(
+                              color: textSecondary,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
