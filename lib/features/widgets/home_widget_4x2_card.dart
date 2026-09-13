@@ -62,7 +62,7 @@ class HomeWidget4x2Card extends StatelessWidget {
                 style: TextStyle(
                   color: textPrimary,
                   fontSize: 16,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: -0.2,
                 ),
               ),
@@ -72,13 +72,13 @@ class HomeWidget4x2Card extends StatelessWidget {
                 style: TextStyle(
                   color: textSecondary,
                   fontSize: 13,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
 
               const Spacer(),
 
-              // Center Hero: Enlarged Nominal + /hari
+              // Center Hero: Nominal + /hari
               Row(
                 crossAxisAlignment: CrossAxisAlignment.baseline,
                 textBaseline: TextBaseline.alphabetic,
@@ -88,8 +88,8 @@ class HomeWidget4x2Card extends StatelessWidget {
                     style: TextStyle(
                       color: textPrimary,
                       fontSize: 36,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -1.0,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.8,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -98,7 +98,7 @@ class HomeWidget4x2Card extends StatelessWidget {
                     style: TextStyle(
                       color: textSecondary,
                       fontSize: 15,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
@@ -124,7 +124,7 @@ class HomeWidget4x2Card extends StatelessWidget {
                         style: TextStyle(
                           color: greenColor,
                           fontSize: 15,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: -0.2,
                         ),
                       ),
@@ -146,7 +146,7 @@ class HomeWidget4x2Card extends StatelessWidget {
                         style: TextStyle(
                           color: redColor,
                           fontSize: 15,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: -0.2,
                         ),
                       ),

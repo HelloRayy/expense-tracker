@@ -15,8 +15,18 @@ export default defineConfig({
       name: 'rewrite-widget-route',
       configureServer(server) {
         server.middlewares.use((req, _res, next) => {
-          if (req.url === '/widget') {
+          if (req.url === '/widget' || req.url === '/widget/') {
             req.url = '/widget/index.html'
+          }
+          next()
+        })
+      },
+      configurePreviewServer(server) {
+        server.middlewares.use((req, res, next) => {
+          if (req.url === '/widget') {
+            res.writeHead(302, { Location: '/widget/' })
+            res.end()
+            return
           }
           next()
         })

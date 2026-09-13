@@ -26,8 +26,8 @@ class PirschColors {
   static const Color darkCard = Color(0xFF18181B);
   static const Color darkCardElevated = Color(0xFF222226);
   static const Color darkBorder = Colors.transparent;   // Borderless matte aesthetic
-  static const Color darkTextPrimary = Color(0xFFFFFFFF); // Crisp White
-  static const Color darkTextSecondary = Color(0xFF9E9E9E); // Muted Grey
+  static const Color darkTextPrimary = Color(0xFFEDEDED); // Soft Off-White (Anti-glare WCAG AAA 16.7:1)
+  static const Color darkTextSecondary = Color(0xFFA1A1AA); // Calibrated Zinc Grey (Anti-fatigue 7.6:1)
   static const Color darkDivider = Colors.transparent;  // Borderless list stacking
   static const Color darkPill = Color(0xFFFFFFFF);     // High-contrast white pill (like Top Up button)
 

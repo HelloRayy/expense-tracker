@@ -29,38 +29,40 @@ class DashboardHeader extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: 42,
+                height: 42,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: PirschColors.mintGreen.withValues(alpha: 0.15),
                 ),
                 alignment: Alignment.center,
-                child: const Icon(Icons.person_rounded, color: PirschColors.mintGreen, size: 22),
+                child: const Icon(Icons.person_rounded, color: PirschColors.mintGreen, size: 24),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Halo, Raditya Rayhan',
+                      'Welcome back,',
                       style: TextStyle(
                         color: textSecondary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: -0.2,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    const SizedBox(height: 2),
                     Text(
-                      'Mental Budget',
+                      'Raditya Rayhan',
                       style: TextStyle(
                         color: textPrimary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.3,
+                        fontSize: 17,
+                        fontWeight: FontWeight.normal,
+                        letterSpacing: -0.2,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
