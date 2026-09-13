@@ -148,12 +148,13 @@ class BudgetRepository extends ChangeNotifier {
     }
   }
 
-  Future<void> addExpense(int amount, {String note = 'Jajan'}) async {
+  Future<void> addExpense(int amount, {String note = 'Jajan', String? categoryId}) async {
     if (kIsWeb) {
       final expense = ExpenseModel(
         id: DateTime.now().millisecondsSinceEpoch,
         amount: amount,
         note: note,
+        categoryId: categoryId,
         createdAt: DateTime.now(),
       );
       _expenses.insert(0, expense);
@@ -165,6 +166,7 @@ class BudgetRepository extends ChangeNotifier {
     final expense = ExpenseModel(
       amount: amount,
       note: note,
+      categoryId: categoryId,
       createdAt: DateTime.now(),
     );
     await _db.insertExpense(expense);

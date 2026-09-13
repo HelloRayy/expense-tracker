@@ -80,29 +80,25 @@ class HeroBalanceCard extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Theme(
-                          data: Theme.of(context).copyWith(
-                            highlightColor: Colors.transparent,
-                            splashColor: Colors.transparent,
-                          ),
-                          child: PopupMenuButton<BudgetPeriodView>(
-                            initialValue: periodView,
-                            tooltip: 'Pilih periode',
-                            offset: const Offset(0, 24),
-                            elevation: 8,
-                            color: isDark ? const Color(0xFF1E1E22) : Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              side: BorderSide(
-                                color: isDark
-                                    ? Colors.white.withValues(alpha: 0.12)
-                                    : Colors.black.withValues(alpha: 0.08),
-                                width: 1,
-                              ),
+                        PopupMenuButton<BudgetPeriodView>(
+                          initialValue: periodView,
+                          tooltip: '',
+                          position: PopupMenuPosition.under,
+                          offset: const Offset(0, 6),
+                          elevation: 8,
+                          color: isDark ? const Color(0xFF1E1E22) : Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.12)
+                                  : Colors.black.withValues(alpha: 0.08),
+                              width: 1,
                             ),
-                            onSelected: (view) {
-                              onPeriodChanged?.call(view);
-                            },
+                          ),
+                          onSelected: (view) {
+                            onPeriodChanged?.call(view);
+                          },
                             itemBuilder: (context) => [
                               PopupMenuItem<BudgetPeriodView>(
                                 value: BudgetPeriodView.daily,
@@ -189,7 +185,6 @@ class HeroBalanceCard extends StatelessWidget {
                               ],
                             ),
                           ),
-                        ),
                         if (formattedPeriod.isNotEmpty) ...[
                           const SizedBox(width: 6),
                           InkWell(

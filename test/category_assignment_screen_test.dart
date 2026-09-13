@@ -75,7 +75,7 @@ class MockCategoryBudgetRepo extends ChangeNotifier implements BudgetRepository 
   Future<void> loadData() async {}
 
   @override
-  Future<void> addExpense(int amount, {String note = 'Jajan'}) async {}
+  Future<void> addExpense(int amount, {String note = 'Jajan', String? categoryId}) async {}
 
   @override
   Future<void> deleteExpense(int id) async {}

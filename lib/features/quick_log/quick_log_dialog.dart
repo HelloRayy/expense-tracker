@@ -4,8 +4,9 @@ import 'package:flutter/services.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../budget/repository/budget_repository.dart';
+import '../categories/models/expense_category.dart';
 import 'services/calculator_evaluator.dart';
-import 'quick_log_screen.dart';
+import 'widgets/category_pill_selector.dart';
 import 'widgets/quick_log_expression_display.dart';
 import 'widgets/quick_log_keypad.dart';
 
@@ -25,12 +26,13 @@ class QuickLogDialog extends StatefulWidget {
     required BudgetRepository repository,
     VoidCallback? onComplete,
   }) {
-    return Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (ctx) => QuickLogScreen(
-          repository: repository,
-          onComplete: onComplete,
-        ),
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => QuickLogDialog(
+        repository: repository,
+        onComplete: onComplete,
       ),
     );
   }
@@ -45,6 +47,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
   bool _isSaving = false;
   bool _cursorVisible = true;
   Timer? _cursorBlinkTimer;
+  ExpenseCategory _selectedCategory = ExpenseCategory.makanan;
 
   @override
   void initState() {
@@ -217,7 +220,11 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     HapticFeedback.mediumImpact();
 
     try {
-      await widget.repository.addExpense(amount, note: 'Jajan');
+      await widget.repository.addExpense(
+        amount,
+        note: _selectedCategory.displayName,
+        categoryId: _selectedCategory.id,
+      );
 
       if (mounted) {
         widget.onComplete?.call();
@@ -364,7 +371,21 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 6),
+
+                  // Centered Category Pill Selector
+                  Center(
+                    child: CategoryPillSelector(
+                      selectedCategory: _selectedCategory,
+                      onCategoryChanged: (cat) {
+                        setState(() => _selectedCategory = cat);
+                      },
+                      isDark: isDark,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
 
                   // 4-Column Standard Calculator Keypad
                   QuickLogKeypad(
