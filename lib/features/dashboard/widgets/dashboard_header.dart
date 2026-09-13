@@ -38,7 +38,7 @@ class DashboardHeader extends StatelessWidget {
                 alignment: Alignment.center,
                 child: const Icon(Icons.person_rounded, color: PirschColors.mintGreen, size: 24),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 9),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,19 +50,21 @@ class DashboardHeader extends StatelessWidget {
                         color: textSecondary,
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
+                        height: 1.1,
                         letterSpacing: -0.2,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 1),
                     Text(
                       'Raditya Rayhan',
                       style: TextStyle(
                         color: textPrimary,
                         fontSize: 17,
-                        fontWeight: FontWeight.normal,
-                        letterSpacing: -0.2,
+                        fontWeight: FontWeight.w600,
+                        height: 1.2,
+                        letterSpacing: -0.3,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
