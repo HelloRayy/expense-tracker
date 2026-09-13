@@ -98,14 +98,13 @@ class CategorySection extends StatelessWidget {
 
               return InkWell(
                 onTap: () => onSelectCategory(cat.id),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(18),
                 child: Container(
                   width: 120,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: cardColor,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: borderColor),
+                    borderRadius: BorderRadius.circular(18),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

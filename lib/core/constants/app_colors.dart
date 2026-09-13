@@ -21,22 +21,22 @@ class PirschColors {
   static const Color accessibleAmber = Color(0xFF996100);
   static const Color accessibleCrimson = Color(0xFFDC2626);
 
-  // Dark Theme Tokens (Deep Onyx #0C0C0C + Elevated Cards #242424)
-  static const Color darkBg = Color(0xFF0C0C0C);
-  static const Color darkCard = Color(0xFF1E1E1E);
-  static const Color darkCardElevated = Color(0xFF242424);
-  static const Color darkBorder = Color(0x1FFFFFFF);   // Subtle ~12% white outline
+  // Dark Theme Tokens (Deep Onyx + Matte Surfaces #18181B / #1C1C1E)
+  static const Color darkBg = Color(0xFF0C0C0E);
+  static const Color darkCard = Color(0xFF18181B);
+  static const Color darkCardElevated = Color(0xFF222226);
+  static const Color darkBorder = Colors.transparent;   // Borderless matte aesthetic
   static const Color darkTextPrimary = Color(0xFFFFFFFF); // Crisp White
   static const Color darkTextSecondary = Color(0xFF9E9E9E); // Muted Grey
-  static const Color darkDivider = Color(0x14FFFFFF);  // Ultra-soft hairline divider (~8% white)
+  static const Color darkDivider = Colors.transparent;  // Borderless list stacking
   static const Color darkPill = Color(0xFFFFFFFF);     // High-contrast white pill (like Top Up button)
 
   // Light Theme Tokens
   static const Color lightBg = Color(0xFFF5F6FA);
   static const Color lightCard = Color(0xFFFFFFFF);
   static const Color lightCardElevated = Color(0xFFECEEF5);
-  static const Color lightBorder = Color(0x10000000);
-  static const Color lightDivider = Color(0xFFE4E7F0);
+  static const Color lightBorder = Colors.transparent;
+  static const Color lightDivider = Colors.transparent;
   static const Color lightTextPrimary = Color(0xFF0C0C0C);
   static const Color lightTextSecondary = Color(0xFF6B7280);
   static const Color lightPill = Color(0xFF0C0C0C);

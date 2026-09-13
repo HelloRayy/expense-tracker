@@ -34,10 +34,6 @@ class DashboardHeader extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: PirschColors.mintGreen.withValues(alpha: 0.15),
-                  border: Border.all(
-                    color: PirschColors.mintGreen.withValues(alpha: 0.4),
-                    width: 1.5,
-                  ),
                 ),
                 alignment: Alignment.center,
                 child: const Icon(Icons.person_rounded, color: PirschColors.mintGreen, size: 22),
@@ -82,14 +78,13 @@ class DashboardHeader extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: onSettingsTap,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
             child: Container(
-              width: 36,
-              height: 36,
+              width: 38,
+              height: 38,
               decoration: BoxDecoration(
                 color: elevatedColor,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: borderColor),
+                borderRadius: BorderRadius.circular(12),
               ),
               alignment: Alignment.center,
               child: Icon(Icons.tune_rounded, color: textPrimary, size: 18),

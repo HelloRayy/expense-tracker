@@ -29,12 +29,11 @@ class FloatingCapsuleNavbar extends StatelessWidget {
       height: 64,
       padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF161616) : Colors.white,
+        color: isDark ? const Color(0xFF18181B) : Colors.white,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: borderColor, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.08),
+            color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.08),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),

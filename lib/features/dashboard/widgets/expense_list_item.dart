@@ -127,14 +127,8 @@ class ExpenseListItem extends StatelessWidget {
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 12),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.transparent,
-          border: Border(
-            bottom: BorderSide(
-              color: dividerColor ?? (isDark ? const Color(0x12FFFFFF) : const Color(0xFFE4E7F0)),
-              width: 0.8,
-            ),
-          ),
         ),
         child: Row(
           children: [
@@ -143,12 +137,8 @@ class ExpenseListItem extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFEFF2F8),
+                color: isDark ? const Color(0xFF18181B) : const Color(0xFFEFF2F8),
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: isDark ? const Color(0x22FFFFFF) : const Color(0x10000000),
-                  width: 1,
-                ),
               ),
               alignment: Alignment.center,
               child: Icon(

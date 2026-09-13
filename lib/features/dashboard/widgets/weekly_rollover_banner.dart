@@ -25,11 +25,7 @@ class WeeklyRolloverBanner extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF16192B) : const Color(0xFFEFF2FC),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: PirschColors.primaryBlue.withValues(alpha: isDark ? 0.35 : 0.4),
-          width: 1,
-        ),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,

@@ -74,13 +74,12 @@ class SavingsGoalCard extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1B1B1B) : cardColor,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: borderColor, width: 1),
+            color: isDark ? const Color(0xFF18181B) : cardColor,
+            borderRadius: BorderRadius.circular(22),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.04),
-                blurRadius: 14,
+                blurRadius: 16,
                 offset: const Offset(0, 4),
               ),
             ],
