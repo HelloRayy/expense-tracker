@@ -12,6 +12,7 @@ class PirschColors {
   static const Color mintGreen = Color(0xFF6578C8);    // Primary Accent aligned to Periwinkle
   static const Color incomeGreen = Color(0xFF4ADE80);  // Clean Financial Green (Positive)
   static const Color roseRed = Color(0xFFF87171);      // Modern Soft Coral Red (Expenses/Overbudget)
+  static const Color coralOrange = Color(0xFFF7A66B); // Warm Coral Orange (Food / Dining category)
   static const Color warmYellow = Color(0xFFFFDA6E);   // Warning Accent
   static const Color beige = Color(0xFFF4F5FA);        // Clean Soft Grey-Lavender for Light Mode
 
