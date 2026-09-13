@@ -3,7 +3,10 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../budget/models/expense_model.dart';
 
-/// Single transaction row in Dashboard with dismissible swipe-to-delete.
+/// Modern transaction row matching Reference Design 1:
+/// - Circular avatar icon with subtle tinted background
+/// - Note title and categorized subtitle (e.g. Food • 12:21 PM)
+/// - Right-aligned amount with color and "Expense" label below
 class ExpenseListItem extends StatelessWidget {
   final ExpenseModel exp;
   final Color cardColor;
@@ -26,26 +29,47 @@ class ExpenseListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Choose vector icon and accent color by note keyword
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Determine category icon and category display name
     final noteLower = exp.note.toLowerCase();
     final IconData itemIcon;
-    final Color itemColor;
-    if (noteLower.contains('kopi') || noteLower.contains('coffee')) {
+    final String categoryName;
+
+    if (exp.categoryId != null && exp.categoryId!.isNotEmpty) {
+      categoryName = exp.categoryId!;
+      if (categoryName.contains('Makan') || categoryName.contains('Food')) {
+        itemIcon = Icons.restaurant_rounded;
+      } else if (categoryName.contains('Kopi') || categoryName.contains('Minum')) {
+        itemIcon = Icons.local_cafe_rounded;
+      } else if (categoryName.contains('Transpor')) {
+        itemIcon = Icons.directions_car_rounded;
+      } else if (categoryName.contains('Belanja')) {
+        itemIcon = Icons.shopping_bag_rounded;
+      } else {
+        itemIcon = Icons.receipt_long_rounded;
+      }
+    } else if (noteLower.contains('kopi') || noteLower.contains('coffee')) {
       itemIcon = Icons.local_cafe_rounded;
-      itemColor = PirschColors.mintGreen;
-    } else if (noteLower.contains('makan') || noteLower.contains('nasi') || noteLower.contains('mie')) {
+      categoryName = 'Kopi & Minum';
+    } else if (noteLower.contains('makan') || noteLower.contains('nasi') || noteLower.contains('mie') || noteLower.contains('ayam')) {
       itemIcon = Icons.restaurant_rounded;
-      itemColor = PirschColors.coralOrange;
+      categoryName = 'Makanan';
     } else if (noteLower.contains('shopee') || noteLower.contains('tokopedia') || noteLower.contains('belanja')) {
       itemIcon = Icons.shopping_bag_rounded;
-      itemColor = PirschColors.warmYellow;
-    } else if (noteLower.contains('transport') || noteLower.contains('bensin') || noteLower.contains('gojek') || noteLower.contains('grab')) {
+      categoryName = 'Belanja';
+    } else if (noteLower.contains('transport') || noteLower.contains('bensin') || noteLower.contains('gojek') || noteLower.contains('grab') || noteLower.contains('uber')) {
       itemIcon = Icons.directions_car_rounded;
-      itemColor = const Color(0xFF60A5FA);
+      categoryName = 'Transport';
     } else {
       itemIcon = Icons.receipt_long_rounded;
-      itemColor = PirschColors.mintGreen;
+      categoryName = 'Jajan';
     }
+
+    // Time formatted as HH:mm
+    final hour = exp.createdAt.hour.toString().padLeft(2, '0');
+    final minute = exp.createdAt.minute.toString().padLeft(2, '0');
+    final timeFormatted = '$hour:$minute';
 
     return Dismissible(
       key: Key(exp.id.toString()),
@@ -53,18 +77,24 @@ class ExpenseListItem extends StatelessWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        color: PirschColors.roseRed.withValues(alpha: 0.85),
+        decoration: BoxDecoration(
+          color: PirschColors.roseRed.withValues(alpha: 0.85),
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: const Icon(Icons.delete_outline, color: Colors.white, size: 24),
       ),
       confirmDismiss: (dir) async {
         return await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            backgroundColor: cardColor,
+            backgroundColor: isDark ? const Color(0xFF1E1E1E) : cardColor,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: Text('Hapus Catatan?', style: TextStyle(color: textPrimary, fontWeight: FontWeight.bold)),
+            title: Text(
+              'Hapus Catatan?',
+              style: TextStyle(color: textPrimary, fontWeight: FontWeight.bold),
+            ),
             content: Text(
-              'Yakin ingin menghapus catatan jajan ${CurrencyFormatter.format(exp.amount)} (${exp.note})?',
+              'Yakin ingin menghapus catatan ${CurrencyFormatter.format(exp.amount)} (${exp.note})?',
               style: TextStyle(color: textSecondary),
             ),
             actions: [
@@ -78,7 +108,7 @@ class ExpenseListItem extends StatelessWidget {
                   backgroundColor: PirschColors.roseRed,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
-                child: const Text('Hapus', style: TextStyle(color: Colors.white)),
+                child: const Text('Hapus', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
             ],
           ),
@@ -96,30 +126,40 @@ class ExpenseListItem extends StatelessWidget {
         }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.transparent,
           border: Border(
             bottom: BorderSide(
-              color: dividerColor ?? PirschColors.divider(Theme.of(context).brightness == Brightness.dark),
-              width: 1.0,
+              color: dividerColor ?? (isDark ? const Color(0x12FFFFFF) : const Color(0xFFE4E7F0)),
+              width: 0.8,
             ),
           ),
         ),
         child: Row(
           children: [
+            // Circular Avatar Container matching Reference Image 1
             Container(
-              width: 40,
-              height: 40,
+              width: 44,
+              height: 44,
               decoration: BoxDecoration(
-                color: itemColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: itemColor.withValues(alpha: 0.25)),
+                color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFEFF2F8),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isDark ? const Color(0x22FFFFFF) : const Color(0x10000000),
+                  width: 1,
+                ),
               ),
               alignment: Alignment.center,
-              child: Icon(itemIcon, color: itemColor, size: 20),
+              child: Icon(
+                itemIcon,
+                color: isDark ? Colors.white : const Color(0xFF242424),
+                size: 20,
+              ),
             ),
             const SizedBox(width: 14),
+
+            // Middle Column: Note & Category + Time
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,27 +169,51 @@ class ExpenseListItem extends StatelessWidget {
                     style: TextStyle(
                       color: textPrimary,
                       fontSize: 15,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.2,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    exp.formattedTime,
+                    '$categoryName • $timeFormatted',
                     style: TextStyle(
                       color: textSecondary,
                       fontSize: 12,
+                      fontWeight: FontWeight.w500,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-            Text(
-              '- ${CurrencyFormatter.format(exp.amount)}',
-              style: const TextStyle(
-                color: PirschColors.roseRed,
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-              ),
+            const SizedBox(width: 12),
+
+            // Right Column: Amount (-Rp 18.000) & Status Tag ("Expense")
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  '-${CurrencyFormatter.format(exp.amount)}',
+                  style: const TextStyle(
+                    color: PirschColors.roseRed,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.3,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Expense',
+                  style: TextStyle(
+                    color: textSecondary.withValues(alpha: 0.7),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -174,7 +238,7 @@ class EmptyExpensesPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 20),
       alignment: Alignment.center,
       child: Column(
         children: [
@@ -184,20 +248,20 @@ class EmptyExpensesPlaceholder extends StatelessWidget {
               color: elevatedColor,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.savings_outlined, color: PirschColors.mintGreen, size: 36),
+            child: const Icon(Icons.receipt_long_rounded, color: PirschColors.primaryBlue, size: 32),
           ),
           const SizedBox(height: 14),
           Text(
-            'Belum ada catatan jajan',
+            'Belum ada transaksi terbaru',
             style: TextStyle(
               color: textPrimary,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            'Saldo jajanmu masih utuh. Ketuk tombol (+) di bawah untuk mencatat pengeluaran!',
+            'Catatan pengeluaranmu akan muncul di sini. Ketuk tombol (+) untuk mencatat!',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: textSecondary,

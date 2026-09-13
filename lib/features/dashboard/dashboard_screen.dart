@@ -14,6 +14,7 @@ import 'widgets/expense_list_item.dart';
 import 'widgets/floating_capsule_navbar.dart';
 import 'widgets/hero_balance_card.dart';
 import 'widgets/nudge_banner.dart';
+import 'widgets/savings_goal_card.dart';
 import 'widgets/weekly_budget_input_sheet.dart';
 import 'widgets/weekly_rollover_banner.dart';
 
@@ -219,6 +220,18 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             onConfigureBudget: _openBudgetDetail,
                             onQuickLog: _openQuickLog,
                           ),
+                          const SizedBox(height: 16),
+                          // Savings Items Card matching Wireframe 3
+                          SavingsGoalCard(
+                            weeklySavingsTarget: widget.repository.weeklySavingsTarget,
+                            currentSaved: (widget.repository.weeklySavingsTarget - (widget.repository.totalSpent > widget.repository.spendableBudget ? (widget.repository.totalSpent - widget.repository.spendableBudget) : 0)).clamp(0, widget.repository.weeklySavingsTarget),
+                            isDark: isDark,
+                            cardColor: cardColor,
+                            borderColor: borderColor,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            onConfigure: _openBudgetDetail,
+                          ),
                           const SizedBox(height: 24),
 
                           // Spending by Category (Horizontal Scroll)
@@ -232,14 +245,41 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                           ),
                           const SizedBox(height: 24),
 
-                          // Recent Transactions Header
-                          Text(
-                            'Transaksi Terbaru',
-                            style: TextStyle(
-                              color: textPrimary,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                            ),
+                          // Recent Activity / Transaksi Terbaru Section Header (with See all)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Recent Activity',
+                                style: TextStyle(
+                                  color: textPrimary,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.3,
+                                ),
+                              ),
+                              if (expenses.isNotEmpty)
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      _showAllTransactions = !_showAllTransactions;
+                                    });
+                                  },
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                    child: Text(
+                                      _showAllTransactions ? 'Show less' : 'See all',
+                                      style: const TextStyle(
+                                        color: PirschColors.primaryBlue,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                           const SizedBox(height: 12),
 
@@ -260,35 +300,6 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                                   textSecondary: textSecondary,
                                   onDelete: (id) => widget.repository.deleteExpense(id),
                                 )),
-                            if (expenses.length > 5) ...[
-                              const SizedBox(height: 10),
-                              Center(
-                                child: TextButton.icon(
-                                  onPressed: () {
-                                    setState(() {
-                                      _showAllTransactions = !_showAllTransactions;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    _showAllTransactions
-                                        ? Icons.keyboard_arrow_up_rounded
-                                        : Icons.keyboard_arrow_down_rounded,
-                                    color: PirschColors.mintGreen,
-                                    size: 18,
-                                  ),
-                                  label: Text(
-                                    _showAllTransactions
-                                        ? 'Tampilkan Lebih Sedikit'
-                                        : 'Lihat Semua (${expenses.length} Transaksi)',
-                                    style: const TextStyle(
-                                      color: PirschColors.mintGreen,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
                           ],
 
                           // Padding space for floating bottom bar with safe area
