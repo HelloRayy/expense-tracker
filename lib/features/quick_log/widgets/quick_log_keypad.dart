@@ -93,24 +93,24 @@ class QuickLogKeypad extends StatelessWidget {
     final isSubmit = type == 'submit';
     final isOperator = type == 'operator';
 
-    Color circleBg = btnBg;
+    Color squircleBg = btnBg;
     if (isSubmit) {
-      circleBg = const Color(0xFF00897B); // Vibrant Emerald Green
+      squircleBg = PirschColors.primaryBlue;
     } else if (isOperator) {
-      circleBg = btnBg.withValues(alpha: 0.9);
+      squircleBg = isDark ? const Color(0xFF222226) : const Color(0xFFDEE1EB);
     }
 
     return SizedBox(
       width: size,
       height: size,
       child: Material(
-        color: circleBg,
-        shape: const CircleBorder(),
+        color: squircleBg,
+        borderRadius: BorderRadius.circular(20),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () => onKeyPress(label),
-          customBorder: const CircleBorder(),
-          splashColor: isSubmit ? Colors.white30 : PirschColors.mintGreen.withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(20),
+          splashColor: isSubmit ? Colors.white30 : PirschColors.primaryBlue.withValues(alpha: 0.3),
           child: Center(
             child: type == 'backspace'
                 ? Icon(Icons.backspace_outlined, color: textColor, size: 22)

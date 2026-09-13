@@ -25,7 +25,7 @@ class QuickLogExpressionDisplay extends StatelessWidget {
   });
 
   Widget _buildCursorBar() {
-    const accentCyan = Color(0xFF00E5FF);
+    const accentGreen = Color(0xFF22C55E);
     return AnimatedOpacity(
       opacity: cursorVisible ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 80),
@@ -34,15 +34,8 @@ class QuickLogExpressionDisplay extends StatelessWidget {
         width: 2.5,
         height: 38,
         decoration: BoxDecoration(
-          color: accentCyan,
+          color: accentGreen,
           borderRadius: BorderRadius.circular(1.5),
-          boxShadow: [
-            BoxShadow(
-              color: accentCyan.withValues(alpha: 0.6),
-              blurRadius: 5,
-              spreadRadius: 0.5,
-            ),
-          ],
         ),
       ),
     );

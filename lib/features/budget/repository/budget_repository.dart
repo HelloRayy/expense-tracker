@@ -38,6 +38,14 @@ class BudgetRepository extends ChangeNotifier {
     return spendableBudget - _totalSpent;
   }
 
+  /// Sisa budget mingguan efektif (menggunakan spendable jika ada, fallback ke total remaining balance)
+  int get effectiveWeeklySpendable {
+    if (spendableBudget > 0) {
+      return remainingWeeklySpendable;
+    }
+    return remainingBalance;
+  }
+
   /// Batas jajan harian hari ini (dihitung dari sisa budget belanja s.d. kemarin dibagi sisa hari)
   int get dailyAllowance {
     if (_budget == null) return 0;

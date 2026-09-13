@@ -5,6 +5,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../budget/repository/budget_repository.dart';
 import 'services/calculator_evaluator.dart';
+import 'quick_log_screen.dart';
 import 'widgets/quick_log_expression_display.dart';
 import 'widgets/quick_log_keypad.dart';
 
@@ -24,13 +25,12 @@ class QuickLogDialog extends StatefulWidget {
     required BudgetRepository repository,
     VoidCallback? onComplete,
   }) {
-    return showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => QuickLogDialog(
-        repository: repository,
-        onComplete: onComplete,
+    return Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => QuickLogScreen(
+          repository: repository,
+          onComplete: onComplete,
+        ),
       ),
     );
   }

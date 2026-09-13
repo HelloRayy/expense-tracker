@@ -61,6 +61,9 @@ class MockBudgetRepo extends ChangeNotifier implements BudgetRepository {
   int get remainingWeeklySpendable => 880000;
 
   @override
+  int get effectiveWeeklySpendable => 1000000;
+
+  @override
   int get carryoverBalance => 0;
 
   @override

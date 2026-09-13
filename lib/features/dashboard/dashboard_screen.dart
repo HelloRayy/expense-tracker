@@ -3,7 +3,7 @@ import '../../core/constants/app_colors.dart';
 import '../budget/repository/budget_repository.dart';
 import '../categories/screens/category_assignment_screen.dart';
 import '../expense_catalog/screens/expense_catalog_screen.dart';
-import '../quick_log/quick_log_dialog.dart';
+import '../quick_log/quick_log_screen.dart';
 import '../settings/screens/budget_settings_detail_screen.dart';
 import '../settings/screens/settings_screen.dart';
 import '../settings/screens/shopee_settings_screen.dart';
@@ -32,6 +32,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingObserver {
   bool _showAllTransactions = false;
+  BudgetPeriodView _selectedPeriod = BudgetPeriodView.daily;
 
   @override
   void initState() {
@@ -77,7 +78,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
   }
 
   void _openQuickLog() {
-    QuickLogDialog.show(
+    QuickLogScreen.open(
       context,
       repository: widget.repository,
       onComplete: () => setState(() {}),
@@ -134,10 +135,15 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         final spent = widget.repository.totalSpent;
         final dailyAllowance = widget.repository.dailyAllowance;
         final remainingToday = widget.repository.remainingToday;
+        final remainingWeekly = widget.repository.effectiveWeeklySpendable;
         final expenses = widget.repository.expenses;
         final displayedExpenses = _showAllTransactions ? expenses : expenses.take(5).toList();
-        final isOverBudget = remaining < 0 || remainingToday < 0;
-        final isWarning = !isOverBudget && (remainingToday < 20000 || remaining < dailyAllowance);
+        final isOverBudget = _selectedPeriod == BudgetPeriodView.daily
+            ? (remaining < 0 || remainingToday < 0)
+            : (remaining < 0 || remainingWeekly < 0);
+        final isWarning = _selectedPeriod == BudgetPeriodView.daily
+            ? (!isOverBudget && (remainingToday < 20000 || remaining < dailyAllowance))
+            : (!isOverBudget && remainingWeekly < dailyAllowance);
         final ambientColor = PirschColors.ambientGlowColor(
           isDark: isDark,
           isOverBudget: isOverBudget,
@@ -199,10 +205,17 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             remaining: remaining,
                             spent: spent,
                             remainingToday: remainingToday,
+                            remainingWeekly: remainingWeekly,
                             formattedPeriod: budget?.formattedPeriod ?? '',
                             isOverBudget: isOverBudget,
                             textPrimary: textPrimary,
                             textSecondary: textSecondary,
+                            periodView: _selectedPeriod,
+                            onPeriodChanged: (view) {
+                              setState(() {
+                                _selectedPeriod = view;
+                              });
+                            },
                             onTapPeriod: _openBudgetDetail,
                             onTapMenu: _openSettings,
                           ),
