@@ -2,6 +2,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../features/budget/models/budget_model.dart';
 import '../../features/budget/models/expense_model.dart';
+import '../../features/budget/models/pending_transaction_model.dart';
 
 class DbHelper {
   static final DbHelper instance = DbHelper._internal();
@@ -30,7 +31,7 @@ class DbHelper {
 
     return await openDatabase(
       path,
-      version: 6,
+      version: 7,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE IF NOT EXISTS budget (
@@ -71,6 +72,20 @@ class DbHelper {
           CREATE INDEX IF NOT EXISTS idx_expenses_category_id ON expenses (category_id)
         ''');
 
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS pending_transactions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            amount INTEGER NOT NULL,
+            source TEXT NOT NULL,
+            raw_title TEXT NOT NULL DEFAULT '',
+            created_at TEXT NOT NULL,
+            is_recorded INTEGER NOT NULL DEFAULT 0
+          )
+        ''');
+        await db.execute('''
+          CREATE INDEX IF NOT EXISTS idx_pending_is_recorded ON pending_transactions (is_recorded, created_at DESC)
+        ''');
+
         // Insert default initial weekly budget (Rp 0 income, Rp 0 savings target)
         final defaultBudget = BudgetModel.createDefault();
         await db.insert('budget', defaultBudget.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
@@ -105,6 +120,19 @@ class DbHelper {
           await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN carryover_balance INTEGER NOT NULL DEFAULT 0');
           await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
         }
+        if (oldVersion < 7) {
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS pending_transactions (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              amount INTEGER NOT NULL,
+              source TEXT NOT NULL,
+              raw_title TEXT NOT NULL DEFAULT '',
+              created_at TEXT NOT NULL,
+              is_recorded INTEGER NOT NULL DEFAULT 0
+            )
+          ''');
+          await _safeExecute(db, 'CREATE INDEX IF NOT EXISTS idx_pending_is_recorded ON pending_transactions (is_recorded, created_at DESC)');
+        }
       },
       onOpen: (db) async {
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN total_budget INTEGER NOT NULL DEFAULT 0');
@@ -115,6 +143,17 @@ class DbHelper {
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
         await _safeExecute(db, 'ALTER TABLE expenses ADD COLUMN category_id TEXT DEFAULT NULL');
         await _safeExecute(db, 'CREATE INDEX IF NOT EXISTS idx_expenses_category_id ON expenses (category_id)');
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS pending_transactions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            amount INTEGER NOT NULL,
+            source TEXT NOT NULL,
+            raw_title TEXT NOT NULL DEFAULT '',
+            created_at TEXT NOT NULL,
+            is_recorded INTEGER NOT NULL DEFAULT 0
+          )
+        ''');
+        await _safeExecute(db, 'CREATE INDEX IF NOT EXISTS idx_pending_is_recorded ON pending_transactions (is_recorded, created_at DESC)');
       },
     );
   }
@@ -268,5 +307,53 @@ class DbHelper {
       orderBy: 'created_at DESC',
     );
     return res.map((m) => ExpenseModel.fromMap(m)).toList();
+  }
+
+  // Pending Transaction operations (Passive Notification Detection)
+
+  Future<int> insertPendingTransaction(PendingTransactionModel item) async {
+    final db = await database;
+    return await db.insert('pending_transactions', item.toMap());
+  }
+
+  Future<List<PendingTransactionModel>> getUnrecordedPendingTransactions() async {
+    final db = await database;
+    final cutoff = DateTime.now().subtract(const Duration(hours: 48)).toIso8601String();
+    final res = await db.query(
+      'pending_transactions',
+      where: 'is_recorded = 0 AND created_at >= ?',
+      whereArgs: [cutoff],
+      orderBy: 'created_at DESC',
+    );
+    return res.map((m) => PendingTransactionModel.fromMap(m)).toList();
+  }
+
+  Future<void> markPendingTransactionRecorded(int id) async {
+    final db = await database;
+    await db.update(
+      'pending_transactions',
+      {'is_recorded': 1},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> dismissPendingTransaction(int id) async {
+    final db = await database;
+    await db.delete(
+      'pending_transactions',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> cleanupOldPendingTransactions({Duration maxAge = const Duration(hours: 48)}) async {
+    final db = await database;
+    final cutoff = DateTime.now().subtract(maxAge).toIso8601String();
+    await db.delete(
+      'pending_transactions',
+      where: 'created_at < ?',
+      whereArgs: [cutoff],
+    );
   }
 }

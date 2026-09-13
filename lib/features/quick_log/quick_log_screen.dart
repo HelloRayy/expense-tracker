@@ -228,7 +228,7 @@ class _QuickLogScreenState extends State<QuickLogScreen> {
     HapticFeedback.mediumImpact();
 
     final note = _noteController.text.trim();
-    final effectiveNote = note.isEmpty ? 'Jajan' : note;
+    final effectiveNote = note.isEmpty ? 'Pengeluaran' : note;
 
     try {
       await widget.repository.addExpense(amount, note: effectiveNote);

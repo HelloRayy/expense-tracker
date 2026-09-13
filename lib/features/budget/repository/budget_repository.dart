@@ -3,6 +3,7 @@ import '../../../core/database/db_helper.dart';
 import '../../../core/services/native_bridge.dart';
 import '../models/budget_model.dart';
 import '../models/expense_model.dart';
+import '../models/pending_transaction_model.dart';
 
 class BudgetRepository extends ChangeNotifier {
   final DbHelper _db = DbHelper.instance;
@@ -10,6 +11,7 @@ class BudgetRepository extends ChangeNotifier {
 
   BudgetModel? _budget;
   List<ExpenseModel> _expenses = [];
+  List<PendingTransactionModel> _pendingTransactions = [];
   int _totalSpent = 0;
   int _spentUntilYesterday = 0;
   int _spentToday = 0;
@@ -17,6 +19,8 @@ class BudgetRepository extends ChangeNotifier {
 
   BudgetModel? get budget => _budget;
   List<ExpenseModel> get expenses => _expenses;
+  List<PendingTransactionModel> get pendingTransactions => _pendingTransactions;
+  int get pendingCount => _pendingTransactions.length;
   int get totalSpent => _totalSpent;
   int get spentUntilYesterday => _spentUntilYesterday;
   int get spentToday => _spentToday;
@@ -139,6 +143,11 @@ class BudgetRepository extends ChangeNotifier {
       _spentToday = _expenses.where((e) => e.isToday).fold<int>(0, (sum, e) => sum + e.amount);
       _spentUntilYesterday = _totalSpent - _spentToday;
 
+      if (!kIsWeb) {
+        await _db.cleanupOldPendingTransactions();
+        _pendingTransactions = await _db.getUnrecordedPendingTransactions();
+      }
+
       await _syncNative();
     } catch (e) {
       debugPrint('Error loading budget data: $e');
@@ -171,6 +180,30 @@ class BudgetRepository extends ChangeNotifier {
     );
     await _db.insertExpense(expense);
     await loadData();
+  }
+
+  /// Records a pending transaction and removes it from pending list atomically
+  Future<void> resolvePendingTransaction(
+    int pendingId,
+    int amount, {
+    String note = 'Jajan',
+    String? categoryId,
+  }) async {
+    await addExpense(amount, note: note, categoryId: categoryId);
+    if (!kIsWeb) {
+      await _db.markPendingTransactionRecorded(pendingId);
+      _pendingTransactions.removeWhere((p) => p.id == pendingId);
+      notifyListeners();
+    }
+  }
+
+  /// Dismisses a pending transaction without adding it to expenses
+  Future<void> dismissPendingTransaction(int pendingId) async {
+    if (!kIsWeb) {
+      await _db.dismissPendingTransaction(pendingId);
+      _pendingTransactions.removeWhere((p) => p.id == pendingId);
+      notifyListeners();
+    }
   }
 
   Future<void> deleteExpense(int id) async {

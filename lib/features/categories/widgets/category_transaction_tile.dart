@@ -80,7 +80,7 @@ class CategoryTransactionTile extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        expense.note,
+                        (expense.note.trim().isEmpty || expense.note.trim() == 'Jajan') ? 'Pengeluaran' : expense.note,
                         style: TextStyle(
                           color: textPrimary,
                           fontSize: 15,
@@ -134,9 +134,9 @@ class CategoryTransactionTile extends StatelessWidget {
                                 ),
                               ),
                             )
-                          else if (expense.categoryId != null && !isChecked)
+                          else if (!isChecked)
                             Text(
-                              '• ${expense.categoryId}',
+                              '• ${expense.categoryId ?? 'Belum berkategori'}',
                               style: TextStyle(
                                 color: textSecondary.withValues(alpha: 0.6),
                                 fontSize: 11,

@@ -2,11 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jajan_tracker/features/budget/models/budget_model.dart';
 import 'package:jajan_tracker/features/budget/models/expense_model.dart';
+import 'package:jajan_tracker/features/budget/models/pending_transaction_model.dart';
 import 'package:jajan_tracker/features/budget/repository/budget_repository.dart';
 import 'package:jajan_tracker/features/quick_log/quick_log_dialog.dart';
 
 class TestBudgetRepo extends ChangeNotifier implements BudgetRepository {
   final List<ExpenseModel> addedExpenses = [];
+  final List<PendingTransactionModel> _pendingTransactions = [];
+
+  @override
+  List<PendingTransactionModel> get pendingTransactions => _pendingTransactions;
+
+  @override
+  int get pendingCount => _pendingTransactions.length;
+
+  @override
+  Future<void> resolvePendingTransaction(int pendingId, int amount, {String note = 'Jajan', String? categoryId}) async {
+    await addExpense(amount, note: note, categoryId: categoryId);
+    _pendingTransactions.removeWhere((p) => p.id == pendingId);
+    notifyListeners();
+  }
+
+  @override
+  Future<void> dismissPendingTransaction(int pendingId) async {
+    _pendingTransactions.removeWhere((p) => p.id == pendingId);
+    notifyListeners();
+  }
 
   @override
   BudgetModel? get budget => BudgetModel.createDefault(total: 1500000, payday: 25);
@@ -156,7 +177,7 @@ void main() {
 
     expect(repo.addedExpenses.length, 1);
     expect(repo.addedExpenses.first.amount, 50000);
-    expect(repo.addedExpenses.first.note, 'Jajan');
+    expect(repo.addedExpenses.first.note, 'Makanan');
   });
 
   testWidgets('QuickLogDialog keypad typing and division test', (WidgetTester tester) async {
@@ -201,6 +222,6 @@ void main() {
 
     expect(repo.addedExpenses.length, 1);
     expect(repo.addedExpenses.first.amount, 25000);
-    expect(repo.addedExpenses.first.note, 'Jajan');
+    expect(repo.addedExpenses.first.note, 'Makanan');
   });
 }

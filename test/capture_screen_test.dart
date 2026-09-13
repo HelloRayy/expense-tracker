@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jajan_tracker/core/constants/app_colors.dart';
 import 'package:jajan_tracker/features/budget/models/budget_model.dart';
 import 'package:jajan_tracker/features/budget/models/expense_model.dart';
+import 'package:jajan_tracker/features/budget/models/pending_transaction_model.dart';
 import 'package:jajan_tracker/features/budget/repository/budget_repository.dart';
 import 'package:jajan_tracker/features/dashboard/dashboard_screen.dart';
 import 'package:jajan_tracker/features/quick_log/quick_log_dialog.dart';
@@ -18,6 +19,25 @@ import 'package:jajan_tracker/features/categories/screens/category_assignment_sc
 import 'package:jajan_tracker/features/widgets/home_widget_4x2_card.dart';
 
 class MockBudgetRepo extends ChangeNotifier implements BudgetRepository {
+  final List<PendingTransactionModel> _pendingTransactions = [];
+
+  @override
+  List<PendingTransactionModel> get pendingTransactions => _pendingTransactions;
+
+  @override
+  int get pendingCount => _pendingTransactions.length;
+
+  @override
+  Future<void> resolvePendingTransaction(int pendingId, int amount, {String note = 'Jajan', String? categoryId}) async {
+    _pendingTransactions.removeWhere((p) => p.id == pendingId);
+    notifyListeners();
+  }
+
+  @override
+  Future<void> dismissPendingTransaction(int pendingId) async {
+    _pendingTransactions.removeWhere((p) => p.id == pendingId);
+    notifyListeners();
+  }
   @override
   BudgetModel? get budget => BudgetModel.createDefault(total: 1500000, payday: 25);
 

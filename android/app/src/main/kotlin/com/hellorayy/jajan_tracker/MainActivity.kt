@@ -110,6 +110,7 @@ class MainActivity : FlutterActivity() {
                 "simulatePaymentNotification" -> {
                     val amount = (call.argument<Number>("amount"))?.toLong() ?: 35000L
                     val note = call.argument<String>("note") ?: "ShopeePay"
+                    JajanNotificationListenerService.savePendingTransaction(this, amount, note, "Pembayaran ShopeePay Berhasil")
                     JajanNotificationListenerService.showActionableTransactionNotification(this, amount, note)
                     result.success(true)
                 }

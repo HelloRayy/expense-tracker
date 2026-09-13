@@ -59,6 +59,7 @@ class JajanNotificationListenerService : NotificationListenerService() {
             lastAmount = amount
 
             val sourceNote = determineSource(pkg, fullContent)
+            savePendingTransaction(this, amount, sourceNote, fullContent)
             showActionableTransactionNotification(this, amount, sourceNote)
         } catch (t: Throwable) {
             t.printStackTrace()
@@ -226,6 +227,51 @@ class JajanNotificationListenerService : NotificationListenerService() {
                 )
 
             nm.notify(notifId, builder.build())
+        }
+
+        fun savePendingTransaction(context: Context, amount: Long, source: String, rawTitle: String) {
+            try {
+                val dbPath = context.getDatabasePath("jajan_tracker.db")
+                if (dbPath.exists()) {
+                    val db = android.database.sqlite.SQLiteDatabase.openDatabase(
+                        dbPath.path,
+                        null,
+                        android.database.sqlite.SQLiteDatabase.OPEN_READWRITE
+                    )
+                    try {
+                        db.beginTransaction()
+                        try {
+                            db.execSQL("""
+                                CREATE TABLE IF NOT EXISTS pending_transactions (
+                                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                    amount INTEGER NOT NULL,
+                                    source TEXT NOT NULL,
+                                    raw_title TEXT NOT NULL DEFAULT '',
+                                    created_at TEXT NOT NULL,
+                                    is_recorded INTEGER NOT NULL DEFAULT 0
+                                )
+                            """.trimIndent())
+
+                            val values = android.content.ContentValues().apply {
+                                put("amount", amount)
+                                put("source", source)
+                                put("raw_title", if (rawTitle.length > 200) rawTitle.substring(0, 200) else rawTitle)
+                                val sdf = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", java.util.Locale.US)
+                                put("created_at", sdf.format(java.util.Date()))
+                                put("is_recorded", 0)
+                            }
+                            db.insert("pending_transactions", null, values)
+                            db.setTransactionSuccessful()
+                        } finally {
+                            db.endTransaction()
+                        }
+                    } finally {
+                        db.close()
+                    }
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
         }
     }
 }

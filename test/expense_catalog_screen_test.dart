@@ -2,12 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jajan_tracker/features/budget/models/budget_model.dart';
 import 'package:jajan_tracker/features/budget/models/expense_model.dart';
+import 'package:jajan_tracker/features/budget/models/pending_transaction_model.dart';
 import 'package:jajan_tracker/features/budget/repository/budget_repository.dart';
 import 'package:jajan_tracker/features/expense_catalog/screens/expense_catalog_screen.dart';
 import 'package:jajan_tracker/features/expense_catalog/widgets/catalog_preset_card.dart';
 
 class MockBudgetRepo extends ChangeNotifier implements BudgetRepository {
   final List<ExpenseModel> added = [];
+  final List<PendingTransactionModel> _pendingTransactions = [];
+
+  @override
+  List<PendingTransactionModel> get pendingTransactions => _pendingTransactions;
+
+  @override
+  int get pendingCount => _pendingTransactions.length;
+
+  @override
+  Future<void> resolvePendingTransaction(int pendingId, int amount, {String note = 'Jajan', String? categoryId}) async {
+    await addExpense(amount, note: note, categoryId: categoryId);
+    _pendingTransactions.removeWhere((p) => p.id == pendingId);
+    notifyListeners();
+  }
+
+  @override
+  Future<void> dismissPendingTransaction(int pendingId) async {
+    _pendingTransactions.removeWhere((p) => p.id == pendingId);
+    notifyListeners();
+  }
 
   @override
   BudgetModel? get budget => BudgetModel.createDefault(total: 1000000, payday: 25);

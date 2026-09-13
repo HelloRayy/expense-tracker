@@ -63,7 +63,7 @@ class ExpenseListItem extends StatelessWidget {
       categoryName = 'Transport';
     } else {
       itemIcon = Icons.receipt_long_rounded;
-      categoryName = 'Jajan';
+      categoryName = 'Belum berkategori';
     }
 
     // Time formatted as HH:mm
@@ -155,7 +155,7 @@ class ExpenseListItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    exp.note,
+                    (exp.note.trim().isEmpty || exp.note.trim() == 'Jajan') ? 'Pengeluaran' : exp.note,
                     style: TextStyle(
                       color: textPrimary,
                       fontSize: 15,

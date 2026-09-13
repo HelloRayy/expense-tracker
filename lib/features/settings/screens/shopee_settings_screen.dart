@@ -1,7 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/database/db_helper.dart';
 import '../../../core/services/native_bridge.dart';
 import '../../../core/utils/currency_formatter.dart';
+import '../../budget/models/pending_transaction_model.dart';
 import '../../budget/repository/budget_repository.dart';
 
 class ShopeeSettingsScreen extends StatefulWidget {
@@ -309,11 +312,22 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
                               amount: 35000,
                               note: 'ShopeePay',
                             );
+                            if (kIsWeb) {
+                              await DbHelper.instance.insertPendingTransaction(
+                                PendingTransactionModel(
+                                  amount: 35000,
+                                  source: 'ShopeePay',
+                                  rawTitle: 'Pembayaran ShopeePay Berhasil',
+                                  createdAt: DateTime.now(),
+                                ),
+                              );
+                            }
+                            await widget.repository.loadData();
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
-                                    'Notifikasi transaksi ShopeePay dikirim! Buka tirai notifikasi untuk coba tombol [✓ Catat Langsung].',
+                                    'Notifikasi transaksi ShopeePay dikirim! Periksa Dashboard untuk melihat pengingat.',
                                   ),
                                 ),
                               );

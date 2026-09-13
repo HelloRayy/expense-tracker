@@ -81,6 +81,9 @@ class NotificationActionReceiver : BroadcastReceiver() {
                             put("created_at", sdf.format(Date()))
                         }
                         db.insert("expenses", null, values)
+                        try {
+                            db.execSQL("UPDATE pending_transactions SET is_recorded = 1 WHERE amount = ? AND is_recorded = 0", arrayOf(amount))
+                        } catch (_: Exception) {}
                         db.setTransactionSuccessful()
                     } finally {
                         db.endTransaction()

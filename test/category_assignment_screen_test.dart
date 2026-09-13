@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jajan_tracker/features/budget/models/budget_model.dart';
 import 'package:jajan_tracker/features/budget/models/expense_model.dart';
+import 'package:jajan_tracker/features/budget/models/pending_transaction_model.dart';
 import 'package:jajan_tracker/features/budget/repository/budget_repository.dart';
 import 'package:jajan_tracker/features/categories/screens/category_assignment_screen.dart';
 
@@ -11,6 +12,26 @@ class MockCategoryBudgetRepo extends ChangeNotifier implements BudgetRepository 
   String? lastTargetCategoryId;
   List<int>? lastUnassignIds;
   int batchAssignCallCount = 0;
+  final List<PendingTransactionModel> _pendingTransactions = [];
+
+  @override
+  List<PendingTransactionModel> get pendingTransactions => _pendingTransactions;
+
+  @override
+  int get pendingCount => _pendingTransactions.length;
+
+  @override
+  Future<void> resolvePendingTransaction(int pendingId, int amount, {String note = 'Jajan', String? categoryId}) async {
+    await addExpense(amount, note: note, categoryId: categoryId);
+    _pendingTransactions.removeWhere((p) => p.id == pendingId);
+    notifyListeners();
+  }
+
+  @override
+  Future<void> dismissPendingTransaction(int pendingId) async {
+    _pendingTransactions.removeWhere((p) => p.id == pendingId);
+    notifyListeners();
+  }
 
   MockCategoryBudgetRepo({required this.testExpenses});
 
