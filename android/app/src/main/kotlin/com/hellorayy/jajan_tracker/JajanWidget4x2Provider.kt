@@ -110,18 +110,18 @@ class JajanWidget4x2Provider : AppWidgetProvider() {
                     views.setTextViewText(R.id.tv_widget_remaining, weeklyIncomeStr)
                     views.setTextViewText(R.id.tv_widget_spent, totalSpentStr)
 
-                    // Hero Nominal Color (Soft White when safe, Soft Rose Red when negative)
+                    // Hero Nominal Color (Soft White #EDEDED when safe, Soft Rose Red #F87171 when negative)
                     if (isAllowanceNegative) {
-                        views.setTextColor(R.id.tv_widget_daily_amount, Color.parseColor("#E87B7B"))
+                        views.setTextColor(R.id.tv_widget_daily_amount, Color.parseColor("#F87171"))
                     } else {
-                        views.setTextColor(R.id.tv_widget_daily_amount, Color.parseColor("#EBEBEB"))
+                        views.setTextColor(R.id.tv_widget_daily_amount, Color.parseColor("#EDEDED"))
                     }
 
-                    // Weekly Income Color (Mint Green)
-                    views.setTextColor(R.id.tv_widget_remaining, Color.parseColor("#6ECE9D"))
+                    // Weekly Income Color (Green #4ADE80)
+                    views.setTextColor(R.id.tv_widget_remaining, Color.parseColor("#4ADE80"))
 
-                    // Total Spent Color (Rose Red)
-                    views.setTextColor(R.id.tv_widget_spent, Color.parseColor("#E87B7B"))
+                    // Total Spent Color (Red #F87171)
+                    views.setTextColor(R.id.tv_widget_spent, Color.parseColor("#F87171"))
 
                     // Attach click PendingIntent to container and all interactive subviews
                     views.setOnClickPendingIntent(R.id.widget_4x2_container, appPendingIntent)
