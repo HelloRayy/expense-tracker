@@ -42,8 +42,15 @@ class DashboardActionBar extends StatelessWidget {
         : 1.0;
     final int percent = (fraction * 100).toInt();
 
-    final contrastBtnBg = isDark ? Colors.white : const Color(0xFF0C0C0C);
-    final contrastBtnFg = isDark ? const Color(0xFF0C0C0C) : Colors.white;
+    // Color palette matching the reference image
+    final darkBtnBg = isDark ? const Color(0xFF1E1E22) : const Color(0xFFF1F3F5);
+    final darkBtnFg = isDark ? Colors.white : const Color(0xFF1A1A1E);
+    final darkBtnLabel = isDark
+        ? Colors.white.withValues(alpha: 0.92)
+        : const Color(0xFF1A1A1E);
+
+    final contrastBtnBg = isDark ? Colors.white : const Color(0xFF0F0F12);
+    final contrastBtnFg = isDark ? const Color(0xFF0F0F12) : Colors.white;
 
     return Row(
       children: [
@@ -51,46 +58,46 @@ class DashboardActionBar extends StatelessWidget {
         Expanded(
           child: _buildButton(
             context: context,
-            backgroundColor: cardColor,
+            backgroundColor: darkBtnBg,
             onTap: onTapSavings,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  width: 26,
-                  height: 26,
+                  width: 22,
+                  height: 22,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
                       CircularProgressIndicator(
                         value: fraction,
-                        strokeWidth: 2.5,
+                        strokeWidth: 2.2,
                         backgroundColor: isDark
-                            ? Colors.white.withValues(alpha: 0.12)
-                            : Colors.black.withValues(alpha: 0.08),
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          PirschColors.mintGreen,
+                            ? Colors.white.withValues(alpha: 0.15)
+                            : Colors.black.withValues(alpha: 0.1),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isDark ? PirschColors.mintGreen : const Color(0xFF059669),
                         ),
                       ),
                       Text(
-                        '$percent%',
+                        '$percent',
                         style: TextStyle(
-                          color: textPrimary,
-                          fontSize: 8,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.2,
+                          color: darkBtnFg,
+                          fontSize: 8.5,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.3,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 5),
                 Text(
                   'Tabungan',
                   style: TextStyle(
-                    color: textSecondary,
+                    color: darkBtnLabel,
                     fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: -0.2,
                   ),
                 ),
@@ -104,23 +111,23 @@ class DashboardActionBar extends StatelessWidget {
         Expanded(
           child: _buildButton(
             context: context,
-            backgroundColor: cardColor,
+            backgroundColor: darkBtnBg,
             onTap: onTapCategory,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.pie_chart_outline_rounded,
-                  size: 22,
-                  color: const Color(0xFF60A5FA),
+                  size: 21,
+                  color: darkBtnFg,
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 5),
                 Text(
                   'Kategori',
                   style: TextStyle(
-                    color: textSecondary,
+                    color: darkBtnLabel,
                     fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: -0.2,
                   ),
                 ),
@@ -130,7 +137,7 @@ class DashboardActionBar extends StatelessWidget {
         ),
         const SizedBox(width: 10),
 
-        // Button 3: Catat Jajan (High-contrast prominent pill)
+        // Button 3: Catat (High-contrast prominent thumb button)
         Expanded(
           child: _buildButton(
             context: context,
@@ -145,16 +152,16 @@ class DashboardActionBar extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.add_rounded,
-                      size: 24,
+                      size: 22,
                       color: contrastBtnFg,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 5),
                     Text(
                       'Catat',
                       style: TextStyle(
                         color: contrastBtnFg,
                         fontSize: 12,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: -0.2,
                       ),
                     ),
@@ -164,11 +171,11 @@ class DashboardActionBar extends StatelessWidget {
                 // Indicator dot if passive transaction pending
                 if (pendingCount > 0)
                   Positioned(
-                    top: -2,
-                    right: 4,
+                    top: 6,
+                    right: 8,
                     child: Container(
-                      width: 8,
-                      height: 8,
+                      width: 7,
+                      height: 7,
                       decoration: const BoxDecoration(
                         color: PirschColors.coralOrange,
                         shape: BoxShape.circle,
@@ -198,10 +205,16 @@ class DashboardActionBar extends StatelessWidget {
           onTap();
         },
         borderRadius: BorderRadius.circular(18),
+        splashColor: isDark
+            ? Colors.white.withValues(alpha: 0.08)
+            : Colors.black.withValues(alpha: 0.05),
+        highlightColor: isDark
+            ? Colors.white.withValues(alpha: 0.05)
+            : Colors.black.withValues(alpha: 0.03),
         child: Container(
-          height: 68,
+          height: 74,
           alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
           child: child,
         ),
       ),
