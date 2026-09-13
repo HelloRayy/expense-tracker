@@ -3,7 +3,7 @@ import '../../core/constants/app_colors.dart';
 import '../budget/repository/budget_repository.dart';
 import '../categories/screens/category_assignment_screen.dart';
 import '../expense_catalog/screens/expense_catalog_screen.dart';
-import '../quick_log/quick_log_screen.dart';
+import '../quick_log/quick_log_dialog.dart';
 import '../settings/screens/budget_settings_detail_screen.dart';
 import '../settings/screens/settings_screen.dart';
 import '../settings/screens/shopee_settings_screen.dart';
@@ -78,7 +78,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
   }
 
   void _openQuickLog() {
-    QuickLogScreen.open(
+    QuickLogDialog.show(
       context,
       repository: widget.repository,
       onComplete: () => setState(() {}),
