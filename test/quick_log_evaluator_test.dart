@@ -177,7 +177,7 @@ void main() {
 
     expect(repo.addedExpenses.length, 1);
     expect(repo.addedExpenses.first.amount, 50000);
-    expect(repo.addedExpenses.first.note, 'Makanan');
+    expect(repo.addedExpenses.first.note, 'Makanan / Minuman');
   });
 
   testWidgets('QuickLogDialog keypad typing and division test', (WidgetTester tester) async {
@@ -222,6 +222,6 @@ void main() {
 
     expect(repo.addedExpenses.length, 1);
     expect(repo.addedExpenses.first.amount, 25000);
-    expect(repo.addedExpenses.first.note, 'Makanan');
+    expect(repo.addedExpenses.first.note, 'Makanan / Minuman');
   });
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../core/constants/app_colors.dart';
 
 /// Floating Capsule Bottom Navigation Bar for Dashboard.
-/// Provides quick access to Home, Shopee Scanner, Quick Log (+), Expense Catalog, and Settings.
+/// Features an ultra-compact island with minimal vertical/horizontal padding
+/// matching the reference design: concentric active pill, tight gaps, and zero bloat.
 class FloatingCapsuleNavbar extends StatelessWidget {
   final bool isDark;
   final Color borderColor;
@@ -23,25 +25,49 @@ class FloatingCapsuleNavbar extends StatelessWidget {
     required this.onTapSettings,
   });
 
+  Widget _buildNavItem({
+    required IconData icon,
+    required String tooltip,
+    required VoidCallback onTap,
+    double iconSize = 22,
+  }) {
+    return Tooltip(
+      message: tooltip,
+      child: InkResponse(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
+        radius: 20,
+        splashColor: Colors.transparent,
+        highlightColor: isDark ? Colors.white10 : Colors.black12,
+        child: SizedBox(
+          width: 40,
+          height: 44,
+          child: Icon(icon, color: textSecondary, size: iconSize),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70,
-      constraints: const BoxConstraints(maxWidth: 326),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      height: 52,
+      padding: const EdgeInsets.fromLTRB(4, 4, 6, 4),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
-        borderRadius: BorderRadius.circular(36),
+        color: isDark ? const Color(0xFF161618) : Colors.white,
+        borderRadius: BorderRadius.circular(26),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.55 : 0.09),
-            blurRadius: 28,
-            offset: const Offset(0, 10),
+            color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.12),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisSize: MainAxisSize.min,
         children: [
           // Nav 1: Home (Active Pill matching reference design)
           Container(
@@ -59,16 +85,23 @@ class FloatingCapsuleNavbar extends StatelessWidget {
             ),
           ),
 
+          const SizedBox(width: 4),
+
           // Nav 2: Shopee / Integrations
-          IconButton(
+          _buildNavItem(
+            icon: Icons.storefront_rounded,
             tooltip: 'Shopee & Scanner',
-            icon: Icon(Icons.storefront_rounded, color: textSecondary, size: 22),
-            onPressed: onTapShopee,
+            onTap: onTapShopee,
           ),
+
+          const SizedBox(width: 4),
 
           // Nav Center: (+) Quick Log Action Button
           GestureDetector(
-            onTap: onTapQuickLog,
+            onTap: () {
+              HapticFeedback.selectionClick();
+              onTapQuickLog();
+            },
             child: Container(
               width: 44,
               height: 44,
@@ -76,22 +109,27 @@ class FloatingCapsuleNavbar extends StatelessWidget {
                 color: PirschColors.primaryBlue,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.add, color: Colors.white, size: 26),
+              alignment: Alignment.center,
+              child: const Icon(Icons.add_rounded, color: Colors.white, size: 26),
             ),
           ),
 
+          const SizedBox(width: 4),
+
           // Nav 4: Expense Catalog Cards
-          IconButton(
+          _buildNavItem(
+            icon: Icons.grid_view_rounded,
             tooltip: 'Katalog Kartu Jajan',
-            icon: Icon(Icons.grid_view_rounded, color: textSecondary, size: 22),
-            onPressed: onTapCatalog,
+            onTap: onTapCatalog,
           ),
 
+          const SizedBox(width: 4),
+
           // Nav 5: Settings
-          IconButton(
+          _buildNavItem(
+            icon: Icons.tune_rounded,
             tooltip: 'Pengaturan',
-            icon: Icon(Icons.tune_rounded, color: textSecondary, size: 22),
-            onPressed: onTapSettings,
+            onTap: onTapSettings,
           ),
         ],
       ),
