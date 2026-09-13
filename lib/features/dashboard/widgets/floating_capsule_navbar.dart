@@ -29,12 +29,12 @@ class FloatingCapsuleNavbar extends StatelessWidget {
       height: 64,
       padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141414) : Colors.white,
+        color: isDark ? const Color(0xFF161616) : Colors.white,
         borderRadius: BorderRadius.circular(32),
         border: Border.all(color: borderColor, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
+            color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.08),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
@@ -46,7 +46,7 @@ class FloatingCapsuleNavbar extends StatelessWidget {
           // Nav 1: Home (Active)
           IconButton(
             tooltip: 'Home',
-            icon: const Icon(Icons.home_rounded, color: PirschColors.mintGreen, size: 26),
+            icon: const Icon(Icons.home_rounded, color: PirschColors.primaryBlue, size: 26),
             onPressed: () {},
           ),
 
@@ -57,17 +57,17 @@ class FloatingCapsuleNavbar extends StatelessWidget {
             onPressed: onTapShopee,
           ),
 
-          // Nav Center: (+) Prominent Quick Log Button
+          // Nav Center: (+) Prominent Quick Log Button (Urbanist High-Contrast White Pill style)
           GestureDetector(
             onTap: onTapQuickLog,
             child: Container(
               width: 48,
               height: 48,
               decoration: const BoxDecoration(
-                color: PirschColors.mintGreen,
+                color: PirschColors.primaryBlue,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.add, color: Colors.black, size: 28),
+              child: const Icon(Icons.add, color: Colors.white, size: 28),
             ),
           ),
 

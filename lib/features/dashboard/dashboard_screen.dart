@@ -123,7 +123,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
           return Scaffold(
             backgroundColor: bgColor,
             body: const Center(
-              child: CircularProgressIndicator(color: PirschColors.mintGreen),
+              child: CircularProgressIndicator(color: PirschColors.primaryBlue),
             ),
           );
         }
@@ -153,7 +153,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
               // Main scrollable body
               RefreshIndicator(
-                color: PirschColors.mintGreen,
+                color: PirschColors.primaryBlue,
                 backgroundColor: cardColor,
                 onRefresh: widget.repository.loadData,
                 child: CustomScrollView(

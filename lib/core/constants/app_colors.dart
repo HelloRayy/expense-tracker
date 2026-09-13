@@ -2,37 +2,43 @@ import 'package:flutter/material.dart';
 
 /// Official Pirsch Design System Tokens extracted from https://pirsch.io
 class PirschColors {
-  // Core Brand Palette
-  static const Color beige = Color(0xFFF8F5ED);       // Signature Warm Beige
-  static const Color mintGreen = Color(0xFF6ECE9D);   // Signature Mint Emerald
-  static const Color warmYellow = Color(0xFFFFDA6E);  // Warm Accent Yellow
-  static const Color coralOrange = Color(0xFFF7A66B); // Warm Coral Orange
-  static const Color roseRed = Color(0xFFE87B7B);     // Soft Rose Red (Overbudget)
+  // Core Brand Palette (Urbanist Neo-Fintech)
+  static const Color primaryBlue = Color(0xFF6578C8);  // Signature Periwinkle Indigo (#6578C8)
+  static const Color pureWhite = Color(0xFFFFFFFF);    // High contrast Card/Pill Accent (#FFFFFF)
+  static const Color darkSurface = Color(0xFF242424);  // Elevated Surface & Container (#242424)
+  static const Color deepOnyx = Color(0xFF0C0C0C);     // Ultra Deep Background Canvas (#0C0C0C)
 
-  // Calibrated WCAG 2.1 AA Tokens (>= 4.5:1 on light warm beige #F8F5ED)
-  static const Color accessibleGreen = Color(0xFF1D7A4A);   // 4.9:1 on beige
-  static const Color accessibleAmber = Color(0xFF996100);   // 4.7:1 on beige
-  static const Color accessibleCrimson = Color(0xFFC53030); // 5.0:1 on beige
+  // Secondary & Semantic Accents
+  static const Color mintGreen = Color(0xFF6578C8);    // Primary Accent aligned to Periwinkle
+  static const Color incomeGreen = Color(0xFF4ADE80);  // Clean Financial Green (Positive)
+  static const Color roseRed = Color(0xFFF87171);      // Modern Soft Coral Red (Expenses/Overbudget)
+  static const Color warmYellow = Color(0xFFFFDA6E);   // Warning Accent
+  static const Color beige = Color(0xFFF4F5FA);        // Clean Soft Grey-Lavender for Light Mode
 
-  // Dark Theme Tokens (Deep Onyx with Ergonomic Softening against Halation)
-  static const Color darkBg = Color(0xFF0A0A0A);
-  static const Color darkCard = Color(0xFF141414);
-  static const Color darkCardElevated = Color(0xFF1E1E1E);
-  static const Color darkBorder = Color(0x1FFFFFFF);   // Hairline ~12% white
-  static const Color darkTextPrimary = Color(0xFFEBEBEB); // Softened from #FFFFFF to prevent eye strain/halation (16.6:1)
-  static const Color darkTextSecondary = Color(0xFFA3A3A3); // Soft secondary grey
-  static const Color darkDivider = Color(0x12FFFFFF);  // Ultra-soft dark hairline divider (~7% white)
-  static const Color darkPill = Color(0xFFE8E8E8); // Ergonomic soft white pill
+  // Calibrated WCAG 2.1 AA Tokens
+  static const Color accessibleGreen = Color(0xFF4E5EAA);
+  static const Color accessibleAmber = Color(0xFF996100);
+  static const Color accessibleCrimson = Color(0xFFDC2626);
 
-  // Light Theme Tokens (Warm Paper with Anti-Harsh Calibrated Contrast)
-  static const Color lightBg = Color(0xFFF8F5ED);
+  // Dark Theme Tokens (Deep Onyx #0C0C0C + Elevated Cards #242424)
+  static const Color darkBg = Color(0xFF0C0C0C);
+  static const Color darkCard = Color(0xFF1E1E1E);
+  static const Color darkCardElevated = Color(0xFF242424);
+  static const Color darkBorder = Color(0x1FFFFFFF);   // Subtle ~12% white outline
+  static const Color darkTextPrimary = Color(0xFFFFFFFF); // Crisp White
+  static const Color darkTextSecondary = Color(0xFF9E9E9E); // Muted Grey
+  static const Color darkDivider = Color(0x14FFFFFF);  // Ultra-soft hairline divider (~8% white)
+  static const Color darkPill = Color(0xFFFFFFFF);     // High-contrast white pill (like Top Up button)
+
+  // Light Theme Tokens
+  static const Color lightBg = Color(0xFFF5F6FA);
   static const Color lightCard = Color(0xFFFFFFFF);
-  static const Color lightCardElevated = Color(0xFFF2EFE6);
-  static const Color lightBorder = Color(0x0F000000);  // Hairline ~6% black
-  static const Color lightDivider = Color(0xFFECE7DC); // Ultra-soft warm hairline divider (~3% delta from #F8F5ED)
-  static const Color lightTextPrimary = Color(0xFF222222); // Softened from #0A0A0A to prevent optical vibration (14.6:1)
-  static const Color lightTextSecondary = Color(0xFF666666); // 5.3:1 (safe AA)
-  static const Color lightPill = Color(0xFF1C1C1E); // Ergonomic soft black pill
+  static const Color lightCardElevated = Color(0xFFECEEF5);
+  static const Color lightBorder = Color(0x10000000);
+  static const Color lightDivider = Color(0xFFE4E7F0);
+  static const Color lightTextPrimary = Color(0xFF0C0C0C);
+  static const Color lightTextSecondary = Color(0xFF6B7280);
+  static const Color lightPill = Color(0xFF0C0C0C);
 
   // Dynamic Theme Helpers
   static Color bg(bool isDark) => isDark ? darkBg : lightBg;
@@ -43,33 +49,33 @@ class PirschColors {
   static Color textPrimary(bool isDark) => isDark ? darkTextPrimary : lightTextPrimary;
   static Color textSecondary(bool isDark) => isDark ? darkTextSecondary : lightTextSecondary;
   static Color pill(bool isDark) => isDark ? darkPill : lightPill;
-  static Color pillText(bool isDark) => isDark ? const Color(0xFF1C1C1E) : const Color(0xFFFFFFFF);
+  static Color pillText(bool isDark) => isDark ? const Color(0xFF0C0C0C) : const Color(0xFFFFFFFF);
 
-  // Dynamic WCAG 2.1 AA Compliant Semantic Colors
-  static Color green(bool isDark) => isDark ? mintGreen : accessibleGreen;
+  // Dynamic Semantic Colors
+  static Color green(bool isDark) => isDark ? primaryBlue : accessibleGreen;
   static Color yellow(bool isDark) => isDark ? warmYellow : accessibleAmber;
   static Color red(bool isDark) => isDark ? roseRed : accessibleCrimson;
 
-  // Landing Page Ambient Radial Gradient Glow Tokens
+  // Ambient Radial Gradient Glow Tokens (Periwinkle Blue Bloom)
   static Color ambientGlowColor({
     required bool isDark,
     required bool isOverBudget,
     required bool isWarning,
   }) {
     if (isOverBudget) {
-      return roseRed.withValues(alpha: isDark ? 0.14 : 0.08);
+      return roseRed.withValues(alpha: isDark ? 0.16 : 0.08);
     }
     if (isWarning) {
       return warmYellow.withValues(alpha: isDark ? 0.14 : 0.08);
     }
-    return mintGreen.withValues(alpha: isDark ? 0.14 : 0.08);
+    return primaryBlue.withValues(alpha: isDark ? 0.20 : 0.10);
   }
 }
 
 /// Backward compatibility aliases mapped to Pirsch Design Tokens
 class AppColors {
-  static const Color primary = PirschColors.mintGreen;
-  static const Color primaryDark = Color(0xFF56B585);
+  static const Color primary = PirschColors.primaryBlue;
+  static const Color primaryDark = Color(0xFF4E5EAA);
   static const Color secondary = PirschColors.warmYellow;
   static const Color background = PirschColors.darkBg;
   static const Color surface = PirschColors.darkCard;
@@ -81,6 +87,6 @@ class AppColors {
 
   static const Color danger = PirschColors.roseRed;
   static const Color warning = PirschColors.warmYellow;
-  static const Color success = PirschColors.mintGreen;
+  static const Color success = PirschColors.primaryBlue;
 }
 

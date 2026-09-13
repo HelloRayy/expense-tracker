@@ -192,17 +192,17 @@ class _WeeklyBudgetInputSheetState extends State<WeeklyBudgetInputSheet> {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: PirschColors.mintGreen.withValues(alpha: isDark ? 0.12 : 0.08),
+                  color: PirschColors.primaryBlue.withValues(alpha: isDark ? 0.15 : 0.08),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: PirschColors.mintGreen.withValues(alpha: 0.3),
+                    color: PirschColors.primaryBlue.withValues(alpha: 0.35),
                   ),
                 ),
                 child: Row(
                   children: [
                     const Icon(
                       Icons.savings_outlined,
-                      color: PirschColors.mintGreen,
+                      color: PirschColors.primaryBlue,
                       size: 24,
                     ),
                     const SizedBox(width: 12),
@@ -213,7 +213,7 @@ class _WeeklyBudgetInputSheetState extends State<WeeklyBudgetInputSheet> {
                           const Text(
                             'Sisa Minggu Lalu',
                             style: TextStyle(
-                              color: PirschColors.mintGreen,
+                              color: PirschColors.primaryBlue,
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
@@ -222,7 +222,7 @@ class _WeeklyBudgetInputSheetState extends State<WeeklyBudgetInputSheet> {
                           Text(
                             '+ ${CurrencyFormatter.format(_carryover)}',
                             style: const TextStyle(
-                              color: PirschColors.mintGreen,
+                              color: PirschColors.primaryBlue,
                               fontSize: 16,
                               fontWeight: FontWeight.w800,
                             ),
@@ -232,8 +232,8 @@ class _WeeklyBudgetInputSheetState extends State<WeeklyBudgetInputSheet> {
                     ),
                     Checkbox(
                       value: _includeCarryover,
-                      activeColor: PirschColors.mintGreen,
-                      checkColor: Colors.black,
+                      activeColor: PirschColors.primaryBlue,
+                      checkColor: Colors.white,
                       onChanged: (val) {
                         setState(() {
                           _includeCarryover = val ?? true;
@@ -342,7 +342,7 @@ class _WeeklyBudgetInputSheetState extends State<WeeklyBudgetInputSheet> {
                   Text(
                     CurrencyFormatter.format(totalSpendable),
                     style: TextStyle(
-                      color: totalSpendable > 0 ? PirschColors.mintGreen : textPrimary,
+                      color: totalSpendable > 0 ? PirschColors.primaryBlue : textPrimary,
                       fontSize: 15,
                       fontWeight: FontWeight.w800,
                     ),
@@ -368,8 +368,8 @@ class _WeeklyBudgetInputSheetState extends State<WeeklyBudgetInputSheet> {
               child: ElevatedButton(
                 onPressed: _onConfirm,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: PirschColors.mintGreen,
-                  foregroundColor: Colors.black,
+                  backgroundColor: PirschColors.primaryBlue,
+                  foregroundColor: Colors.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

@@ -24,10 +24,10 @@ class WeeklyRolloverBanner extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1B241E) : const Color(0xFFEBF7F0),
+        color: isDark ? const Color(0xFF16192B) : const Color(0xFFEFF2FC),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: PirschColors.mintGreen.withValues(alpha: isDark ? 0.35 : 0.4),
+          color: PirschColors.primaryBlue.withValues(alpha: isDark ? 0.35 : 0.4),
           width: 1,
         ),
       ),
@@ -37,12 +37,12 @@ class WeeklyRolloverBanner extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: PirschColors.mintGreen.withValues(alpha: 0.15),
+              color: PirschColors.primaryBlue.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.event_repeat_rounded,
-              color: PirschColors.mintGreen,
+              color: PirschColors.primaryBlue,
               size: 20,
             ),
           ),
@@ -54,7 +54,7 @@ class WeeklyRolloverBanner extends StatelessWidget {
                 const Text(
                   'Periode Baru Dimulai',
                   style: TextStyle(
-                    color: PirschColors.mintGreen,
+                    color: PirschColors.primaryBlue,
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                   ),
@@ -65,7 +65,7 @@ class WeeklyRolloverBanner extends StatelessWidget {
                       ? 'Ada sisa ${CurrencyFormatter.format(carryoverBalance)} dari minggu lalu. Yuk atur budget minggu ini!'
                       : 'Yuk masukkan uang jajan untuk memulai minggu ini!',
                   style: TextStyle(
-                    color: isDark ? const Color(0xFFC7D4CC) : const Color(0xFF335C43),
+                    color: isDark ? const Color(0xFFCBD2EC) : const Color(0xFF374151),
                     fontSize: 12,
                     height: 1.3,
                   ),
@@ -77,8 +77,8 @@ class WeeklyRolloverBanner extends StatelessWidget {
           ElevatedButton(
             onPressed: onInputBudget,
             style: ElevatedButton.styleFrom(
-              backgroundColor: PirschColors.mintGreen,
-              foregroundColor: Colors.black,
+              backgroundColor: PirschColors.primaryBlue,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
