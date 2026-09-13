@@ -94,12 +94,15 @@ class NativeBridge {
   }
 
   /// Triggers a test floating reminder on screen
-  Future<void> showShopeeFloatingTest(int balance) async {
+  Future<bool> showShopeeFloatingTest(int balance) async {
     try {
-      await _shopeeChannel.invokeMethod('showFloatingReminder', {
+      final bool? ok = await _shopeeChannel.invokeMethod('showFloatingReminder', {
         'balance': balance,
       });
-    } catch (_) {}
+      return ok ?? true;
+    } catch (_) {
+      return false;
+    }
   }
 
   /// Toggle floating bubble service
@@ -147,6 +150,33 @@ class NativeBridge {
     }
   }
 
+  /// Check if System Notification (POST_NOTIFICATIONS) permission is granted
+  Future<bool> checkNotificationPermission() async {
+    try {
+      final bool? enabled = await _shopeeChannel.invokeMethod('checkNotificationPermission');
+      return enabled ?? false;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Request System Notification permission from user or open settings
+  Future<bool> requestNotificationPermission() async {
+    try {
+      final bool? granted = await _shopeeChannel.invokeMethod('requestNotificationPermission');
+      return granted ?? false;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Open App Notification Settings directly
+  Future<void> openAppNotificationSettings() async {
+    try {
+      await _shopeeChannel.invokeMethod('openAppNotificationSettings');
+    } catch (_) {}
+  }
+
   /// Check if Notification Listener (Akses Notifikasi) permission is granted
   Future<bool> checkNotificationListenerPermission() async {
     try {
@@ -166,12 +196,15 @@ class NativeBridge {
   }
 
   /// Simulate payment notification for testing
-  Future<void> simulatePaymentNotification({int amount = 35000, String note = 'ShopeePay'}) async {
+  Future<bool> simulatePaymentNotification({int amount = 35000, String note = 'ShopeePay'}) async {
     try {
-      await _shopeeChannel.invokeMethod('simulatePaymentNotification', {
+      final bool? ok = await _shopeeChannel.invokeMethod('simulatePaymentNotification', {
         'amount': amount,
         'note': note,
       });
-    } catch (_) {}
+      return ok ?? true;
+    } catch (_) {
+      return false;
+    }
   }
 }

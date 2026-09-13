@@ -1,10 +1,15 @@
 package com.hellorayy.jajan_tracker
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -73,6 +78,31 @@ class MainActivity : FlutterActivity() {
                     startActivity(intent)
                     result.success(true)
                 }
+                "checkNotificationPermission" -> {
+                    val enabled = NotificationManagerCompat.from(this).areNotificationsEnabled()
+                    result.success(enabled)
+                }
+                "requestNotificationPermission" -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(
+                                this,
+                                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                                1010
+                            )
+                            result.success(false)
+                            return@setMethodCallHandler
+                        }
+                    }
+                    if (!NotificationManagerCompat.from(this).areNotificationsEnabled()) {
+                        openAppNotificationSettings()
+                    }
+                    result.success(NotificationManagerCompat.from(this).areNotificationsEnabled())
+                }
+                "openAppNotificationSettings" -> {
+                    openAppNotificationSettings()
+                    result.success(true)
+                }
                 "showFloatingReminder" -> {
                     val balance = (call.argument<Number>("balance"))?.toLong() ?: 0L
                     val formatter = java.text.NumberFormat.getCurrencyInstance(java.util.Locale("id", "ID")).apply {
@@ -80,8 +110,18 @@ class MainActivity : FlutterActivity() {
                     }
                     val balanceStr = formatter.format(balance)
                     ShopeeAccessibilityService.isMutedForSession = false
+
+                    val areEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled()
+                    if (!areEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        ActivityCompat.requestPermissions(
+                            this,
+                            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                            1010
+                        )
+                    }
+
                     ShopeeAccessibilityService.showHeadsUpNotification(this, balanceStr, "Rp 50.000", isFromQris = true)
-                    result.success(true)
+                    result.success(areEnabled)
                 }
                 "toggleFloatingBubble" -> {
                     val enabled = call.argument<Boolean>("enabled") ?: false
@@ -110,12 +150,39 @@ class MainActivity : FlutterActivity() {
                 "simulatePaymentNotification" -> {
                     val amount = (call.argument<Number>("amount"))?.toLong() ?: 35000L
                     val note = call.argument<String>("note") ?: "ShopeePay"
+
+                    val areEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled()
+                    if (!areEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        ActivityCompat.requestPermissions(
+                            this,
+                            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                            1010
+                        )
+                    }
+
                     JajanNotificationListenerService.savePendingTransaction(this, amount, note, "Pembayaran ShopeePay Berhasil")
                     JajanNotificationListenerService.showActionableTransactionNotification(this, amount, note)
-                    result.success(true)
+                    result.success(areEnabled)
                 }
                 else -> result.notImplemented()
             }
+        }
+    }
+
+    private fun openAppNotificationSettings() {
+        try {
+            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                }
+            } else {
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.parse("package:$packageName")
+                }
+            }
+            startActivity(intent)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

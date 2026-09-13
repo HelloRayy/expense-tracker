@@ -274,7 +274,9 @@ class ShopeeAccessibilityService : AccessibilityService() {
                     NotificationManager.IMPORTANCE_HIGH
                 ).apply {
                     description = "Notifikasi sisa uang jajan saat membuka Shopee atau scan QRIS"
+                    enableLights(true)
                     enableVibration(true)
+                    lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
                 }
                 notificationManager.createNotificationChannel(channel)
             }
@@ -317,8 +319,10 @@ class ShopeeAccessibilityService : AccessibilityService() {
 
             val subtitle = "Batas aman: $formattedDaily / hari"
 
+            val iconRes = context.applicationInfo.icon.takeIf { it != 0 } ?: R.mipmap.ic_launcher
+
             val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_quick_tile)
+                .setSmallIcon(iconRes)
                 .setContentTitle(title)
                 .setContentText(subtitle)
                 .setStyle(
@@ -326,15 +330,14 @@ class ShopeeAccessibilityService : AccessibilityService() {
                         .setBigContentTitle(title)
                         .bigText(subtitle)
                 )
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setDeleteIntent(mutePendingIntent) // If swiped away, also mute for session
-                .setTimeoutAfter(8000) // Disappear after 8 seconds
                 .addAction(
-                    R.drawable.ic_quick_tile,
+                    android.R.drawable.ic_menu_add,
                     "⚡ Catat Jajan",
                     pendingIntent
                 )

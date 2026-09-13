@@ -19,6 +19,7 @@ class ShopeeSettingsScreen extends StatefulWidget {
 class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
     with WidgetsBindingObserver {
   final NativeBridge _bridge = NativeBridge.instance;
+  bool _hasPostNotificationPermission = false;
   bool _hasOverlayPermission = false;
   bool _hasAccessibilityPermission = false;
   bool _hasNotificationListenerPermission = false;
@@ -47,12 +48,14 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
 
   Future<void> _checkPermissions() async {
     setState(() => _isChecking = true);
+    final postNotif = await _bridge.checkNotificationPermission();
     final overlay = await _bridge.checkOverlayPermission();
     final access = await _bridge.checkAccessibilityPermission();
     final notifListener = await _bridge.checkNotificationListenerPermission();
     final bubble = await _bridge.isFloatingBubbleRunning();
     if (mounted) {
       setState(() {
+        _hasPostNotificationPermission = postNotif;
         _hasOverlayPermission = overlay;
         _hasAccessibilityPermission = access;
         _hasNotificationListenerPermission = notifListener;
@@ -151,6 +154,20 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1,
                   ),
+                ),
+                const SizedBox(height: 12),
+
+                // Permission Item 0: System Notification (Essential for alerts to show)
+                _permissionTile(
+                  title: 'Izin Notifikasi Sistem (Wajib)',
+                  description:
+                      'Diperlukan oleh sistem Android agar pop-up notifikasi 1-tap dan pengingat jajan diizinkan muncul di status bar.',
+                  isGranted: _hasPostNotificationPermission,
+                  badge: 'WAJIB',
+                  onAction: () async {
+                    await _bridge.requestNotificationPermission();
+                    _checkPermissions();
+                  },
                 ),
                 const SizedBox(height: 12),
 
@@ -308,7 +325,13 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
                         height: 46,
                         child: ElevatedButton.icon(
                           onPressed: () async {
-                            await _bridge.simulatePaymentNotification(
+                            final hasPerm = await _bridge.checkNotificationPermission();
+                            if (!hasPerm) {
+                              await _bridge.requestNotificationPermission();
+                              _checkPermissions();
+                            }
+
+                            final ok = await _bridge.simulatePaymentNotification(
                               amount: 35000,
                               note: 'ShopeePay',
                             );
@@ -324,11 +347,20 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
                             }
                             await widget.repository.loadData();
                             if (context.mounted) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
+                                SnackBar(
                                   content: Text(
-                                    'Notifikasi transaksi ShopeePay dikirim! Periksa Dashboard untuk melihat pengingat.',
+                                    ok
+                                        ? 'Notifikasi transaksi ShopeePay dikirim ke status bar! Periksa tirai notifikasi HP Anda.'
+                                        : 'Izin notifikasi sistem belum aktif. Harap izinkan notifikasi agar muncul di status bar.',
                                   ),
+                                  action: ok
+                                      ? null
+                                      : SnackBarAction(
+                                          label: 'Izinkan',
+                                          onPressed: () => _bridge.openAppNotificationSettings(),
+                                        ),
                                 ),
                               );
                             }
@@ -352,13 +384,28 @@ class _ShopeeSettingsScreenState extends State<ShopeeSettingsScreen>
                         height: 46,
                         child: OutlinedButton.icon(
                           onPressed: () async {
-                            await _bridge.showShopeeFloatingTest(balance);
+                            final hasPerm = await _bridge.checkNotificationPermission();
+                            if (!hasPerm) {
+                              await _bridge.requestNotificationPermission();
+                              _checkPermissions();
+                            }
+
+                            final ok = await _bridge.showShopeeFloatingTest(balance);
                             if (context.mounted) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
+                                SnackBar(
                                   content: Text(
-                                    'Notifikasi sistem pengingat jajan dikirim meluncur dari atas status bar!',
+                                    ok
+                                        ? 'Notifikasi sistem pengingat jajan dikirim meluncur dari atas status bar!'
+                                        : 'Izin notifikasi sistem dinonaktifkan di pengaturan Android. Aktifkan agar muncul.',
                                   ),
+                                  action: ok
+                                      ? null
+                                      : SnackBarAction(
+                                          label: 'Buka Izin',
+                                          onPressed: () => _bridge.openAppNotificationSettings(),
+                                        ),
                                 ),
                               );
                             }

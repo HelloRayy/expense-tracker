@@ -129,6 +129,7 @@ class JajanNotificationListenerService : NotificationListenerService() {
                     description = "Notifikasi interaktif 1-tap untuk mencatat pengeluaran yang terdeteksi"
                     enableLights(true)
                     enableVibration(true)
+                    lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
                 }
                 nm.createNotificationChannel(channel)
             }
@@ -201,8 +202,10 @@ class JajanNotificationListenerService : NotificationListenerService() {
                 "⚠️ Overbudget! Sisa uang jajan Anda: $newRemainingStr"
             }
 
+            val iconRes = context.applicationInfo.icon.takeIf { it != 0 } ?: R.mipmap.ic_launcher
+
             val builder = NotificationCompat.Builder(context, TRANSACTION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_quick_tile)
+                .setSmallIcon(iconRes)
                 .setContentTitle(title)
                 .setContentText(subtitle)
                 .setStyle(
@@ -210,7 +213,8 @@ class JajanNotificationListenerService : NotificationListenerService() {
                         .setBigContentTitle(title)
                         .bigText(subtitle)
                 )
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(calcPendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setAutoCancel(true)
@@ -226,7 +230,11 @@ class JajanNotificationListenerService : NotificationListenerService() {
                     calcPendingIntent
                 )
 
-            nm.notify(notifId, builder.build())
+            try {
+                nm.notify(notifId, builder.build())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         fun savePendingTransaction(context: Context, amount: Long, source: String, rawTitle: String) {
