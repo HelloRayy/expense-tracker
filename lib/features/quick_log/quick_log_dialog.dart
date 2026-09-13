@@ -60,7 +60,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
   bool _isSaving = false;
   bool _cursorVisible = true;
   Timer? _cursorBlinkTimer;
-  ExpenseCategory _selectedCategory = ExpenseCategory.makanan;
+  ExpenseCategory _selectedCategory = ExpenseCategory.makananMinuman;
 
   @override
   void initState() {

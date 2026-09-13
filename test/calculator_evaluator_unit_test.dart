@@ -35,5 +35,32 @@ void main() {
       expect(CalculatorEvaluator.hasOperator('25000 × 2'), isTrue);
       expect(CalculatorEvaluator.hasOperator('10%'), isTrue);
     });
+
+    group('Auto-Kilo Experimental Mode', () {
+      test('keeps numbers intact when autoKilo is false', () {
+        expect(CalculatorEvaluator.evaluate('72', autoKilo: false), 72);
+        expect(CalculatorEvaluator.evaluate('72 + 3000', autoKilo: false), 3072);
+      });
+
+      test('scales single integer < 1000 by 1000 when autoKilo is true', () {
+        expect(CalculatorEvaluator.evaluate('72', autoKilo: true), 72000);
+        expect(CalculatorEvaluator.evaluate('500', autoKilo: true), 500000);
+        expect(CalculatorEvaluator.evaluate('0', autoKilo: true), 0);
+        expect(CalculatorEvaluator.evaluate('50000', autoKilo: true), 50000);
+      });
+
+      test('scales additive operands while preserving full thousands', () {
+        expect(CalculatorEvaluator.evaluate('72 + 3.000', autoKilo: true), 75000);
+        expect(CalculatorEvaluator.evaluate('72 + 3', autoKilo: true), 75000);
+        expect(CalculatorEvaluator.evaluate('100 - 5', autoKilo: true), 95000);
+      });
+
+      test('safeguards multipliers and divisors from being scaled to thousands', () {
+        expect(CalculatorEvaluator.evaluate('50000 ÷ 2', autoKilo: true), 25000);
+        expect(CalculatorEvaluator.evaluate('50.000 ÷ 2', autoKilo: true), 25000);
+        expect(CalculatorEvaluator.evaluate('25 × 2', autoKilo: true), 50000);
+        expect(CalculatorEvaluator.evaluate('100.000 × 10%', autoKilo: true), 10000);
+      });
+    });
   });
 }

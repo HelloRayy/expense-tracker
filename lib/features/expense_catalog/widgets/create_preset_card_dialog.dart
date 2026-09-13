@@ -25,14 +25,13 @@ class CreatePresetCardDialog extends StatefulWidget {
 class _CreatePresetCardDialogState extends State<CreatePresetCardDialog> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
-  String _selectedCategory = 'Makanan';
+  String _selectedCategory = 'Makanan / Minuman';
   String? _error;
 
   final _categories = [
-    {'name': 'Makanan', 'icon': Icons.restaurant_rounded, 'color': PirschColors.coralOrange},
-    {'name': 'Kopi', 'icon': Icons.local_cafe_rounded, 'color': PirschColors.mintGreen},
-    {'name': 'Transport', 'icon': Icons.two_wheeler_rounded, 'color': Color(0xFF60A5FA)},
-    {'name': 'Belanja', 'icon': Icons.shopping_bag_rounded, 'color': PirschColors.warmYellow},
+    {'name': 'Makanan / Minuman', 'icon': Icons.restaurant_rounded, 'color': PirschColors.coralOrange},
+    {'name': 'Transportasi', 'icon': Icons.directions_car_rounded, 'color': Color(0xFF60A5FA)},
+    {'name': 'Lainnya', 'icon': Icons.more_horiz_rounded, 'color': PirschColors.warmYellow},
   ];
 
   @override

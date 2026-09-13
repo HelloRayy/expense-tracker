@@ -89,7 +89,10 @@ class _QuickLogScreenState extends State<QuickLogScreen> {
     _resetCursorBlink();
   }
 
-  int get _currentTotal => CalculatorEvaluator.evaluate(_expression);
+  int get _currentTotal => CalculatorEvaluator.evaluate(
+        _expression,
+        autoKilo: AppSettingsController.instance.autoKiloEnabled,
+      );
 
   bool get _hasOperator => CalculatorEvaluator.hasOperator(_expression);
 
@@ -478,7 +481,11 @@ class _QuickLogScreenState extends State<QuickLogScreen> {
                                     ],
                                   ),
                                 ),
-                                if (_hasOperator && _currentTotal > 0) ...[
+                                if (((_hasOperator ||
+                                        (AppSettingsController.instance.autoKiloEnabled &&
+                                            _expression.isNotEmpty &&
+                                            _currentTotal != CalculatorEvaluator.evaluate(_expression, autoKilo: false))) &&
+                                    _currentTotal > 0)) ...[
                                   const SizedBox(height: 4),
                                   Text(
                                     '= ${CurrencyFormatter.format(_currentTotal)}',

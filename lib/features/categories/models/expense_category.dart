@@ -16,51 +16,61 @@ class ExpenseCategory {
     required this.color,
   });
 
-  static const makanan = ExpenseCategory(
-    id: 'Makanan',
-    displayName: 'Makanan',
+  static const makananMinuman = ExpenseCategory(
+    id: 'Makanan / Minuman',
+    displayName: 'Makanan / Minuman',
     icon: Icons.restaurant_rounded,
     color: PirschColors.coralOrange,
   );
 
-  static const kopi = ExpenseCategory(
-    id: 'Kopi & Minum',
-    displayName: 'Kopi & Minum',
-    icon: Icons.local_cafe_rounded,
-    color: PirschColors.mintGreen,
-  );
-
-  static const transport = ExpenseCategory(
-    id: 'Transport',
-    displayName: 'Transport',
+  static const transportasi = ExpenseCategory(
+    id: 'Transportasi',
+    displayName: 'Transportasi',
     icon: Icons.directions_car_rounded,
     color: Color(0xFF60A5FA),
   );
 
-  static const belanja = ExpenseCategory(
-    id: 'Belanja',
-    displayName: 'Belanja/QRIS',
-    icon: Icons.shopping_bag_rounded,
+  static const lainnya = ExpenseCategory(
+    id: 'Lainnya',
+    displayName: 'Lainnya',
+    icon: Icons.more_horiz_rounded,
     color: PirschColors.warmYellow,
   );
 
+  // Backward compatibility aliases
+  static const makanan = makananMinuman;
+  static const transport = transportasi;
+  static const belanja = lainnya;
+  static const kopi = makananMinuman;
+
   /// All registered canonical categories.
   static const List<ExpenseCategory> all = [
-    makanan,
-    kopi,
-    transport,
-    belanja,
+    makananMinuman,
+    transportasi,
+    lainnya,
   ];
 
   /// Resolves any string or alias into a canonical ExpenseCategory.
-  /// Gracefully normalizes legacy strings like 'Kopi' -> 'Kopi & Minum', 'Belanja/QRIS' -> 'Belanja'.
+  /// Gracefully normalizes legacy strings like 'Kopi', 'Makanan', 'Transport', 'Belanja/QRIS' -> canonical categories.
   static ExpenseCategory? fromId(String? id) {
     if (id == null) return null;
     final normalized = id.toLowerCase().trim();
-    if (normalized.contains('makan')) return makanan;
-    if (normalized.contains('kopi') || normalized.contains('minum')) return kopi;
-    if (normalized.contains('transpor')) return transport;
-    if (normalized.contains('belanja') || normalized.contains('qris')) return belanja;
-    return null;
+    if (normalized.contains('makan') ||
+        normalized.contains('kopi') ||
+        normalized.contains('minum') ||
+        normalized.contains('food')) {
+      return makananMinuman;
+    }
+    if (normalized.contains('transpor') ||
+        normalized.contains('bensin') ||
+        normalized.contains('ojek')) {
+      return transportasi;
+    }
+    if (normalized.contains('belanja') ||
+        normalized.contains('qris') ||
+        normalized.contains('lain')) {
+      return lainnya;
+    }
+    return lainnya;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../budget/repository/budget_repository.dart';
+import '../../categories/models/expense_category.dart';
 import '../models/expense_preset_model.dart';
 import '../widgets/catalog_live_header.dart';
 import '../widgets/catalog_preset_card.dart';
@@ -27,16 +28,21 @@ class _ExpenseCatalogScreenState extends State<ExpenseCatalogScreen> {
 
   final List<String> _categories = [
     'Semua',
-    'Makanan',
-    'Kopi',
-    'Transport',
-    'Belanja',
+    'Makanan / Minuman',
+    'Transportasi',
+    'Lainnya',
   ];
 
   @override
   void initState() {
     super.initState();
-    _selectedCategory = widget.initialCategory ?? 'Semua';
+    final initial = widget.initialCategory;
+    if (initial != null) {
+      final normalized = ExpenseCategory.fromId(initial);
+      _selectedCategory = normalized?.displayName ?? initial;
+    } else {
+      _selectedCategory = 'Semua';
+    }
     if (!_categories.contains(_selectedCategory)) {
       _selectedCategory = 'Semua';
     }
@@ -96,7 +102,11 @@ class _ExpenseCatalogScreenState extends State<ExpenseCatalogScreen> {
 
     final filteredPresets = _selectedCategory == 'Semua'
         ? _presets
-        : _presets.where((p) => p.category == _selectedCategory).toList();
+        : _presets.where((p) {
+            final cat = ExpenseCategory.fromId(p.category);
+            final target = ExpenseCategory.fromId(_selectedCategory);
+            return p.category == _selectedCategory || (cat != null && cat.id == target?.id);
+          }).toList();
 
     return ListenableBuilder(
       listenable: widget.repository,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../budget/models/expense_model.dart';
+import '../../categories/models/expense_category.dart';
 
 /// Modern transaction row matching Reference Design 1:
 /// - Circular avatar icon with subtle tinted background
@@ -36,31 +37,34 @@ class ExpenseListItem extends StatelessWidget {
     final IconData itemIcon;
     final String categoryName;
 
-    if (exp.categoryId != null && exp.categoryId!.isNotEmpty) {
-      categoryName = exp.categoryId!;
-      if (categoryName.contains('Makan') || categoryName.contains('Food')) {
-        itemIcon = Icons.restaurant_rounded;
-      } else if (categoryName.contains('Kopi') || categoryName.contains('Minum')) {
-        itemIcon = Icons.local_cafe_rounded;
-      } else if (categoryName.contains('Transpor')) {
-        itemIcon = Icons.directions_car_rounded;
-      } else if (categoryName.contains('Belanja')) {
-        itemIcon = Icons.shopping_bag_rounded;
-      } else {
-        itemIcon = Icons.receipt_long_rounded;
-      }
-    } else if (noteLower.contains('kopi') || noteLower.contains('coffee')) {
-      itemIcon = Icons.local_cafe_rounded;
-      categoryName = 'Kopi & Minum';
-    } else if (noteLower.contains('makan') || noteLower.contains('nasi') || noteLower.contains('mie') || noteLower.contains('ayam')) {
+    final resolvedCategory = ExpenseCategory.fromId(exp.categoryId);
+    if (resolvedCategory != null) {
+      categoryName = resolvedCategory.displayName;
+      itemIcon = resolvedCategory.icon;
+    } else if (noteLower.contains('kopi') ||
+        noteLower.contains('coffee') ||
+        noteLower.contains('makan') ||
+        noteLower.contains('nasi') ||
+        noteLower.contains('mie') ||
+        noteLower.contains('ayam') ||
+        noteLower.contains('minum')) {
       itemIcon = Icons.restaurant_rounded;
-      categoryName = 'Makanan';
-    } else if (noteLower.contains('shopee') || noteLower.contains('tokopedia') || noteLower.contains('belanja')) {
-      itemIcon = Icons.shopping_bag_rounded;
-      categoryName = 'Belanja';
-    } else if (noteLower.contains('transport') || noteLower.contains('bensin') || noteLower.contains('gojek') || noteLower.contains('grab') || noteLower.contains('uber')) {
+      categoryName = 'Makanan / Minuman';
+    } else if (noteLower.contains('transport') ||
+        noteLower.contains('bensin') ||
+        noteLower.contains('gojek') ||
+        noteLower.contains('grab') ||
+        noteLower.contains('ojek') ||
+        noteLower.contains('parkir')) {
       itemIcon = Icons.directions_car_rounded;
-      categoryName = 'Transport';
+      categoryName = 'Transportasi';
+    } else if (noteLower.contains('shopee') ||
+        noteLower.contains('tokopedia') ||
+        noteLower.contains('belanja') ||
+        noteLower.contains('qris') ||
+        noteLower.contains('snack')) {
+      itemIcon = Icons.more_horiz_rounded;
+      categoryName = 'Lainnya';
     } else {
       itemIcon = Icons.receipt_long_rounded;
       categoryName = 'Belum berkategori';
