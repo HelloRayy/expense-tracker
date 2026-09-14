@@ -134,75 +134,82 @@ class HomeWidget4x2Card extends StatelessWidget {
                         ],
                       ),
 
-                      // Center Hero: Nominal + /hari
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
+                      // Lower Block: Hero Nominal + Metrics grouped with a small gap
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            CurrencyFormatter.format(dailyAllowance),
-                            style: TextStyle(
-                              color: textPrimary,
-                              fontSize: 32,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: -0.8,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '/hari',
-                            style: TextStyle(
-                              color: textSecondary,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      // Bottom Metrics: Uang Masuk Mingguan & Total Pengeluaran
-                      Row(
-                        children: [
-                          // Income Stat (Green)
+                          // Center Hero: Nominal + /hari
                           Row(
-                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
                             children: [
-                              Icon(
-                                Icons.arrow_downward_rounded,
-                                size: 15,
-                                color: greenColor,
+                              Text(
+                                CurrencyFormatter.format(dailyAllowance),
+                                style: TextStyle(
+                                  color: textPrimary,
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.8,
+                                ),
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                CurrencyFormatter.format(weeklyIncome),
+                                '/hari',
                                 style: TextStyle(
-                                  color: greenColor,
+                                  color: textSecondary,
                                   fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: -0.2,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(width: 12),
-                          // Expense Stat (Red)
+                          const SizedBox(height: 8),
+                          // Bottom Metrics: Uang Masuk Mingguan & Total Pengeluaran
                           Row(
-                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
-                                Icons.arrow_upward_rounded,
-                                size: 15,
-                                color: redColor,
+                              // Income Stat (Green)
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.arrow_downward_rounded,
+                                    size: 15,
+                                    color: greenColor,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    CurrencyFormatter.format(weeklyIncome),
+                                    style: TextStyle(
+                                      color: greenColor,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: -0.2,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                CurrencyFormatter.format(totalSpent),
-                                style: TextStyle(
-                                  color: redColor,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: -0.2,
-                                ),
+                              const SizedBox(width: 12),
+                              // Expense Stat (Red)
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.arrow_upward_rounded,
+                                    size: 15,
+                                    color: redColor,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    CurrencyFormatter.format(totalSpent),
+                                    style: TextStyle(
+                                      color: redColor,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: -0.2,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

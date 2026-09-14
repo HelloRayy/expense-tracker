@@ -81,67 +81,70 @@ export function HomeWidget4x2({
           </span>
         </div>
 
-        {/* Center Hero: Daily Allowance + /hari */}
-        <div className="flex items-baseline gap-1">
-          <span
-            style={{
-              color: tokens.textPrimary,
-              fontSize: '32px',
-              fontWeight: 700,
-              letterSpacing: '-0.8px',
-              lineHeight: 1,
-            }}
-          >
-            {formatRupiah(dailyAllowance)}
-          </span>
-          <span
-            style={{
-              color: tokens.textSecondary,
-              fontSize: '15px',
-              fontWeight: 500,
-              lineHeight: 1,
-            }}
-          >
-            /hari
-          </span>
-        </div>
-
-        {/* Bottom Metrics: Weekly Income (Green) & Total Spent (Red) */}
-        <div className="flex items-center gap-3">
-          {/* Weekly Income */}
-          <div
-            className="inline-flex items-center gap-1"
-            style={{ color: tokens.incomeGreen }}
-          >
-            <ArrowDown size={15} strokeWidth={2.4} className="shrink-0" />
+        {/* Lower Group (borderGreen): Hero + Metrics */}
+        <div className="flex flex-col gap-2">
+          {/* Center Hero: Daily Allowance + /hari */}
+          <div className="flex items-baseline gap-1">
             <span
               style={{
-                fontSize: '15px',
-                fontWeight: 600,
-                letterSpacing: '-0.2px',
+                color: tokens.textPrimary,
+                fontSize: '32px',
+                fontWeight: 700,
+                letterSpacing: '-0.8px',
                 lineHeight: 1,
               }}
             >
-              {formatRupiah(weeklyIncome)}
+              {formatRupiah(dailyAllowance)}
+            </span>
+            <span
+              style={{
+                color: tokens.textSecondary,
+                fontSize: '15px',
+                fontWeight: 500,
+                lineHeight: 1,
+              }}
+            >
+              /hari
             </span>
           </div>
 
-          {/* Total Spent */}
-          <div
-            className="inline-flex items-center gap-1"
-            style={{ color: tokens.expenseRed }}
-          >
-            <ArrowUp size={15} strokeWidth={2.4} className="shrink-0" />
-            <span
-              style={{
-                fontSize: '15px',
-                fontWeight: 600,
-                letterSpacing: '-0.2px',
-                lineHeight: 1,
-              }}
+          {/* Bottom Metrics: Weekly Income (Green) & Total Spent (Red) */}
+          <div className="flex items-center gap-3">
+            {/* Weekly Income */}
+            <div
+              className="inline-flex items-center gap-1"
+              style={{ color: tokens.incomeGreen }}
             >
-              {formatRupiah(totalSpent)}
-            </span>
+              <ArrowDown size={15} strokeWidth={2.4} className="shrink-0" />
+              <span
+                style={{
+                  fontSize: '15px',
+                  fontWeight: 600,
+                  letterSpacing: '-0.2px',
+                  lineHeight: 1,
+                }}
+              >
+                {formatRupiah(weeklyIncome)}
+              </span>
+            </div>
+
+            {/* Total Spent */}
+            <div
+              className="inline-flex items-center gap-1"
+              style={{ color: tokens.expenseRed }}
+            >
+              <ArrowUp size={15} strokeWidth={2.4} className="shrink-0" />
+              <span
+                style={{
+                  fontSize: '15px',
+                  fontWeight: 600,
+                  letterSpacing: '-0.2px',
+                  lineHeight: 1,
+                }}
+              >
+                {formatRupiah(totalSpent)}
+              </span>
+            </div>
           </div>
         </div>
       </div>
