@@ -43,6 +43,7 @@ Scaffold Key: `UIKeys.dashboardScaffold`
 |  | [UIKeys.heroGreeting] [Period Dropdown]  [...] Menu |  |
 |  | SISA SALDO JAJAN HARI INI                           |  |
 |  | [UIKeys.heroRemainingAmount] Rp 85.000 /hari        |  |
+|  | [UIKeys.heroTomorrowAllowance] Besok max: Rp 85.000 |  |
 |  | --------------------------------------------------- |  |
 |  | [UIKeys.heroSingleWalletRow] Saldo: Rp 350.000 [Pen]|  |
 |  |  OR (if multi-wallet enabled)                       |  |
@@ -236,6 +237,7 @@ UIKeys.heroPeriodDropdown
 UIKeys.heroPeriodDates
 UIKeys.heroMenuButton
 UIKeys.heroRemainingAmount
+UIKeys.heroTomorrowAllowance
 UIKeys.heroSingleWalletRow
 UIKeys.heroAccordionToggle
 UIKeys.heroSpentMetric

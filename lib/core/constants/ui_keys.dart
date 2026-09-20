@@ -22,6 +22,7 @@ abstract final class UIKeys {
   static const heroPeriodDates = ValueKey('hero_period_dates');
   static const heroMenuButton = ValueKey('hero_menu_button');
   static const heroRemainingAmount = ValueKey('hero_remaining_amount');
+  static const heroTomorrowAllowance = ValueKey('hero_tomorrow_allowance');
   static const heroSingleWalletRow = ValueKey('hero_single_wallet_row');
   static const heroAccordionToggle = ValueKey('hero_accordion_toggle');
   static const heroEwalletBreakdown = ValueKey('hero_ewallet_breakdown');

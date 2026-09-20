@@ -232,6 +232,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             remainingWeekly: remainingWeekly,
                             ewalletBalance: widget.repository.ewalletBalance,
                             cashBalance: widget.repository.cashBalance,
+                            tomorrowDailyAllowance: widget.repository.tomorrowDailyAllowance,
                             formattedPeriod: budget?.formattedPeriod ?? '',
                             isOverBudget: isOverBudget,
                             textPrimary: textPrimary,

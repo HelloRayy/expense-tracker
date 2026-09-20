@@ -106,6 +106,25 @@ class BudgetRepository extends ChangeNotifier {
     return remainingToday < 0;
   }
 
+  /// Batas jajan harian untuk hari esok (proyeksi jatah jajan besok)
+  int get tomorrowDailyAllowance {
+    if (_budget == null) return 0;
+    final now = DateTime.now();
+    if (_budget!.daysRemainingInWeek <= 1) {
+      // Hari ini hari terakhir minggu (Minggu). Besok mulai periode baru (Senin).
+      final surplus = (spendableBudget - _totalSpent).clamp(0, spendableBudget);
+      final nextWeeklySpendable = (weeklyIncome - weeklySavingsTarget) + surplus;
+      if (nextWeeklySpendable <= 0) return 0;
+      final allowance = nextWeeklySpendable / 7;
+      return (allowance / 100).round() * 100;
+    }
+
+    return _budget!.calculateDailyAllowance(
+      _totalSpent,
+      targetDate: now.add(const Duration(days: 1)),
+    );
+  }
+
   /// Status apakah total jajan seminggu sudah memakan porsi target tabungan
   bool get isSavingsAtRisk {
     return _totalSpent > spendableBudget;
@@ -195,6 +214,15 @@ class BudgetRepository extends ChangeNotifier {
       _totalSpent = actualExpenses.fold<int>(0, (sum, e) => sum + e.amount);
       _spentToday = actualExpenses.where((e) => e.isToday).fold<int>(0, (sum, e) => sum + e.amount);
       _spentUntilYesterday = _totalSpent - _spentToday;
+
+      // Self-healing: if period is not yet confirmed and carryover exceeds real wallet money,
+      // synchronize carryoverBalance immediately to actual remaining balance
+      if (!_budget!.isPeriodConfirmed && remainingBalance >= 0 && _budget!.carryoverBalance > remainingBalance) {
+        _budget = _budget!.copyWith(carryoverBalance: remainingBalance);
+        if (!kIsWeb) {
+          await _db.updateBudget(_budget!);
+        }
+      }
 
       if (!kIsWeb) {
         await _db.cleanupOldPendingTransactions();
@@ -562,5 +590,23 @@ class BudgetRepository extends ChangeNotifier {
       return List.unmodifiable(_expenses);
     }
     return await _db.getAllExpenses();
+  }
+
+  /// Synchronous test-only mutator to prevent async deadlocks during widget tests.
+  @visibleForTesting
+  void setForTest({
+    BudgetModel? budget,
+    List<ExpenseModel>? expenses,
+    int? totalSpent,
+    int? spentUntilYesterday,
+    int? spentToday,
+  }) {
+    if (budget != null) _budget = budget;
+    if (expenses != null) _expenses = expenses;
+    if (totalSpent != null) _totalSpent = totalSpent;
+    if (spentUntilYesterday != null) _spentUntilYesterday = spentUntilYesterday;
+    if (spentToday != null) _spentToday = spentToday;
+    _isLoading = false;
+    notifyListeners();
   }
 }

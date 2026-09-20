@@ -20,6 +20,7 @@ class HeroBalanceCard extends StatefulWidget {
   final int? remainingWeekly;
   final int? ewalletBalance;
   final int? cashBalance;
+  final int? tomorrowDailyAllowance;
   final String formattedPeriod;
   final bool isOverBudget;
   final Color textPrimary;
@@ -40,6 +41,7 @@ class HeroBalanceCard extends StatefulWidget {
     this.remainingWeekly,
     this.ewalletBalance,
     this.cashBalance,
+    this.tomorrowDailyAllowance,
     required this.formattedPeriod,
     required this.isOverBudget,
     required this.textPrimary,
@@ -71,6 +73,7 @@ class _HeroBalanceCardState extends State<HeroBalanceCard> {
     final remainingWeekly = widget.remainingWeekly;
     final ewalletBalance = widget.ewalletBalance;
     final cashBalance = widget.cashBalance;
+    final tomorrowDailyAllowance = widget.tomorrowDailyAllowance;
     final formattedPeriod = widget.formattedPeriod;
     final isOverBudget = widget.isOverBudget;
     final textPrimary = widget.textPrimary;
@@ -301,7 +304,52 @@ class _HeroBalanceCardState extends State<HeroBalanceCard> {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          if (isDaily && tomorrowDailyAllowance != null) ...[
+            const SizedBox(height: 8),
+            Container(
+              key: UIKeys.heroTomorrowAllowance,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: (isNegative || isOverBudget)
+                    ? PirschColors.roseRed.withValues(alpha: isDark ? 0.16 : 0.08)
+                    : (isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.04)),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: (isNegative || isOverBudget)
+                      ? PirschColors.roseRed.withValues(alpha: isDark ? 0.35 : 0.2)
+                      : (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.06)),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    (isNegative || isOverBudget) ? Icons.info_outline_rounded : Icons.calendar_today_rounded,
+                    size: 13,
+                    color: (isNegative || isOverBudget)
+                        ? (isDark ? const Color(0xFFFFB4AB) : PirschColors.roseRed)
+                        : textSecondary,
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    'Besok max jajan: ${CurrencyFormatter.format(tomorrowDailyAllowance)}',
+                    style: TextStyle(
+                      color: (isNegative || isOverBudget)
+                          ? (isDark ? const Color(0xFFFFB4AB) : PirschColors.roseRed)
+                          : textSecondary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+          ] else ...[
+            const SizedBox(height: 16),
+          ],
 
           // Sub-metrics Row below Hero: Sisa Saldo & Terpakai
           ListenableBuilder(
