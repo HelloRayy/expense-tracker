@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_version.dart';
 import '../../../core/constants/ui_keys.dart';
 import '../../../core/services/app_settings_controller.dart';
 import '../../../core/theme/theme_controller.dart';
@@ -113,7 +114,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     Text(
-                      'Versi 1.0.0 (Production Release)',
+                      AppVersion.fullVersion,
                       style: TextStyle(
                         color: PirschColors.textSecondary(isDark),
                         fontSize: 12,
@@ -384,7 +385,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           key: UIKeys.settingsAboutTile,
                           icon: Icons.info_outline_rounded,
                           title: 'Tentang Aplikasi',
-                          subtitle: 'Versi 1.0.0 • Info sistem adaptive jajan',
+                          subtitle: AppVersion.subtitle,
                           onTap: _showAboutDialog,
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
