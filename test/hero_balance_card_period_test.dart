@@ -70,4 +70,41 @@ void main() {
     expect(find.text('/ hari'), findsOneWidget);
     expect(find.text('Rp 20.000'), findsOneWidget);
   });
+
+  testWidgets('HeroBalanceCard accordion toggles E-Wallet and Tunai breakdown', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: HeroBalanceCard(
+            remaining: 110000,
+            spent: 40000,
+            remainingToday: 20000,
+            ewalletBalance: 110000,
+            cashBalance: 0,
+            formattedPeriod: '7 Sep - 13 Sep',
+            isOverBudget: false,
+            textPrimary: Colors.white,
+            textSecondary: Colors.grey,
+            onTapMenu: () {},
+          ),
+        ),
+      ),
+    );
+
+    // Initial state: Sisa saldo is visible, breakdown row is collapsed
+    expect(find.byIcon(Icons.south_west_rounded), findsOneWidget);
+    expect(find.text('Rp 40.000'), findsOneWidget);
+
+    // Tap on accordion toggle (the south_west icon / arrow)
+    await tester.tap(find.byIcon(Icons.south_west_rounded));
+    await tester.pumpAndSettle();
+
+    // Verify breakdown is revealed
+    expect(find.text('E-Wallet '), findsOneWidget);
+    expect(find.text('Tunai '), findsOneWidget);
+
+    // Tap again to collapse
+    await tester.tap(find.byIcon(Icons.south_west_rounded));
+    await tester.pumpAndSettle();
+  });
 }
