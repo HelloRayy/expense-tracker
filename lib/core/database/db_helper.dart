@@ -31,7 +31,7 @@ class DbHelper {
 
     return await openDatabase(
       path,
-      version: 7,
+      version: 8,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE IF NOT EXISTS budget (
@@ -61,6 +61,7 @@ class DbHelper {
             amount INTEGER NOT NULL,
             note TEXT NOT NULL,
             category_id TEXT DEFAULT NULL,
+            is_income INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL
           )
         ''');
@@ -133,6 +134,9 @@ class DbHelper {
           ''');
           await _safeExecute(db, 'CREATE INDEX IF NOT EXISTS idx_pending_is_recorded ON pending_transactions (is_recorded, created_at DESC)');
         }
+        if (oldVersion < 8) {
+          await _safeExecute(db, 'ALTER TABLE expenses ADD COLUMN is_income INTEGER NOT NULL DEFAULT 0');
+        }
       },
       onOpen: (db) async {
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN total_budget INTEGER NOT NULL DEFAULT 0');
@@ -142,6 +146,7 @@ class DbHelper {
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN carryover_balance INTEGER NOT NULL DEFAULT 0');
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
         await _safeExecute(db, 'ALTER TABLE expenses ADD COLUMN category_id TEXT DEFAULT NULL');
+        await _safeExecute(db, 'ALTER TABLE expenses ADD COLUMN is_income INTEGER NOT NULL DEFAULT 0');
         await _safeExecute(db, 'CREATE INDEX IF NOT EXISTS idx_expenses_category_id ON expenses (category_id)');
         await db.execute('''
           CREATE TABLE IF NOT EXISTS pending_transactions (

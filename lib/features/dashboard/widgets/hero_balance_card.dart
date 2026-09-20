@@ -24,6 +24,7 @@ class HeroBalanceCard extends StatelessWidget {
   final ValueChanged<BudgetPeriodView>? onPeriodChanged;
   final VoidCallback? onTapPeriod;
   final VoidCallback onTapMenu;
+  final VoidCallback? onTapAdjustBalance;
 
   const HeroBalanceCard({
     super.key,
@@ -39,6 +40,7 @@ class HeroBalanceCard extends StatelessWidget {
     this.onPeriodChanged,
     this.onTapPeriod,
     required this.onTapMenu,
+    this.onTapAdjustBalance,
   });
 
   @override
@@ -264,28 +266,44 @@ class HeroBalanceCard extends StatelessWidget {
           // Sub-metrics Row below Hero: ↙ Sisa Saldo & ↗ Terpakai (Side-by-Side)
           Row(
             children: [
-              // Left: ↙ Sisa Saldo (WCAG AA Compliant Green)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.south_west_rounded,
-                    size: 15,
-                    color: PirschColors.green(isDark),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    CurrencyFormatter.format(remaining),
-                    style: TextStyle(
-                      color: remaining < 0 ? PirschColors.red(isDark) : PirschColors.green(isDark),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.2,
+              // Left: ↙ Sisa Saldo (WCAG AA Compliant Green) with tap to adjust
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onTapAdjustBalance,
+                  borderRadius: BorderRadius.circular(6),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.south_west_rounded,
+                          size: 15,
+                          color: PirschColors.green(isDark),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          CurrencyFormatter.format(remaining),
+                          style: TextStyle(
+                            color: remaining < 0 ? PirschColors.red(isDark) : PirschColors.green(isDark),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.2,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.sync_alt_rounded,
+                          size: 13,
+                          color: textSecondary.withValues(alpha: 0.6),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-              const SizedBox(width: 20),
+              const SizedBox(width: 16),
 
               // Right: ↗ Terpakai (WCAG AA Compliant Red)
               Row(

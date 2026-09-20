@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../../../core/database/db_helper.dart';
 import '../../../core/services/native_bridge.dart';
+import '../../categories/models/expense_category.dart';
 import '../models/budget_model.dart';
 import '../models/expense_model.dart';
 import '../models/pending_transaction_model.dart';
@@ -139,8 +140,9 @@ class BudgetRepository extends ChangeNotifier {
         _budget!.startDate,
         _budget!.endDate,
       );
-      _totalSpent = _expenses.fold<int>(0, (sum, e) => sum + e.amount);
-      _spentToday = _expenses.where((e) => e.isToday).fold<int>(0, (sum, e) => sum + e.amount);
+      final actualExpenses = _expenses.where((e) => !e.isIncome);
+      _totalSpent = actualExpenses.fold<int>(0, (sum, e) => sum + e.amount);
+      _spentToday = actualExpenses.where((e) => e.isToday).fold<int>(0, (sum, e) => sum + e.amount);
       _spentUntilYesterday = _totalSpent - _spentToday;
 
       if (!kIsWeb) {
@@ -157,18 +159,26 @@ class BudgetRepository extends ChangeNotifier {
     }
   }
 
-  Future<void> addExpense(int amount, {String note = 'Jajan', String? categoryId}) async {
+  Future<void> addExpense(
+    int amount, {
+    String note = 'Jajan',
+    String? categoryId,
+    bool isIncome = false,
+  }) async {
     if (kIsWeb) {
       final expense = ExpenseModel(
         id: DateTime.now().millisecondsSinceEpoch,
         amount: amount,
         note: note,
         categoryId: categoryId,
+        isIncome: isIncome,
         createdAt: DateTime.now(),
       );
       _expenses.insert(0, expense);
-      _totalSpent += amount;
-      _spentToday += amount;
+      if (!isIncome) {
+        _totalSpent += amount;
+        _spentToday += amount;
+      }
       notifyListeners();
       return;
     }
@@ -176,10 +186,95 @@ class BudgetRepository extends ChangeNotifier {
       amount: amount,
       note: note,
       categoryId: categoryId,
+      isIncome: isIncome,
       createdAt: DateTime.now(),
     );
     await _db.insertExpense(expense);
     await loadData();
+  }
+
+  /// Updates an existing expense transaction (e.g. correcting a mistyped amount or note).
+  Future<void> updateExpense(ExpenseModel expense) async {
+    if (kIsWeb) {
+      final idx = _expenses.indexWhere((e) => e.id == expense.id);
+      if (idx != -1) {
+        _expenses[idx] = expense;
+        final actualExpenses = _expenses.where((e) => !e.isIncome);
+        _totalSpent = actualExpenses.fold<int>(0, (sum, e) => sum + e.amount);
+        _spentToday = actualExpenses.where((e) => e.isToday).fold<int>(0, (sum, e) => sum + e.amount);
+        _spentUntilYesterday = _totalSpent - _spentToday;
+        notifyListeners();
+      }
+      return;
+    }
+    await _db.updateExpense(expense);
+    await loadData();
+  }
+
+  /// Ad-hoc top-up to increase weekly budget or savings mid-week.
+  Future<void> addTopUp(
+    int amount, {
+    bool allocateToSavings = false,
+    String note = 'Top Up Saldo',
+  }) async {
+    if (amount <= 0 || _budget == null) return;
+
+    final newWeeklyIncome = allocateToSavings
+        ? _budget!.weeklyIncome
+        : _budget!.weeklyIncome + amount;
+    final newSavings = allocateToSavings
+        ? _budget!.weeklySavingsTarget + amount
+        : _budget!.weeklySavingsTarget;
+
+    final updatedBudget = _budget!.copyWith(
+      weeklyIncome: newWeeklyIncome,
+      weeklySavingsTarget: newSavings,
+    );
+
+    final topUpExpense = ExpenseModel(
+      amount: amount,
+      note: note,
+      categoryId: ExpenseCategory.topUp.id,
+      isIncome: true,
+      createdAt: DateTime.now(),
+    );
+
+    if (kIsWeb) {
+      _budget = updatedBudget;
+      _expenses.insert(0, topUpExpense);
+      notifyListeners();
+      return;
+    }
+
+    await _db.updateBudget(updatedBudget);
+    await _db.insertExpense(topUpExpense);
+    await loadData();
+  }
+
+  /// Reconciles real wallet balance: calculates discrepancy automatically.
+  /// If positive -> top up ad-hoc.
+  /// If negative -> records forgotten expense adjustment.
+  Future<void> adjustRealBalance({
+    required int actualBalance,
+    bool allocateToSavings = false,
+  }) async {
+    final diff = actualBalance - remainingBalance;
+    if (diff == 0) return;
+
+    if (diff > 0) {
+      await addTopUp(
+        diff,
+        allocateToSavings: allocateToSavings,
+        note: 'Top Up Saldo',
+      );
+    } else {
+      await addExpense(
+        diff.abs(),
+        note: 'Penyesuaian Saldo (Terlupa)',
+        categoryId: ExpenseCategory.penyesuaian.id,
+        isIncome: false,
+      );
+    }
   }
 
   /// Records a pending transaction and removes it from pending list atomically
@@ -209,8 +304,10 @@ class BudgetRepository extends ChangeNotifier {
   Future<void> deleteExpense(int id) async {
     if (kIsWeb) {
       final item = _expenses.firstWhere((e) => e.id == id, orElse: () => ExpenseModel(amount: 0, note: '', createdAt: DateTime.now()));
-      _totalSpent -= item.amount;
-      _spentToday -= item.amount;
+      if (!item.isIncome) {
+        _totalSpent -= item.amount;
+        _spentToday -= item.amount;
+      }
       _expenses.removeWhere((e) => e.id == id);
       notifyListeners();
       return;

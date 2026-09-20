@@ -9,8 +9,10 @@ import '../settings/screens/budget_settings_detail_screen.dart';
 import '../settings/screens/settings_screen.dart';
 import '../settings/screens/shopee_settings_screen.dart';
 import 'widgets/ambient_glow_background.dart';
+import 'widgets/balance_adjustment_sheet.dart';
 import 'widgets/dashboard_action_bar.dart';
 import 'widgets/dashboard_header.dart';
+import 'widgets/edit_expense_sheet.dart';
 import 'widgets/expense_list_item.dart';
 import 'widgets/floating_capsule_navbar.dart';
 import 'widgets/hero_balance_card.dart';
@@ -235,6 +237,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             },
                             onTapPeriod: _openBudgetDetail,
                             onTapMenu: _openSettings,
+                            onTapAdjustBalance: () => BalanceAdjustmentSheet.show(context, widget.repository),
                           ),
                           const SizedBox(height: 14),
 
@@ -312,6 +315,11 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                                   dividerColor: dividerColor,
                                   textPrimary: textPrimary,
                                   textSecondary: textSecondary,
+                                  onTap: () => EditExpenseSheet.show(
+                                    context,
+                                    expense: exp,
+                                    repository: widget.repository,
+                                  ),
                                   onDelete: (id) => widget.repository.deleteExpense(id),
                                 )),
                           ],

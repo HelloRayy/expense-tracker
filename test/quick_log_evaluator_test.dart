@@ -90,16 +90,26 @@ class TestBudgetRepo extends ChangeNotifier implements BudgetRepository {
   Future<void> loadData() async {}
 
   @override
-  Future<void> addExpense(int amount, {String note = 'Jajan', String? categoryId}) async {
+  Future<void> addExpense(int amount, {String note = 'Jajan', String? categoryId, bool isIncome = false}) async {
     addedExpenses.add(ExpenseModel(
       id: addedExpenses.length + 1,
       amount: amount,
       note: note,
       categoryId: categoryId,
+      isIncome: isIncome,
       createdAt: DateTime.now(),
     ));
     notifyListeners();
   }
+
+  @override
+  Future<void> updateExpense(ExpenseModel expense) async {}
+
+  @override
+  Future<void> addTopUp(int amount, {bool allocateToSavings = false, String note = 'Top Up Saldo'}) async {}
+
+  @override
+  Future<void> adjustRealBalance({required int actualBalance, bool allocateToSavings = false}) async {}
 
   @override
   Future<void> deleteExpense(int id) async {}

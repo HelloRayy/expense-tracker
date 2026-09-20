@@ -108,7 +108,16 @@ class MockBudgetRepo extends ChangeNotifier implements BudgetRepository {
   Future<void> loadData() async {}
 
   @override
-  Future<void> addExpense(int amount, {String note = 'Jajan', String? categoryId}) async {}
+  Future<void> addExpense(int amount, {String note = 'Jajan', String? categoryId, bool isIncome = false}) async {}
+
+  @override
+  Future<void> updateExpense(ExpenseModel expense) async {}
+
+  @override
+  Future<void> addTopUp(int amount, {bool allocateToSavings = false, String note = 'Top Up Saldo'}) async {}
+
+  @override
+  Future<void> adjustRealBalance({required int actualBalance, bool allocateToSavings = false}) async {}
 
   @override
   Future<void> deleteExpense(int id) async {}
@@ -376,15 +385,15 @@ void main() {
     expect(find.text('Es Teh Manis'), findsNothing); // 6th item not shown
 
     // Tap button to expand
-    await tester.ensureVisible(find.text('Lihat Semua (8 Transaksi)'));
-    await tester.tap(find.text('Lihat Semua (8 Transaksi)'));
+    await tester.ensureVisible(find.text('See all'));
+    await tester.tap(find.text('See all'));
     await tester.pumpAndSettle();
 
     // Now all 8 items shown
     expect(find.text('Es Teh Manis'), findsOneWidget);
     await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
     await tester.pumpAndSettle();
-    expect(find.text('Tampilkan Lebih Sedikit'), findsOneWidget);
+    expect(find.text('Show less'), findsOneWidget);
   });
 
   testWidgets('Capture SettingsScreen real screenshot', (tester) async {

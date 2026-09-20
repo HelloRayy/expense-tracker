@@ -37,6 +37,20 @@ class ExpenseCategory {
     color: PirschColors.warmYellow,
   );
 
+  static const penyesuaian = ExpenseCategory(
+    id: 'Penyesuaian',
+    displayName: 'Penyesuaian Saldo',
+    icon: Icons.sync_alt_rounded,
+    color: Color(0xFFA1A1AA),
+  );
+
+  static const topUp = ExpenseCategory(
+    id: 'Top Up',
+    displayName: 'Top Up Saldo',
+    icon: Icons.account_balance_wallet_rounded,
+    color: PirschColors.incomeGreen,
+  );
+
   // Backward compatibility aliases
   static const makanan = makananMinuman;
   static const transport = transportasi;
@@ -55,6 +69,12 @@ class ExpenseCategory {
   static ExpenseCategory? fromId(String? id) {
     if (id == null) return null;
     final normalized = id.toLowerCase().trim();
+    if (normalized.contains('penyesuaian') || normalized.contains('koreksi') || normalized.contains('terlupa')) {
+      return penyesuaian;
+    }
+    if (normalized.contains('top up') || normalized.contains('topup')) {
+      return topUp;
+    }
     if (normalized.contains('makan') ||
         normalized.contains('kopi') ||
         normalized.contains('minum') ||

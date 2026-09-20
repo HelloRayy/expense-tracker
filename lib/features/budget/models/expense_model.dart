@@ -5,6 +5,7 @@ class ExpenseModel {
   final int amount;
   final String note;
   final String? categoryId;
+  final bool isIncome;
   final DateTime createdAt;
 
   ExpenseModel({
@@ -12,6 +13,7 @@ class ExpenseModel {
     required this.amount,
     this.note = 'Jajan',
     this.categoryId,
+    this.isIncome = false,
     required this.createdAt,
   });
 
@@ -56,6 +58,7 @@ class ExpenseModel {
       'amount': amount,
       'note': note.trim().isEmpty ? 'Jajan' : note.trim(),
       'category_id': categoryId,
+      'is_income': isIncome ? 1 : 0,
       'created_at': createdAt.toIso8601String(),
     };
   }
@@ -66,6 +69,7 @@ class ExpenseModel {
       amount: map['amount'] as int? ?? 0,
       note: map['note'] as String? ?? 'Jajan',
       categoryId: map['category_id'] as String?,
+      isIncome: (map['is_income'] as int? ?? 0) == 1,
       createdAt: DateTime.tryParse(map['created_at'] as String? ?? '') ??
           DateTime.now(),
     );
@@ -77,6 +81,7 @@ class ExpenseModel {
     String? note,
     String? categoryId,
     bool clearCategory = false,
+    bool? isIncome,
     DateTime? createdAt,
   }) {
     return ExpenseModel(
@@ -84,6 +89,7 @@ class ExpenseModel {
       amount: amount ?? this.amount,
       note: note ?? this.note,
       categoryId: clearCategory ? null : (categoryId ?? this.categoryId),
+      isIncome: isIncome ?? this.isIncome,
       createdAt: createdAt ?? this.createdAt,
     );
   }

@@ -150,5 +150,31 @@ void main() {
       expect(fromDb.weeklySavingsTarget, 50000);
       expect(fromDb.spendableBudget, 100000);
     });
+
+    test('Ad-hoc top-up mid-week increases weeklyIncome and recalculates daily allowance', () {
+      final monday = DateTime(2026, 9, 7);
+      final sunday = DateTime(2026, 9, 13, 23, 59, 59, 999);
+
+      var budget = BudgetModel(
+        weeklyIncome: 100000,
+        weeklySavingsTarget: 30000,
+        startDate: monday,
+        endDate: sunday,
+      );
+
+      expect(budget.spendableBudget, 70000);
+
+      // Top up 50.000 mid-week
+      budget = budget.copyWith(
+        weeklyIncome: budget.weeklyIncome + 50000,
+      );
+
+      expect(budget.weeklyIncome, 150000);
+      expect(budget.spendableBudget, 120000);
+
+      // On Thursday (4 days remaining), allowance should increase
+      final allowance = budget.calculateDailyAllowance(0, targetDate: DateTime(2026, 9, 10));
+      expect(allowance, 120000 ~/ 4); // 30.000 / day
+    });
   });
 }

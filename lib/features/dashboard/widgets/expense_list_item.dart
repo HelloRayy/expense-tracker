@@ -16,6 +16,7 @@ class ExpenseListItem extends StatelessWidget {
   final Color textPrimary;
   final Color textSecondary;
   final ValueChanged<int> onDelete;
+  final VoidCallback? onTap;
 
   const ExpenseListItem({
     super.key,
@@ -26,6 +27,7 @@ class ExpenseListItem extends StatelessWidget {
     required this.textPrimary,
     required this.textSecondary,
     required this.onDelete,
+    this.onTap,
   });
 
   @override
@@ -38,7 +40,10 @@ class ExpenseListItem extends StatelessWidget {
     final String categoryName;
 
     final resolvedCategory = ExpenseCategory.fromId(exp.categoryId);
-    if (resolvedCategory != null) {
+    if (exp.isIncome) {
+      categoryName = 'Uang Masuk';
+      itemIcon = Icons.arrow_downward_rounded;
+    } else if (resolvedCategory != null) {
       categoryName = resolvedCategory.displayName;
       itemIcon = resolvedCategory.icon;
     } else if (noteLower.contains('kopi') ||
@@ -129,87 +134,97 @@ class ExpenseListItem extends StatelessWidget {
           );
         }
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 12),
-        decoration: const BoxDecoration(
-          color: Colors.transparent,
-        ),
-        child: Row(
-          children: [
-            // Circular Avatar Container matching Reference Image 1
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF18181B) : const Color(0xFFEFF2F8),
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: Icon(
-                itemIcon,
-                color: isDark ? Colors.white : const Color(0xFF242424),
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 14),
-
-            // Middle Column: Note & Category + Time
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    (exp.note.trim().isEmpty || exp.note.trim() == 'Jajan') ? 'Pengeluaran' : exp.note,
-                    style: TextStyle(
-                      color: textPrimary,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.2,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    '$categoryName • $timeFormatted',
-                    style: TextStyle(
-                      color: textSecondary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-
-            // Right Column: Amount (-Rp 18.000) & Status Tag ("Expense")
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 12),
+            child: Row(
               children: [
-                Text(
-                  '-${CurrencyFormatter.format(exp.amount)}',
-                  style: const TextStyle(
-                    color: PirschColors.roseRed,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.3,
+                // Circular Avatar Container matching Reference Image 1
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: exp.isIncome
+                        ? (isDark ? PirschColors.incomeGreen.withValues(alpha: 0.18) : PirschColors.incomeGreen.withValues(alpha: 0.12))
+                        : (isDark ? const Color(0xFF18181B) : const Color(0xFFEFF2F8)),
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    itemIcon,
+                    color: exp.isIncome
+                        ? PirschColors.incomeGreen
+                        : (isDark ? Colors.white : const Color(0xFF242424)),
+                    size: 20,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  'Expense',
-                  style: TextStyle(
-                    color: textSecondary.withValues(alpha: 0.7),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
+                const SizedBox(width: 14),
+
+                // Middle Column: Note & Category + Time
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        (exp.note.trim().isEmpty || exp.note.trim() == 'Jajan') ? 'Pengeluaran' : exp.note,
+                        style: TextStyle(
+                          color: textPrimary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.2,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        '$categoryName • $timeFormatted',
+                        style: TextStyle(
+                          color: textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
+                ),
+                const SizedBox(width: 12),
+
+                // Right Column: Amount (+/-Rp 18.000) & Status Tag ("Income" / "Expense")
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${exp.isIncome ? '+' : '-'}${CurrencyFormatter.format(exp.amount)}',
+                      style: TextStyle(
+                        color: exp.isIncome ? PirschColors.incomeGreen : PirschColors.roseRed,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      exp.isIncome ? 'Income' : 'Expense',
+                      style: TextStyle(
+                        color: exp.isIncome
+                            ? PirschColors.incomeGreen.withValues(alpha: 0.8)
+                            : textSecondary.withValues(alpha: 0.7),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

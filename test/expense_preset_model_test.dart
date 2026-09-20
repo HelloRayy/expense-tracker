@@ -11,12 +11,12 @@ void main() {
 
       final kopi = presets.firstWhere((p) => p.title == 'Kopi Kenangan');
       expect(kopi.amount, 15000);
-      expect(kopi.category, 'Kopi');
+      expect(kopi.category, 'Makanan / Minuman');
       expect(kopi.icon, Icons.local_cafe_rounded);
 
       final padang = presets.firstWhere((p) => p.title == 'Nasi Padang');
       expect(padang.amount, 25000);
-      expect(padang.category, 'Makanan');
+      expect(padang.category, 'Makanan / Minuman');
     });
 
     test('serialization toMap and fromMap works symmetrically', () {
