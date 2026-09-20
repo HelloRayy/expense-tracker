@@ -214,7 +214,11 @@ void main() {
       expect(find.text('4 Transaksi'), findsOneWidget);
 
       // Scroll to bottom to verify wallet and top expenses
-      await tester.scrollUntilVisible(find.byKey(UIKeys.rekapTopExpensesList), 200);
+      await tester.scrollUntilVisible(
+        find.byKey(UIKeys.rekapTopExpensesList),
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
       await tester.pumpAndSettle();
 
       // Verify Top Expenses has 'Nasi Padang Spesial' as rank 1
@@ -264,6 +268,35 @@ void main() {
       await tester.tap(find.text('Semua'));
       await tester.pumpAndSettle();
       expect(find.text('Seluruh Riwayat Transaksi'), findsOneWidget);
+      expect(find.byKey(UIKeys.rekapSummaryCard), findsOneWidget);
+    });
+
+    testWidgets('swiping horizontally across PageView slides between periods', (tester) async {
+      final repo = MockRekapBudgetRepo(testExpenses: sampleExpenses);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: RekapScreen(repository: repo),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Initially at Minggu Ini
+      expect(find.byKey(UIKeys.rekapSummaryCard), findsOneWidget);
+
+      // Fling left to slide to Bulan Ini
+      await tester.fling(find.byType(PageView), const Offset(-600, 0), 1000);
+      await tester.pumpAndSettle();
+      expect(find.byKey(UIKeys.rekapSummaryCard), findsOneWidget);
+
+      // Fling left to slide to Semua
+      await tester.fling(find.byType(PageView), const Offset(-600, 0), 1000);
+      await tester.pumpAndSettle();
+      expect(find.text('Seluruh Riwayat Transaksi'), findsOneWidget);
+
+      // Fling right to slide back to Bulan Ini
+      await tester.fling(find.byType(PageView), const Offset(600, 0), 1000);
+      await tester.pumpAndSettle();
       expect(find.byKey(UIKeys.rekapSummaryCard), findsOneWidget);
     });
 

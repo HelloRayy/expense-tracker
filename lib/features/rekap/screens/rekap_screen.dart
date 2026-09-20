@@ -11,7 +11,8 @@ import '../../categories/models/expense_category.dart';
 
 enum RekapPeriod { mingguIni, bulanIni, semua }
 
-/// Dedicated Rekap / Analytics Screen for visualizing expenses from SQLite.
+/// Dedicated Rekap / Analytics Screen with floating capsule dock and
+/// native horizontal PageView slide between periods.
 class RekapScreen extends StatefulWidget {
   final BudgetRepository repository;
 
@@ -22,87 +23,101 @@ class RekapScreen extends StatefulWidget {
 }
 
 class _RekapScreenState extends State<RekapScreen> {
+  late final PageController _pageController;
   RekapPeriod _selectedPeriod = RekapPeriod.mingguIni;
   bool _isLoading = true;
-  List<ExpenseModel> _periodExpenses = [];
+
+  final Map<RekapPeriod, List<ExpenseModel>> _periodExpensesMap = {
+    RekapPeriod.mingguIni: [],
+    RekapPeriod.bulanIni: [],
+    RekapPeriod.semua: [],
+  };
 
   @override
   void initState() {
     super.initState();
-    _loadPeriodData();
+    _pageController = PageController(initialPage: _selectedPeriod.index);
+    _loadAllPeriodData();
   }
 
-  Future<void> _loadPeriodData() async {
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadAllPeriodData() async {
     setState(() => _isLoading = true);
     final now = DateTime.now();
-    List<ExpenseModel> expenses;
 
-    switch (_selectedPeriod) {
-      case RekapPeriod.mingguIni:
-        final budget = widget.repository.budget;
-        final start = budget?.startDate ??
-            DateTime(now.year, now.month, now.day).subtract(Duration(days: now.weekday - 1));
-        final end = budget?.endDate ??
-            start.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
-        expenses = await widget.repository.getExpensesForPeriod(start, end);
-        break;
+    // 1. Minggu Ini
+    final budget = widget.repository.budget;
+    final startWeek = budget?.startDate ??
+        DateTime(now.year, now.month, now.day).subtract(Duration(days: now.weekday - 1));
+    final endWeek = budget?.endDate ??
+        startWeek.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
 
-      case RekapPeriod.bulanIni:
-        final start = DateTime(now.year, now.month, 1);
-        final end = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
-        expenses = await widget.repository.getExpensesForPeriod(start, end);
-        break;
+    // 2. Bulan Ini
+    final startMonth = DateTime(now.year, now.month, 1);
+    final endMonth = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
 
-      case RekapPeriod.semua:
-        expenses = await widget.repository.getAllExpensesHistory();
-        break;
-    }
-
-    // Filter out income records, focus on actual expenses
-    final actualExpenses = expenses.where((e) => !e.isIncome).toList();
+    final results = await Future.wait([
+      widget.repository.getExpensesForPeriod(startWeek, endWeek),
+      widget.repository.getExpensesForPeriod(startMonth, endMonth),
+      widget.repository.getAllExpensesHistory(),
+    ]);
 
     if (mounted) {
       setState(() {
-        _periodExpenses = actualExpenses;
+        _periodExpensesMap[RekapPeriod.mingguIni] = results[0].where((e) => !e.isIncome).toList();
+        _periodExpensesMap[RekapPeriod.bulanIni] = results[1].where((e) => !e.isIncome).toList();
+        _periodExpensesMap[RekapPeriod.semua] = results[2].where((e) => !e.isIncome).toList();
         _isLoading = false;
       });
     }
   }
 
-  void _onPeriodChanged(RekapPeriod period) {
+  void _onDockTabTapped(RekapPeriod period) {
     if (_selectedPeriod == period) return;
     HapticFeedback.selectionClick();
     setState(() => _selectedPeriod = period);
-    _loadPeriodData();
+    _pageController.animateToPage(
+      period.index,
+      duration: const Duration(milliseconds: 320),
+      curve: Curves.easeOutCubic,
+    );
   }
 
-  int get _totalSpent => _periodExpenses.fold<int>(0, (sum, e) => sum + e.amount);
+  List<ExpenseModel> _getExpenses(RekapPeriod period) => _periodExpensesMap[period] ?? [];
 
-  int get _dailyAverage {
-    if (_periodExpenses.isEmpty) return 0;
+  int _getTotalSpent(List<ExpenseModel> expenses) =>
+      expenses.fold<int>(0, (sum, e) => sum + e.amount);
+
+  int _getDailyAverage(RekapPeriod period, List<ExpenseModel> expenses) {
+    if (expenses.isEmpty) return 0;
+    final total = _getTotalSpent(expenses);
     final now = DateTime.now();
     int days;
-    switch (_selectedPeriod) {
+    switch (period) {
       case RekapPeriod.mingguIni:
-        days = now.weekday; // Number of days elapsed in current week
+        days = now.weekday;
         break;
       case RekapPeriod.bulanIni:
-        days = now.day; // Number of days elapsed in current month
+        days = now.day;
         break;
       case RekapPeriod.semua:
-        if (_periodExpenses.isEmpty) return 0;
-        final earliest = _periodExpenses
+        final earliest = expenses
             .map((e) => e.createdAt)
             .reduce((a, b) => a.isBefore(b) ? a : b);
         days = now.difference(earliest).inDays + 1;
         break;
     }
-    return days > 0 ? (_totalSpent / days).round() : _totalSpent;
+    return days > 0 ? (total / days).round() : total;
   }
 
-  String get _periodLabel {
+  String _getPeriodLabel(RekapPeriod period) {
     final now = DateTime.now();
-    switch (_selectedPeriod) {
+    switch (period) {
       case RekapPeriod.mingguIni:
         final budget = widget.repository.budget;
         if (budget != null) return budget.formattedPeriod;
@@ -153,87 +168,158 @@ class _RekapScreenState extends State<RekapScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.refresh_rounded, color: textSecondary, size: 22),
-            onPressed: _loadPeriodData,
+            onPressed: _loadAllPeriodData,
             tooltip: 'Muat Ulang',
           ),
         ],
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // Period Tab Selector (Minggu Ini, Bulan Ini, Semua)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            child: Container(
-              key: UIKeys.rekapPeriodTabBar,
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1B1B1E) : const Color(0xFFEEEEF0),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: borderColor),
+          // Main Body: Period Subtitle + Native Horizontal Swipe PageView
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Period Subtitle
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    child: Text(
+                      _getPeriodLabel(_selectedPeriod),
+                      key: ValueKey(_selectedPeriod),
+                      style: TextStyle(
+                        color: textSecondary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              child: Row(
-                children: [
-                  _buildPeriodTab(RekapPeriod.mingguIni, 'Minggu Ini', isDark, textPrimary, textSecondary),
-                  _buildPeriodTab(RekapPeriod.bulanIni, 'Bulan Ini', isDark, textPrimary, textSecondary),
-                  _buildPeriodTab(RekapPeriod.semua, 'Semua', isDark, textPrimary, textSecondary),
-                ],
+              const SizedBox(height: 6),
+
+              // Horizontal Swipe PageView
+              Expanded(
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : PageView(
+                        controller: _pageController,
+                        physics: const BouncingScrollPhysics(),
+                        onPageChanged: (index) {
+                          HapticFeedback.selectionClick();
+                          setState(() {
+                            _selectedPeriod = RekapPeriod.values[index];
+                          });
+                        },
+                        children: [
+                          _buildPeriodPage(
+                            RekapPeriod.mingguIni,
+                            cardColor,
+                            borderColor,
+                            textPrimary,
+                            textSecondary,
+                            isDark,
+                          ),
+                          _buildPeriodPage(
+                            RekapPeriod.bulanIni,
+                            cardColor,
+                            borderColor,
+                            textPrimary,
+                            textSecondary,
+                            isDark,
+                          ),
+                          _buildPeriodPage(
+                            RekapPeriod.semua,
+                            cardColor,
+                            borderColor,
+                            textPrimary,
+                            textSecondary,
+                            isDark,
+                          ),
+                        ],
+                      ),
               ),
-            ),
+            ],
           ),
 
-          // Period Subtitle
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                _periodLabel,
-                style: TextStyle(
-                  color: textSecondary,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+          // Bottom Gradient Fade (Scrim) to smoothly fade out scrolling items behind the floating dock
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 110 + MediaQuery.of(context).padding.bottom,
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      bgColor.withValues(alpha: 0.0),
+                      bgColor.withValues(alpha: 0.8),
+                      bgColor,
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ),
                 ),
               ),
             ),
           ),
 
-          // Scrollable Content
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _periodExpenses.isEmpty
-                    ? _buildEmptyState(textPrimary, textSecondary)
-                    : RefreshIndicator(
-                        onRefresh: _loadPeriodData,
-                        child: ListView(
-                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 32),
-                          children: [
-                            // 1. Total Summary Card
-                            _buildSummaryCard(cardColor, borderColor, textPrimary, textSecondary, isDark),
-                            const SizedBox(height: 16),
-
-                            // 2. Category Breakdown Card
-                            _buildCategoryCard(cardColor, borderColor, textPrimary, textSecondary, isDark),
-                            const SizedBox(height: 16),
-
-                            // 3. Wallet Breakdown Card (E-Wallet vs Cash) - only if cash wallet enabled in Settings
-                            if (AppSettingsController.instance.cashWalletEnabled) ...[
-                              _buildWalletBreakdownCard(cardColor, borderColor, textPrimary, textSecondary, isDark),
-                              const SizedBox(height: 16),
-                            ],
-
-                            // 4. Top Expenses Card
-                            _buildTopExpensesCard(cardColor, borderColor, textPrimary, textSecondary, isDark),
-                          ],
-                        ),
-                      ),
+          // Floating Capsule Dock (matching homepage dock style)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 20 + MediaQuery.of(context).padding.bottom,
+            child: Center(
+              child: _buildFloatingDock(isDark, borderColor, textPrimary, textSecondary),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPeriodTab(
+  Widget _buildFloatingDock(
+    bool isDark,
+    Color borderColor,
+    Color textPrimary,
+    Color textSecondary,
+  ) {
+    return Container(
+      key: UIKeys.rekapPeriodTabBar,
+      height: 54,
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF161618) : Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : borderColor,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.12),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildDockItem(RekapPeriod.mingguIni, 'Minggu Ini', isDark, textPrimary, textSecondary),
+          const SizedBox(width: 4),
+          _buildDockItem(RekapPeriod.bulanIni, 'Bulan Ini', isDark, textPrimary, textSecondary),
+          const SizedBox(width: 4),
+          _buildDockItem(RekapPeriod.semua, 'Semua', isDark, textPrimary, textSecondary),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDockItem(
     RekapPeriod period,
     String label,
     bool isDark,
@@ -241,44 +327,133 @@ class _RekapScreenState extends State<RekapScreen> {
     Color textSecondary,
   ) {
     final isSelected = _selectedPeriod == period;
-    return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => _onPeriodChanged(period),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          padding: const EdgeInsets.symmetric(vertical: 9),
-          decoration: BoxDecoration(
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => _onDockTabTapped(period),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark ? Colors.white : const Color(0xFF0C0C0C))
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(22),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: TextStyle(
             color: isSelected
-                ? (isDark ? const Color(0xFF2C2C32) : Colors.white)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? textPrimary : textSecondary,
-              fontSize: 13,
-              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            ),
+                ? (isDark ? const Color(0xFF0C0C0C) : Colors.white)
+                : textSecondary,
+            fontSize: 13,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           ),
         ),
       ),
     );
   }
 
+  Widget _buildPeriodPage(
+    RekapPeriod period,
+    Color cardColor,
+    Color borderColor,
+    Color textPrimary,
+    Color textSecondary,
+    bool isDark,
+  ) {
+    final expenses = _getExpenses(period);
+    if (expenses.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: _loadAllPeriodData,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.55,
+              child: _buildEmptyState(textPrimary, textSecondary),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final totalSpent = _getTotalSpent(expenses);
+    final dailyAverage = _getDailyAverage(period, expenses);
+
+    return RefreshIndicator(
+      onRefresh: _loadAllPeriodData,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
+        ),
+        padding: EdgeInsets.fromLTRB(
+          20,
+          8,
+          20,
+          96 + MediaQuery.of(context).padding.bottom,
+        ),
+        children: [
+          // 1. Total Summary Card
+          _buildSummaryCard(
+            expenses,
+            totalSpent,
+            dailyAverage,
+            cardColor,
+            borderColor,
+            textPrimary,
+            textSecondary,
+            isDark,
+          ),
+          const SizedBox(height: 16),
+
+          // 2. Category Breakdown Card
+          _buildCategoryCard(
+            expenses,
+            totalSpent,
+            cardColor,
+            borderColor,
+            textPrimary,
+            textSecondary,
+            isDark,
+          ),
+          const SizedBox(height: 16),
+
+          // 3. Wallet Breakdown Card (E-Wallet vs Cash) - only if cash wallet enabled in Settings
+          if (AppSettingsController.instance.cashWalletEnabled) ...[
+            _buildWalletBreakdownCard(
+              expenses,
+              totalSpent,
+              cardColor,
+              borderColor,
+              textPrimary,
+              textSecondary,
+              isDark,
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          // 4. Top Expenses Card
+          _buildTopExpensesCard(
+            expenses,
+            cardColor,
+            borderColor,
+            textPrimary,
+            textSecondary,
+            isDark,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSummaryCard(
+    List<ExpenseModel> expenses,
+    int totalSpent,
+    int dailyAverage,
     Color cardColor,
     Color borderColor,
     Color textPrimary,
@@ -315,7 +490,7 @@ class _RekapScreenState extends State<RekapScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  '${_periodExpenses.length} Transaksi',
+                  '${expenses.length} Transaksi',
                   style: const TextStyle(
                     color: PirschColors.roseRed,
                     fontSize: 11,
@@ -327,7 +502,7 @@ class _RekapScreenState extends State<RekapScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            CurrencyFormatter.format(_totalSpent),
+            CurrencyFormatter.format(totalSpent),
             style: TextStyle(
               color: textPrimary,
               fontSize: 28,
@@ -347,7 +522,7 @@ class _RekapScreenState extends State<RekapScreen> {
                     Text('Rata-rata / Hari', style: TextStyle(color: textSecondary, fontSize: 11)),
                     const SizedBox(height: 4),
                     Text(
-                      CurrencyFormatter.format(_dailyAverage),
+                      CurrencyFormatter.format(dailyAverage),
                       style: TextStyle(color: textPrimary, fontSize: 15, fontWeight: FontWeight.w700),
                     ),
                   ],
@@ -376,6 +551,8 @@ class _RekapScreenState extends State<RekapScreen> {
   }
 
   Widget _buildCategoryCard(
+    List<ExpenseModel> expenses,
+    int totalSpent,
     Color cardColor,
     Color borderColor,
     Color textPrimary,
@@ -386,7 +563,7 @@ class _RekapScreenState extends State<RekapScreen> {
     final categoryTotals = <String, int>{};
     final categoryCounts = <String, int>{};
 
-    for (final exp in _periodExpenses) {
+    for (final exp in expenses) {
       final cat = ExpenseCategory.fromId(exp.categoryId) ?? ExpenseCategory.lainnya;
       categoryTotals[cat.displayName] = (categoryTotals[cat.displayName] ?? 0) + exp.amount;
       categoryCounts[cat.displayName] = (categoryCounts[cat.displayName] ?? 0) + 1;
@@ -418,7 +595,7 @@ class _RekapScreenState extends State<RekapScreen> {
           const SizedBox(height: 14),
 
           // Multi-Segmented Proportional Bar
-          if (_totalSpent > 0) ...[
+          if (totalSpent > 0) ...[
             ClipRRect(
               borderRadius: BorderRadius.circular(6),
               child: SizedBox(
@@ -426,7 +603,7 @@ class _RekapScreenState extends State<RekapScreen> {
                 child: Row(
                   children: sortedEntries.map((entry) {
                     final cat = ExpenseCategory.fromId(entry.key) ?? ExpenseCategory.lainnya;
-                    final flex = ((entry.value / _totalSpent) * 1000).round();
+                    final flex = ((entry.value / totalSpent) * 1000).round();
                     return Expanded(
                       flex: flex > 0 ? flex : 1,
                       child: Container(color: cat.color),
@@ -441,7 +618,7 @@ class _RekapScreenState extends State<RekapScreen> {
           // Category rows
           ...sortedEntries.map((entry) {
             final cat = ExpenseCategory.fromId(entry.key) ?? ExpenseCategory.lainnya;
-            final percentage = _totalSpent > 0 ? ((entry.value / _totalSpent) * 100).toStringAsFixed(1) : '0';
+            final percentage = totalSpent > 0 ? ((entry.value / totalSpent) * 100).toStringAsFixed(1) : '0';
             final count = categoryCounts[entry.key] ?? 1;
 
             return Padding(
@@ -498,6 +675,8 @@ class _RekapScreenState extends State<RekapScreen> {
   }
 
   Widget _buildWalletBreakdownCard(
+    List<ExpenseModel> expenses,
+    int totalSpent,
     Color cardColor,
     Color borderColor,
     Color textPrimary,
@@ -507,7 +686,7 @@ class _RekapScreenState extends State<RekapScreen> {
     int ewalletTotal = 0;
     int cashTotal = 0;
 
-    for (final exp in _periodExpenses) {
+    for (final exp in expenses) {
       if (exp.walletType == 'cash') {
         cashTotal += exp.amount;
       } else {
@@ -515,8 +694,8 @@ class _RekapScreenState extends State<RekapScreen> {
       }
     }
 
-    final ewalletPercent = _totalSpent > 0 ? ((ewalletTotal / _totalSpent) * 100).toStringAsFixed(0) : '0';
-    final cashPercent = _totalSpent > 0 ? ((cashTotal / _totalSpent) * 100).toStringAsFixed(0) : '0';
+    final ewalletPercent = totalSpent > 0 ? ((ewalletTotal / totalSpent) * 100).toStringAsFixed(0) : '0';
+    final cashPercent = totalSpent > 0 ? ((cashTotal / totalSpent) * 100).toStringAsFixed(0) : '0';
 
     return Container(
       key: UIKeys.rekapWalletBreakdown,
@@ -591,7 +770,6 @@ class _RekapScreenState extends State<RekapScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Icon(Icons.payments_rounded, color: PirschColors.mintGreen, size: 20),
-                          const Text('', style: TextStyle(color: PirschColors.mintGreen, fontWeight: FontWeight.w700, fontSize: 12)),
                           Text('$cashPercent%', style: const TextStyle(color: PirschColors.mintGreen, fontWeight: FontWeight.w700, fontSize: 12)),
                         ],
                       ),
@@ -617,13 +795,14 @@ class _RekapScreenState extends State<RekapScreen> {
   }
 
   Widget _buildTopExpensesCard(
+    List<ExpenseModel> expenses,
     Color cardColor,
     Color borderColor,
     Color textPrimary,
     Color textSecondary,
     bool isDark,
   ) {
-    final sortedByAmount = List<ExpenseModel>.from(_periodExpenses)
+    final sortedByAmount = List<ExpenseModel>.from(expenses)
       ..sort((a, b) => b.amount.compareTo(a.amount));
     final top5 = sortedByAmount.take(5).toList();
 
