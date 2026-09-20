@@ -1,147 +1,143 @@
-# UI Redesign TODOs & Enhancement Roadmap
+# Technical Directive: UI Redesign & Component Roadmap
 
-Dokumen ini merangkum daftar rencana kerja (*actionable TODOs*) untuk mendesain ulang dan memoles komponen visual utama pada aplikasi **Expense Tracker**.
-
----
-
-## 1. Redesign: UI "Besok Max Jajan" (Tomorrow's Allowance Indicator)
-
-### Latar Belakang & Masalah Saat Ini
-- Indikator proyeksi jatah jajan besok (`tomorrowDailyAllowance`) saat ini dirender sebagai pill kecil di bawah nominal sisa jajan hari ini.
-- Tampilannya masih cenderung kaku dan kurang kontras atau informatif saat kondisi:
-  1. Pengguna sedang *overbudget* hari ini (besok jatah otomatis terserap).
-  2. Pengguna masih sangat hemat hari ini (besok jatah bisa bertambah).
-- Hirarki visual perlu diperjelas agar pengguna langsung memahami bahwa ini adalah **proyeksi adaptif**, bukan sisa saldo riil saat ini.
-
-### Wireframe Konsep
-```
-+-------------------------------------------------------------+
-| SISA SALDO JAJAN HARI INI                                   |
-| Rp 45.000 / hari                                            |
-|                                                             |
-| (•) Besok max jajan: Rp 38.000  (i)                         |
-|     ^ Pill dinamis: Hijau (Hemat) / Coral (Overbudget)      |
-+-------------------------------------------------------------+
-```
-
-### Daftar Tugas (TODOs)
-- [ ] **Badge / Capsule Polish**:
-  - Desain ulang chip proyeksi dengan bentuk kapsul modern, border halus (*subtle glass/card border*), dan padding seimbang.
-  - Gunakan typography yang lebih kontras: label *"Besok max jajan:"* dengan warna sekunder, nominal tebal (*semibold/bold*).
-- [ ] **Adaptive State Styling**:
-  - **Normal / Surplus**: Aksen biru halus (`PirschColors.primaryBlue`) atau abu-abu netral dengan icon kalender minimalis.
-  - **Hemat Ekstra**: Berikan indikator hijau lembut jika penghematan hari ini menaikkan jatah hari esok.
-  - **Overbudget / Warning**: Tampilan warna coral/rose lembut (`PirschColors.roseRed` dengan background transparan 12%) dengan icon peringatan rounded (`Icons.info_outline_rounded`).
-- [ ] **Interactive Tooltip / Bottom Sheet Info**:
-  - Berikan micro-interaction (tap target) yang memunculkan tooltip atau bottom sheet penjelasan singkat:
-    *"Dihitung dari sisa budget mingguan dibagi sisa hari minggu ini."*
-- [ ] **Animasi Perubahan Nilai**:
-  - Tambahkan animasi transisi halus (`AnimatedSwitcher` / count animation) ketika jatah besok berubah setelah pengguna mencatat pengeluaran baru.
+Dokumen ini adalah **panduan instruksi teknis direktif** bagi AI agent dan developer untuk mengeksekusi *redesign UI* pada aplikasi **Expense Tracker**. Setiap bagian mencakup target file, kelas, semantic key, spesifikasi layout/widget, dan langkah eksekusi kode.
 
 ---
 
-## 2. Redesign: Alert / Banner "Periode Baru Dimulai"
+## 1. Komponen: Alert "Periode Baru Dimulai" (`WeeklyRolloverBanner`)
 
-### Latar Belakang & Masalah Saat Ini
-- Banner `WeeklyRolloverBanner` saat ini muncul di atas Hero Card saat hari Senin tiba (sebelum konfirmasi budget mingguan).
-- Desain saat ini berupa kartu statis persegi dengan tombol *"Input"* kecil.
-- Perlu dirombak agar:
-  1. Tampilannya lebih elegan, ramah, dan tidak terasa seperti *error message*.
-  2. Menampilkan nominal sisa riil secara transparan dan jelas.
-  3. Memiliki visual hierarchy yang menuntun pengguna untuk segera menetapkan budget minggu baru tanpa rasa cemas.
+### Lokasi Kode & Arsitektur
+- **File Target**: [`lib/features/dashboard/widgets/weekly_rollover_banner.dart`](file:///home/rayhan/Windows-D/project/expense-tracker/lib/features/dashboard/widgets/weekly_rollover_banner.dart)
+- **Parent Screen**: [`lib/features/dashboard/dashboard_screen.dart`](file:///home/rayhan/Windows-D/project/expense-tracker/lib/features/dashboard/dashboard_screen.dart#L218-L225)
+- **Semantic Key**: `UIKeys.dashboardRolloverBanner`
+- **State Source**: `BudgetRepository.carryoverBalance`, `BudgetRepository.isPeriodConfirmed`, `AppSettingsController.instance.cashWalletEnabled`
 
-### Wireframe Konsep
+### Masalah Saat Ini
+Bentuk kartu statis dengan kontras standar dan tombol kecil "Input" yang terlihat seperti *system error*, serta belum menampilkan rincian saldo fisik vs e-wallet ketika mode multi-wallet aktif.
+
+### Spesifikasi Target Desain
 ```
-+-------------------------------------------------------------+
-|  (🗓️) Periode Baru Dimulai                                  |
-|      Ada sisa Rp 27.000 dari minggu lalu di dompetmu.       |
-|      Yuk tentukan budget untuk minggu ini!                  |
-|                                                             |
-|      [ Atur Budget Minggu Ini -> ]          [ Nanti / x ]   |
-+-------------------------------------------------------------+
++-------------------------------------------------------------------+
+|  [Icon Kalender Bulat]  PERIODE BARU DIMULAI                      |
+|                         Ada sisa Rp 27.000 dari minggu lalu.      |
+|                         (E-Wallet: Rp 20.000 • Tunai: Rp 7.000)   |
+|                                                                   |
+|  [ Atur Budget Minggu Ini -> ]                    [ Nanti / v ]   |
++-------------------------------------------------------------------+
 ```
 
-### Daftar Tugas (TODOs)
-- [ ] **Card Layout & Visual Hierarchy**:
-  - Terapkan kontainer rounded modern (border radius 20–24px) dengan ambient accent glow atau aksen warna biru Pirsch (`0xFF16192B` di dark mode / `0xFFEFF2FC` di light mode).
-  - Pisahkan area icon, teks ringkasan, dan tombol aksi (*CTA Button*) dengan spacing 16px.
-- [ ] **Pemberitahuan Saldo Riil yang Jelas**:
-  - Teks utama: *"Periode Baru Dimulai"* dengan badge kalender/refresh.
-  - Subteks: *"Ada sisa Rp xx.xxx dari minggu lalu di dompetmu. Yuk tentukan budget minggu ini!"*.
-  - Tambahkan label saldo riil per dompet jika fitur Multi-Wallet aktif (misal: E-Wallet: Rp xx.xxx | Tunai: Rp xx.xxx).
-- [ ] **Tombol Aksi (CTA Button) Lebih Menonjol**:
-  - Ubah tombol *"Input"* menjadi tombol pill dengan teks lebih actionable: *"Atur Budget"* atau *"Set Budget"*.
-  - Tambahkan efek haptic feedback saat ditekan dan hover/pressed state yang responsif.
-- [ ] **Opsi Minimize / Snooze (Non-Intrusive)**:
-  - Berikan tombol dismiss/minimize kecil (*chevron* atau *close*) agar pengguna yang sedang terburu-buru mencatat jajan cepat tetap bisa menggunakan aplikasi tanpa terhalang banner besar.
-  - Banner yang di-minimize berubah menjadi chip kompak di header: *"Atur budget minggu ini >"*.
-- [ ] **Animasi Masuk (Slide-in Entry)**:
-  - Berikan animasi *fade & slide down* yang mulus ketika banner pertama kali muncul di hari Senin pagi.
+### Arahan Implementasi Teknis (Step-by-Step)
+1. **Container & Elevasi**:
+   - Ganti `BoxDecoration` kartu dengan `borderRadius: BorderRadius.circular(22)`.
+   - Dark mode: `color: const Color(0xFF16192B)`, border: `Border.all(color: PirschColors.primaryBlue.withValues(alpha: 0.3))`.
+   - Light mode: `color: const Color(0xFFEFF2FC)`, border: `Border.all(color: PirschColors.primaryBlue.withValues(alpha: 0.2))`.
+2. **Typography & Info Saldo**:
+   - Header badge: `Text('PERIODE BARU DIMULAI')` (size: 11, bold, letterSpacing: 0.8, color: `PirschColors.primaryBlue`).
+   - Subtitle: `Text('Ada sisa ${CurrencyFormatter.format(carryoverBalance)} dari minggu lalu.')` (size: 13, weight: 600).
+   - Multi-Wallet Sub-row (jika `cashWalletEnabled`): Tampilkan rincian chip kecil saldo E-Wallet vs Tunai.
+3. **CTA Action Button**:
+   - Ubah tombol menjadi full-pill: `ElevatedButton` dengan label `"Atur Budget Minggu Ini"`, height: 38, icon panah `Icons.arrow_forward_rounded`.
+   - On tap: Panggil `WeeklyBudgetInputSheet.show(context, repository)`.
+4. **State Minimize / Collapse**:
+   - Sediakan tombol minimize `IconButton(Icons.keyboard_arrow_up_rounded)` untuk mengecilkan banner menjadi compact pill jika user ingin langsung mencatat transaksi tanpa terhalang.
 
 ---
 
-## 3. Redesign: Layar Rekap Pengeluaran & Visualisasi Chart
+## 2. Komponen: Pill Indikator "Besok Max Jajan" (`HeroTomorrowAllowancePill`)
 
-### Latar Belakang & Masalah Saat Ini
-- Layar Rekap saat ini menyajikan breakdown kategori dalam bentuk *multi-segmented horizontal line bar*.
-- Pengguna membutuhkan representasi grafik visual (*chart*) yang lebih intuitif untuk:
-  1. Mengetahui **tren pengeluaran harian** (hari apa saja yang paling boros).
-  2. Membandingkan pengeluaran harian terhadap batas budget harian rata-rata (*benchmark line*).
-  3. Melihat proporsi kategori dalam grafik donat (*donut chart*) atau grafik batang vertikal modern.
+### Lokasi Kode & Arsitektur
+- **File Target**: [`lib/features/dashboard/widgets/hero_balance_card.dart`](file:///home/rayhan/Windows-D/project/expense-tracker/lib/features/dashboard/widgets/hero_balance_card.dart#L307-L348)
+- **Method Target**: Widget builder untuk pill proyeksi jatah besok di bawah nominal utama.
+- **Semantic Key**: `UIKeys.heroTomorrowAllowance`
+- **Data Source**: `widget.tomorrowDailyAllowance` (dihitung dari `BudgetRepository.tomorrowDailyAllowance`)
 
-### Wireframe Konsep Layar Rekap dengan Chart
+### Masalah Saat Ini
+Pill berada tepat di bawah nominal utama tetapi styling warnanya monoton, kurang memiliki hirarki visual dengan angka sisa hari ini, dan belum menjelaskan formula perhitungan saat ditekan pengguna.
+
+### Spesifikasi Target Desain
 ```
-+-------------------------------------------------------------+
-| [<]                  Rekap Pengeluaran                  [↻] |
-| 15 - 21 Sep 2026                                            |
-+-------------------------------------------------------------+
-| [ TOTAL PENGELUARAN ]                         [ 8 Transaksi]|
-| Rp 145.000                                                  |
-| Rata-rata: Rp 20.700/hari    | Budget: Rp 200.000           |
-+-------------------------------------------------------------+
-| TREN HARIAN (7-Day Bar Chart)                               |
-|   50k |             [■]                                     |
-|   25k |   [■]       [■]       [■]                           |
-|       - - - - - - - - - - - - - - - (Batas: Rp 20.700/hari) |
-|    0  +----+----+----+----+----+----+----+                  |
-|       Sen  Sel  Rab  Kam  Jum  Sab  Min                     |
-+-------------------------------------------------------------+
-| PROPORSI KATEGORI (Interactive Donut / Bar)                 |
-|   ( O )  45% Makanan & Minuman   (Rp 65.000)                |
-|          30% Transportasi        (Rp 43.500)                |
-|          25% Belanja & Lainnya   (Rp 36.500)                |
-+-------------------------------------------------------------+
-| TOP 5 PENGELUARAN TERBESAR                                  |
-| 1. Nasi Padang Spesial                    Rp 35.000         |
-| 2. Kopi Kenangan Mantan                   Rp 22.000         |
-+-------------------------------------------------------------+
-|             ( Minggu Ini | Bulan Ini | Semua )              |
-+-------------------------------------------------------------+
++-------------------------------------------------------------------+
+| Rp 45.000 / hari                                                  |
+|                                                                   |
+| [ (🗓️) Besok max jajan: Rp 38.000 | info (i) ]                    |
+| ^ Warna adaptif:                                                  |
+|   - Hijau/Mint: Jika pengeluaran hari ini hemat (sisa > kuota)    |
+|   - Biru Netral: Jika kondisi pengeluaran normal                  |
+|   - Rose/Coral: Jika overbudget hari ini (besok jatah terserap)   |
++-------------------------------------------------------------------+
 ```
 
-### Daftar Tugas (TODOs)
-- [ ] **Chart Tren Harian (Weekly 7-Day Bar Chart)**:
-  - Implementasi grafik batang 7 hari (Senin s.d. Minggu) dengan Flutter CustomPainter atau widget bar chart modular tanpa dependensi berat yang membengkakkan APK.
-  - Tampilkan garis batas putus-putus (*dashed benchmark line*) penanda batas jajan rata-rata harian.
-  - Batang yang melebihi batas rata-rata diwarnai dengan aksen coral/rose (`PirschColors.roseRed`), sedangkan yang aman diwarnai biru/mint.
-  - Micro-interaction: Tap pada batang hari memunculkan tooltip nominal pengeluaran hari tersebut.
-- [ ] **Chart Distribusi Kategori (Donut / Pie Chart)**:
-  - Tampilkan visualisasi cincin (*donut ring*) dengan warna identik per kategori sesuai `ExpenseCategory.color`.
-  - Di tengah cincin donat, tampilkan nominal kategori terbesar atau total pengeluaran.
-- [ ] **Perbandingan Antar Periode (*Delta Comparison*)**:
-  - Tampilkan badge perbandingan terhadap periode sebelumnya (contoh: *"-14% lebih hemat dibanding minggu lalu"*).
-- [ ] **Filter & Interaksi Chart Tanpa Lag**:
-  - Pastikan chart di-*render* secara efisien pada `PageView` 3 tab (*Minggu Ini*, *Bulan Ini*, *Semua*) dengan framerate stabil 60/120 FPS.
+### Arahan Implementasi Teknis (Step-by-Step)
+1. **Dynamic Color Resolver**:
+   - Buat helper method internal:
+     ```dart
+     Color _getTomorrowBadgeColor(bool isDark, bool isOverBudget, int remainingToday, int dailyAllowance)
+     ```
+   - Jika `isOverBudget`: Background `PirschColors.roseRed.withValues(alpha: 0.12)`, border `PirschColors.roseRed.withValues(alpha: 0.3)`, text `PirschColors.roseRed`.
+   - Jika `remainingToday >= dailyAllowance` (hemat): Background `PirschColors.mintGreen.withValues(alpha: 0.12)`, border `PirschColors.mintGreen.withValues(alpha: 0.3)`, text `PirschColors.mintGreen`.
+   - Jika normal: Background `Colors.white10`, border `borderColor`, text `textSecondary`.
+2. **Kapsul & Spacing**:
+   - Gunakan `borderRadius: BorderRadius.circular(20)`.
+   - Padding: `EdgeInsets.symmetric(horizontal: 12, vertical: 6)`.
+   - Spacing dari nominal utama: `SizedBox(height: 10)`.
+3. **Micro-Interaction Info Sheet**:
+   - Bungkus pill dengan `InkWell` / `GestureDetector`.
+   - Saat di-tap, panggil modal dialog atau bottom sheet penjelasan singkat:
+     *"Batas jajan esok hari dihitung dari sisa budget mingguan dibagi sisa hari minggu ini."*
 
 ---
 
-## 4. Matriks Prioritas Pengerjaan
+## 3. Komponen: Visualisasi Chart Rekap Pengeluaran (`RekapScreen`)
 
-| Prioritas | Komponen | Target File | Estimasi Waktu |
-| :--- | :--- | :--- | :--- |
-| **P1** | Redesign Alert *"Periode Baru Dimulai"* | `lib/features/dashboard/widgets/weekly_rollover_banner.dart` | ~45 menit |
-| **P1** | Redesign Pill *"Besok Max Jajan"* | `lib/features/dashboard/widgets/hero_balance_card.dart` | ~30 menit |
-| **P1** | Chart Tren Pengeluaran Harian Rekap | `lib/features/rekap/widgets/rekap_daily_bar_chart.dart` | ~60 menit |
-| **P2** | Chart Donut Kategori Rekap | `lib/features/rekap/widgets/rekap_category_donut_chart.dart` | ~45 menit |
-| **P2** | Micro-interaction Tooltip Penjelasan Proyeksi | `lib/features/dashboard/widgets/hero_balance_card.dart` | ~20 menit |
-| **P2** | State Minimize / Chip Compact Periode Baru | `lib/features/dashboard/dashboard_screen.dart` | ~30 menit |
+### Lokasi Kode & Arsitektur
+- **Layar Utama**: [`lib/features/rekap/screens/rekap_screen.dart`](file:///home/rayhan/Windows-D/project/expense-tracker/lib/features/rekap/screens/rekap_screen.dart)
+- **Widget Baru 1**: `lib/features/rekap/widgets/rekap_daily_bar_chart.dart` (Grafik Batang 7 Hari)
+- **Widget Baru 2**: `lib/features/rekap/widgets/rekap_category_donut_chart.dart` (Grafik Donut Kategori)
+- **Data Source**: `widget.repository.getExpensesForPeriod(start, end)`
+
+### Masalah Saat Ini
+Halaman Rekap hanya menampilkan proportional bar satu garis datar horizontal, tanpa visualisasi tren hari apa yang paling boros dan tanpa perbandingan terhadap batas jajan harian rata-rata.
+
+### Spesifikasi Target Desain Wireframe
+```
++-------------------------------------------------------------------+
+| TREN PENGELUARAN 7 HARI                                           |
+|                                                                   |
+|   50k |            [■]                                            |
+|   25k |   [■]      [■]       [■]                                  |
+|   15k - - - - - - - - - - - - - - - (Batas Harian: Rp 15.000)     |
+|    0  +----+----+----+----+----+----+----+                        |
+|       Sen  Sel  Rab  Kam  Jum  Sab  Min                           |
++-------------------------------------------------------------------+
+| PROPORSI KATEGORI (Donut Chart)                                   |
+|   [ Donut ]  45% Makanan & Minuman   (Rp 65.000)                  |
+|   [ Ring  ]  30% Transportasi        (Rp 43.500)                  |
+|              25% Belanja & Lainnya   (Rp 36.500)                  |
++-------------------------------------------------------------------+
+```
+
+### Arahan Implementasi Teknis (Step-by-Step)
+1. **Buat `RekapDailyBarChart`** ([NEW] `lib/features/rekap/widgets/rekap_daily_bar_chart.dart`):
+   - Input props: `List<ExpenseModel> expenses`, `int dailyAllowanceBenchmark`, `bool isDark`.
+   - Hitung total pengeluaran per hari (Senin s.d. Minggu).
+   - Render menggunakan kolom batang vertikal `Container` dengan tinggi proporsional (`height = (dayTotal / maxDailySpent) * maxBarHeight`).
+   - Terapkan garis benchmark putus-putus (*dashed line*) di posisi `dailyAllowanceBenchmark`.
+   - Warna batang: Jika `dayTotal > dailyAllowanceBenchmark`, warnai dengan `PirschColors.roseRed`, jika aman warnai dengan `PirschColors.primaryBlue`.
+   - Micro-interaction: Tap batang memunculkan tooltip nominal hari itu.
+2. **Buat `RekapCategoryDonutChart`** ([NEW] `lib/features/rekap/widgets/rekap_category_donut_chart.dart`):
+   - Gunakan `CustomPainter` menggambar busur (*arcs*) lingkaran donat dengan ketebalan stroke `14px`.
+   - Warna busur sesuai `ExpenseCategory.color`.
+   - Lubang tengah (*center hole*) menampilkan icon atau total pengeluaran.
+3. **Integrasi ke `RekapScreen`**:
+   - Di method `_buildPeriodPage()`, pasang `RekapDailyBarChart` tepat di bawah kartu `Total Summary Card`.
+   - Pasang `RekapCategoryDonutChart` di dalam `Category Breakdown Card`.
+
+---
+
+## 4. Urutan Eksekusi Bounded Task
+
+1. **Task 1**: Implementasi Redesign `WeeklyRolloverBanner` di `lib/features/dashboard/widgets/weekly_rollover_banner.dart`.
+2. **Task 2**: Implementasi Redesign Pill `HeroTomorrowAllowance` di `lib/features/dashboard/widgets/hero_balance_card.dart`.
+3. **Task 3**: Buat widget `RekapDailyBarChart` dan integrasikan ke `lib/features/rekap/screens/rekap_screen.dart`.
+4. **Task 4**: Buat widget `RekapCategoryDonutChart` dan integrasikan ke `lib/features/rekap/screens/rekap_screen.dart`.
+5. **Task 5**: Verifikasi seluruh test suite (`flutter test`) dan auto-commit & push ke GitHub.
