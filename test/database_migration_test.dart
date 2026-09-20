@@ -40,6 +40,7 @@ void main() {
               total_budget INTEGER NOT NULL DEFAULT 0,
               payday_day INTEGER NOT NULL DEFAULT 25,
               carryover_balance INTEGER NOT NULL DEFAULT 0,
+              initial_cash INTEGER NOT NULL DEFAULT 0,
               is_period_confirmed INTEGER NOT NULL DEFAULT 1,
               start_date TEXT NOT NULL,
               end_date TEXT NOT NULL
@@ -60,6 +61,9 @@ void main() {
           } catch (_) {}
           try {
             await db.execute('ALTER TABLE budget ADD COLUMN carryover_balance INTEGER NOT NULL DEFAULT 0');
+          } catch (_) {}
+          try {
+            await db.execute('ALTER TABLE budget ADD COLUMN initial_cash INTEGER NOT NULL DEFAULT 0');
           } catch (_) {}
           try {
             await db.execute('ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
@@ -138,6 +142,11 @@ void main() {
               await db.execute('ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
             } catch (_) {}
           }
+          if (oldVersion < 9) {
+            try {
+              await db.execute('ALTER TABLE budget ADD COLUMN initial_cash INTEGER NOT NULL DEFAULT 0');
+            } catch (_) {}
+          }
         },
         onOpen: (db) async {
           try {
@@ -148,6 +157,9 @@ void main() {
           } catch (_) {}
           try {
             await db.execute('ALTER TABLE budget ADD COLUMN carryover_balance INTEGER NOT NULL DEFAULT 0');
+          } catch (_) {}
+          try {
+            await db.execute('ALTER TABLE budget ADD COLUMN initial_cash INTEGER NOT NULL DEFAULT 0');
           } catch (_) {}
           try {
             await db.execute('ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
@@ -205,6 +217,9 @@ void main() {
             await db.execute('ALTER TABLE budget ADD COLUMN carryover_balance INTEGER NOT NULL DEFAULT 0');
           } catch (_) {}
           try {
+            await db.execute('ALTER TABLE budget ADD COLUMN initial_cash INTEGER NOT NULL DEFAULT 0');
+          } catch (_) {}
+          try {
             await db.execute('ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
           } catch (_) {}
         },
@@ -233,6 +248,7 @@ void main() {
               total_budget INTEGER NOT NULL DEFAULT 0,
               payday_day INTEGER NOT NULL DEFAULT 25,
               carryover_balance INTEGER NOT NULL DEFAULT 0,
+              initial_cash INTEGER NOT NULL DEFAULT 0,
               is_period_confirmed INTEGER NOT NULL DEFAULT 1,
               start_date TEXT NOT NULL,
               end_date TEXT NOT NULL

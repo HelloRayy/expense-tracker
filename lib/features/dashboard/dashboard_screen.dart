@@ -225,6 +225,8 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             spent: spent,
                             remainingToday: remainingToday,
                             remainingWeekly: remainingWeekly,
+                            ewalletBalance: widget.repository.ewalletBalance,
+                            cashBalance: widget.repository.cashBalance,
                             formattedPeriod: budget?.formattedPeriod ?? '',
                             isOverBudget: isOverBudget,
                             textPrimary: textPrimary,
@@ -238,6 +240,16 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             onTapPeriod: _openBudgetDetail,
                             onTapMenu: _openSettings,
                             onTapAdjustBalance: () => BalanceAdjustmentSheet.show(context, widget.repository),
+                            onTapAdjustEwallet: () => BalanceAdjustmentSheet.show(
+                              context,
+                              widget.repository,
+                              initialWalletType: 'ewallet',
+                            ),
+                            onTapAdjustCash: () => BalanceAdjustmentSheet.show(
+                              context,
+                              widget.repository,
+                              initialWalletType: 'cash',
+                            ),
                           ),
                           const SizedBox(height: 14),
 

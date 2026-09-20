@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jajan_tracker/features/budget/models/budget_model.dart';
+import 'package:jajan_tracker/features/budget/models/expense_model.dart';
 
 void main() {
   group('Adaptive Weekly Savings Budget System - Section 6 Simulation', () {
@@ -175,6 +176,51 @@ void main() {
       // On Thursday (4 days remaining), allowance should increase
       final allowance = budget.calculateDailyAllowance(0, targetDate: DateTime(2026, 9, 10));
       expect(allowance, 120000 ~/ 4); // 30.000 / day
+    });
+
+    test('Cash Wallet multi-account balance separation math', () {
+      final monday = DateTime(2026, 9, 7);
+      final sunday = DateTime(2026, 9, 13, 23, 59, 59, 999);
+
+      // Weekly income 200.000, savings 50.000, initialCash 30.000
+      final budget = BudgetModel(
+        weeklyIncome: 200000,
+        weeklySavingsTarget: 50000,
+        initialCash: 30000,
+        startDate: monday,
+        endDate: sunday,
+      );
+
+      expect(budget.initialCash, 30000);
+      expect(budget.totalBudget, 200000);
+      expect(budget.spendableBudget, 150000);
+
+      // Simulation of expenses in cash and ewallet
+      final cashExpense = ExpenseModel(
+        amount: 15000,
+        note: 'Gorengan',
+        walletType: 'cash',
+        createdAt: monday,
+      );
+      final ewalletExpense = ExpenseModel(
+        amount: 25000,
+        note: 'Kopi',
+        walletType: 'ewallet',
+        createdAt: monday,
+      );
+
+      final expenses = [cashExpense, ewalletExpense];
+      final cashSpent = expenses.where((e) => !e.isIncome && e.walletType == 'cash').fold<int>(0, (sum, e) => sum + e.amount);
+      final ewalletSpent = expenses.where((e) => !e.isIncome && e.walletType != 'cash').fold<int>(0, (sum, e) => sum + e.amount);
+
+      expect(cashSpent, 15000);
+      expect(ewalletSpent, 25000);
+
+      final cashBalance = budget.initialCash - cashSpent;
+      final ewalletBalance = (budget.totalBudget - budget.initialCash) - ewalletSpent;
+      expect(cashBalance, 15000);
+      expect(ewalletBalance, 145000);
+      expect(cashBalance + ewalletBalance, 160000);
     });
   });
 }

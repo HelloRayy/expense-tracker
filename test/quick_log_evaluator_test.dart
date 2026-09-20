@@ -81,6 +81,24 @@ class TestBudgetRepo extends ChangeNotifier implements BudgetRepository {
   int get remainingToday => dailyAllowance - spentToday;
 
   @override
+  int get initialCash => 0;
+
+  @override
+  int get cashSpent => 0;
+
+  @override
+  int get cashIncome => 0;
+
+  @override
+  int get cashBalance => 0;
+
+  @override
+  int get ewalletSpent => totalSpent;
+
+  @override
+  int get ewalletBalance => remainingBalance;
+
+  @override
   bool get isOverBudgetToday => remainingToday < 0;
 
   @override
@@ -90,13 +108,14 @@ class TestBudgetRepo extends ChangeNotifier implements BudgetRepository {
   Future<void> loadData() async {}
 
   @override
-  Future<void> addExpense(int amount, {String note = 'Jajan', String? categoryId, bool isIncome = false}) async {
+  Future<void> addExpense(int amount, {String note = 'Jajan', String? categoryId, bool isIncome = false, String walletType = 'ewallet'}) async {
     addedExpenses.add(ExpenseModel(
       id: addedExpenses.length + 1,
       amount: amount,
       note: note,
       categoryId: categoryId,
       isIncome: isIncome,
+      walletType: walletType,
       createdAt: DateTime.now(),
     ));
     notifyListeners();
@@ -106,10 +125,10 @@ class TestBudgetRepo extends ChangeNotifier implements BudgetRepository {
   Future<void> updateExpense(ExpenseModel expense) async {}
 
   @override
-  Future<void> addTopUp(int amount, {bool allocateToSavings = false, String note = 'Top Up Saldo'}) async {}
+  Future<void> addTopUp(int amount, {bool allocateToSavings = false, String note = 'Top Up Saldo', String walletType = 'ewallet'}) async {}
 
   @override
-  Future<void> adjustRealBalance({required int actualBalance, bool allocateToSavings = false}) async {}
+  Future<void> adjustRealBalance({required int actualBalance, bool allocateToSavings = false, String walletType = 'ewallet'}) async {}
 
   @override
   Future<void> deleteExpense(int id) async {}
@@ -122,6 +141,7 @@ class TestBudgetRepo extends ChangeNotifier implements BudgetRepository {
     required int newIncome,
     int? carryover,
     int? savingsTarget,
+    int? initialCash,
   }) async {}
 
   @override
@@ -130,6 +150,7 @@ class TestBudgetRepo extends ChangeNotifier implements BudgetRepository {
     int? weeklySavingsTarget,
     int? totalBudget,
     int? carryoverBalance,
+    int? initialCash,
     bool? isPeriodConfirmed,
     int? paydayDay,
   }) async {}

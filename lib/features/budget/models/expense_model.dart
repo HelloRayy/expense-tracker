@@ -6,6 +6,7 @@ class ExpenseModel {
   final String note;
   final String? categoryId;
   final bool isIncome;
+  final String walletType; // 'ewallet' | 'cash'
   final DateTime createdAt;
 
   ExpenseModel({
@@ -14,6 +15,7 @@ class ExpenseModel {
     this.note = 'Jajan',
     this.categoryId,
     this.isIncome = false,
+    this.walletType = 'ewallet',
     required this.createdAt,
   });
 
@@ -59,6 +61,7 @@ class ExpenseModel {
       'note': note.trim().isEmpty ? 'Jajan' : note.trim(),
       'category_id': categoryId,
       'is_income': isIncome ? 1 : 0,
+      'wallet_type': walletType,
       'created_at': createdAt.toIso8601String(),
     };
   }
@@ -70,6 +73,7 @@ class ExpenseModel {
       note: map['note'] as String? ?? 'Jajan',
       categoryId: map['category_id'] as String?,
       isIncome: (map['is_income'] as int? ?? 0) == 1,
+      walletType: map['wallet_type'] as String? ?? 'ewallet',
       createdAt: DateTime.tryParse(map['created_at'] as String? ?? '') ??
           DateTime.now(),
     );
@@ -82,6 +86,7 @@ class ExpenseModel {
     String? categoryId,
     bool clearCategory = false,
     bool? isIncome,
+    String? walletType,
     DateTime? createdAt,
   }) {
     return ExpenseModel(
@@ -90,6 +95,7 @@ class ExpenseModel {
       note: note ?? this.note,
       categoryId: clearCategory ? null : (categoryId ?? this.categoryId),
       isIncome: isIncome ?? this.isIncome,
+      walletType: walletType ?? this.walletType,
       createdAt: createdAt ?? this.createdAt,
     );
   }

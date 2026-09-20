@@ -6,18 +6,27 @@ import '../../budget/repository/budget_repository.dart';
 /// Modal bottom sheet to Top Up balance or Adjust Real Balance (Koreksi Saldo).
 class BalanceAdjustmentSheet extends StatefulWidget {
   final BudgetRepository repository;
+  final String initialWalletType; // 'ewallet' | 'cash'
 
   const BalanceAdjustmentSheet({
     super.key,
     required this.repository,
+    this.initialWalletType = 'ewallet',
   });
 
-  static Future<void> show(BuildContext context, BudgetRepository repository) {
+  static Future<void> show(
+    BuildContext context,
+    BudgetRepository repository, {
+    String initialWalletType = 'ewallet',
+  }) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => BalanceAdjustmentSheet(repository: repository),
+      builder: (ctx) => BalanceAdjustmentSheet(
+        repository: repository,
+        initialWalletType: initialWalletType,
+      ),
     );
   }
 
@@ -28,6 +37,7 @@ class BalanceAdjustmentSheet extends StatefulWidget {
 class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late String _selectedWallet; // 'ewallet' | 'cash'
 
   // Tab 1: Top Up controllers
   late TextEditingController _topUpAmountController;
@@ -43,9 +53,12 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
   @override
   void initState() {
     super.initState();
+    _selectedWallet = widget.initialWalletType;
     _tabController = TabController(length: 2, vsync: this);
     _topUpAmountController = TextEditingController();
-    _topUpNoteController = TextEditingController(text: 'Top Up Saldo');
+    _topUpNoteController = TextEditingController(
+      text: _selectedWallet == 'cash' ? 'Tambah Uang Tunai' : 'Top Up Saldo',
+    );
     _realBalanceController = TextEditingController();
 
     _tabController.addListener(() {
@@ -72,25 +85,28 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
   Future<void> _submitTopUp() async {
     final amount = CurrencyFormatter.parse(_topUpAmountController.text);
     if (amount <= 0) {
-      setState(() => _errorMessage = 'Masukkan nominal top up yang valid');
+      setState(() => _errorMessage = 'Masukkan nominal yang valid');
       return;
     }
 
+    final defaultNote = _selectedWallet == 'cash' ? 'Tambah Uang Tunai' : 'Top Up Saldo';
     final note = _topUpNoteController.text.trim().isEmpty
-        ? 'Top Up Saldo'
+        ? defaultNote
         : _topUpNoteController.text.trim();
 
     await widget.repository.addTopUp(
       amount,
       allocateToSavings: _topUpToSavings,
       note: note,
+      walletType: _selectedWallet,
     );
 
     if (!mounted) return;
     Navigator.of(context).pop();
+    final walletLabel = _selectedWallet == 'cash' ? 'Tunai' : 'E-Wallet';
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Top Up ${CurrencyFormatter.format(amount)} berhasil dicatat!'),
+        content: Text('Saldo $walletLabel +${CurrencyFormatter.format(amount)} berhasil dicatat!'),
         backgroundColor: PirschColors.incomeGreen,
         duration: const Duration(seconds: 2),
       ),
@@ -98,14 +114,17 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
   }
 
   Future<void> _submitAdjustment() async {
+    final walletLabel = _selectedWallet == 'cash' ? 'Tunai' : 'E-Wallet';
     if (_realBalanceController.text.trim().isEmpty) {
-      setState(() => _errorMessage = 'Masukkan saldo riil e-wallet Anda');
+      setState(() => _errorMessage = 'Masukkan saldo riil $walletLabel Anda');
       return;
     }
 
     final actualBalance = CurrencyFormatter.parse(_realBalanceController.text);
-    final currentAppBalance = widget.repository.remainingBalance;
-    final diff = actualBalance - currentAppBalance;
+    final currentTargetBalance = _selectedWallet == 'cash'
+        ? widget.repository.cashBalance
+        : widget.repository.ewalletBalance;
+    final diff = actualBalance - currentTargetBalance;
 
     if (diff == 0) {
       setState(() => _errorMessage = 'Saldo riil sama dengan saldo aplikasi (tidak ada selisih)');
@@ -115,6 +134,7 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
     await widget.repository.adjustRealBalance(
       actualBalance: actualBalance,
       allocateToSavings: _reconcileToSavings,
+      walletType: _selectedWallet,
     );
 
     if (!mounted) return;
@@ -123,8 +143,8 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
       SnackBar(
         content: Text(
           diff > 0
-              ? 'Saldo disesuaikan: +${CurrencyFormatter.format(diff)}'
-              : 'Saldo disesuaikan: -${CurrencyFormatter.format(diff.abs())}',
+              ? 'Saldo $walletLabel disesuaikan: +${CurrencyFormatter.format(diff)}'
+              : 'Saldo $walletLabel disesuaikan: -${CurrencyFormatter.format(diff.abs())}',
         ),
         backgroundColor: diff > 0 ? PirschColors.incomeGreen : PirschColors.roseRed,
         duration: const Duration(seconds: 2),
@@ -172,7 +192,58 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
+
+            // Wallet Selector Pill Strip (E-Wallet vs Tunai)
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildWalletChip(
+                      label: 'E-Wallet',
+                      icon: Icons.account_balance_wallet_rounded,
+                      isSelected: _selectedWallet == 'ewallet',
+                      isDark: isDark,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                      onTap: () {
+                        setState(() {
+                          _selectedWallet = 'ewallet';
+                          _topUpNoteController.text = 'Top Up Saldo';
+                          _errorMessage = null;
+                        });
+                      },
+                    ),
+                    const SizedBox(width: 4),
+                    _buildWalletChip(
+                      label: 'Uang Tunai',
+                      icon: Icons.payments_rounded,
+                      isSelected: _selectedWallet == 'cash',
+                      isDark: isDark,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                      onTap: () {
+                        setState(() {
+                          _selectedWallet = 'cash';
+                          _topUpNoteController.text = 'Tambah Uang Tunai';
+                          _errorMessage = null;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
 
             // Tab Header (Top Up vs Koreksi Saldo)
             Container(
@@ -394,22 +465,24 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
     Color textPrimary,
     Color textSecondary,
   ) {
-    final appBalance = widget.repository.remainingBalance;
+    final isCash = _selectedWallet == 'cash';
+    final targetBalance = isCash ? widget.repository.cashBalance : widget.repository.ewalletBalance;
+    final walletName = isCash ? 'Uang Tunai' : 'E-Wallet';
     final actualBalance = _realBalanceController.text.trim().isEmpty
         ? null
         : CurrencyFormatter.parse(_realBalanceController.text);
-    final diff = actualBalance != null ? actualBalance - appBalance : null;
+    final diff = actualBalance != null ? actualBalance - targetBalance : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Koreksi Saldo Riil E-Wallet',
+          'Koreksi Saldo Riil $walletName',
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: textPrimary),
         ),
         const SizedBox(height: 4),
         Text(
-          'Ketik saldo asli e-wallet Anda saat ini. Aplikasi akan menghitung selisih dan menyesuaikannya.',
+          'Ketik saldo asli $walletName Anda saat ini. Aplikasi akan menghitung selisih dan menyesuaikannya.',
           style: TextStyle(fontSize: 12, color: textSecondary),
         ),
         const SizedBox(height: 14),
@@ -418,18 +491,18 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Saldo di Aplikasi:', style: TextStyle(fontSize: 12, color: textSecondary)),
+            Text('Saldo $walletName di Aplikasi:', style: TextStyle(fontSize: 12, color: textSecondary)),
             Text(
-              CurrencyFormatter.format(appBalance),
+              CurrencyFormatter.format(targetBalance),
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: textPrimary),
             ),
           ],
         ),
         const SizedBox(height: 8),
 
-        // Real E-Wallet Balance Input
+        // Real Wallet Balance Input
         Text(
-          'Saldo Asli E-Wallet Saat Ini',
+          'Saldo Asli $walletName Saat Ini',
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: textSecondary),
         ),
         const SizedBox(height: 6),
@@ -440,7 +513,7 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
           decoration: InputDecoration(
             prefixText: 'Rp ',
             prefixStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: textPrimary),
-            hintText: CurrencyFormatter.formatNumber(appBalance),
+            hintText: CurrencyFormatter.formatNumber(targetBalance),
             hintStyle: TextStyle(color: textSecondary.withValues(alpha: 0.4)),
             filled: true,
             fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
@@ -528,6 +601,59 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildWalletChip({
+    required String label,
+    required IconData icon,
+    required bool isSelected,
+    required bool isDark,
+    required Color textPrimary,
+    required Color textSecondary,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark ? const Color(0xFF2C2C30) : Colors.white)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 14,
+              color: isSelected ? PirschColors.primaryBlue : textSecondary,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color: isSelected ? textPrimary : textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

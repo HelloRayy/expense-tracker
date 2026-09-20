@@ -5,6 +5,7 @@ class BudgetModel {
   final int weeklyIncome; // uangMingguan baru
   final int weeklySavingsTarget; // nabungMinggu
   final int carryoverBalance; // sisa uang jajan minggu lalu
+  final int initialCash; // saldo tunai dasar/awal
   final bool isPeriodConfirmed; // apakah user sudah input/konfirmasi budget minggu ini
   final DateTime startDate; // Monday 00:00:00
   final DateTime endDate; // Sunday 23:59:59
@@ -16,6 +17,7 @@ class BudgetModel {
     int? totalBudget,
     int? paydayDay,
     this.carryoverBalance = 0,
+    this.initialCash = 0,
     this.isPeriodConfirmed = true,
     required this.startDate,
     required this.endDate,
@@ -95,6 +97,7 @@ class BudgetModel {
       'total_budget': spendableBudget,
       'payday_day': 25,
       'carryover_balance': carryoverBalance,
+      'initial_cash': initialCash,
       'is_period_confirmed': isPeriodConfirmed ? 1 : 0,
       'start_date': startDate.toIso8601String(),
       'end_date': endDate.toIso8601String(),
@@ -105,6 +108,7 @@ class BudgetModel {
     final income = map['weekly_income'] as int? ?? map['total_budget'] as int? ?? 0;
     final savings = map['weekly_savings_target'] as int? ?? 0;
     final carryover = map['carryover_balance'] as int? ?? 0;
+    final cash = map['initial_cash'] as int? ?? 0;
     final confirmed = (map['is_period_confirmed'] as int? ?? 1) == 1;
 
     return BudgetModel(
@@ -112,6 +116,7 @@ class BudgetModel {
       weeklyIncome: income,
       weeklySavingsTarget: savings,
       carryoverBalance: carryover,
+      initialCash: cash,
       isPeriodConfirmed: confirmed,
       startDate: DateTime.tryParse(map['start_date'] as String? ?? '') ?? getMondayOfWeek(DateTime.now()),
       endDate: DateTime.tryParse(map['end_date'] as String? ?? '') ?? getSundayOfWeek(DateTime.now()),
@@ -123,6 +128,7 @@ class BudgetModel {
     int? weeklyIncome,
     int? weeklySavingsTarget,
     int? carryoverBalance,
+    int? initialCash,
     bool? isPeriodConfirmed,
     DateTime? startDate,
     DateTime? endDate,
@@ -132,6 +138,7 @@ class BudgetModel {
       weeklyIncome: weeklyIncome ?? this.weeklyIncome,
       weeklySavingsTarget: weeklySavingsTarget ?? this.weeklySavingsTarget,
       carryoverBalance: carryoverBalance ?? this.carryoverBalance,
+      initialCash: initialCash ?? this.initialCash,
       isPeriodConfirmed: isPeriodConfirmed ?? this.isPeriodConfirmed,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,

@@ -16,6 +16,8 @@ class HeroBalanceCard extends StatelessWidget {
   final int spent;
   final int remainingToday;
   final int? remainingWeekly;
+  final int? ewalletBalance;
+  final int? cashBalance;
   final String formattedPeriod;
   final bool isOverBudget;
   final Color textPrimary;
@@ -25,6 +27,8 @@ class HeroBalanceCard extends StatelessWidget {
   final VoidCallback? onTapPeriod;
   final VoidCallback onTapMenu;
   final VoidCallback? onTapAdjustBalance;
+  final VoidCallback? onTapAdjustEwallet;
+  final VoidCallback? onTapAdjustCash;
 
   const HeroBalanceCard({
     super.key,
@@ -32,6 +36,8 @@ class HeroBalanceCard extends StatelessWidget {
     required this.spent,
     required this.remainingToday,
     this.remainingWeekly,
+    this.ewalletBalance,
+    this.cashBalance,
     required this.formattedPeriod,
     required this.isOverBudget,
     required this.textPrimary,
@@ -41,6 +47,8 @@ class HeroBalanceCard extends StatelessWidget {
     this.onTapPeriod,
     required this.onTapMenu,
     this.onTapAdjustBalance,
+    this.onTapAdjustEwallet,
+    this.onTapAdjustCash,
   });
 
   @override
@@ -263,47 +271,107 @@ class HeroBalanceCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // Sub-metrics Row below Hero: ↙ Sisa Saldo & ↗ Terpakai (Side-by-Side)
-          Row(
+          // Sub-metrics Row below Hero: Multi-Account Badges (E-Wallet & Tunai) + ↗ Terpakai
+          Wrap(
+            spacing: 12,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              // Left: ↙ Sisa Saldo (WCAG AA Compliant Green) with tap to adjust
+              // E-Wallet Chip
               Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: onTapAdjustBalance,
-                  borderRadius: BorderRadius.circular(6),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+                  onTap: onTapAdjustEwallet ?? onTapAdjustBalance,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+                      ),
+                    ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.south_west_rounded,
-                          size: 15,
-                          color: PirschColors.green(isDark),
+                        const Icon(
+                          Icons.account_balance_wallet_rounded,
+                          size: 13,
+                          color: PirschColors.primaryBlue,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 5),
                         Text(
-                          CurrencyFormatter.format(remaining),
+                          'E-Wallet: ',
                           style: TextStyle(
-                            color: remaining < 0 ? PirschColors.red(isDark) : PirschColors.green(isDark),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -0.2,
+                            color: textSecondary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(width: 4),
-                        Icon(
-                          Icons.sync_alt_rounded,
-                          size: 13,
-                          color: textSecondary.withValues(alpha: 0.6),
+                        Text(
+                          CurrencyFormatter.format(ewalletBalance ?? remaining),
+                          style: TextStyle(
+                            color: (ewalletBalance ?? remaining) < 0
+                                ? PirschColors.red(isDark)
+                                : PirschColors.green(isDark),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
+
+              // Tunai / Cash Chip
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onTapAdjustCash ?? onTapAdjustBalance,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.payments_rounded,
+                          size: 13,
+                          color: PirschColors.mintGreen,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          'Tunai: ',
+                          style: TextStyle(
+                            color: textSecondary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          CurrencyFormatter.format(cashBalance ?? 0),
+                          style: TextStyle(
+                            color: (cashBalance ?? 0) < 0
+                                ? PirschColors.red(isDark)
+                                : PirschColors.green(isDark),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
 
               // Right: ↗ Terpakai (WCAG AA Compliant Red)
               Row(
@@ -311,7 +379,7 @@ class HeroBalanceCard extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.north_east_rounded,
-                    size: 15,
+                    size: 14,
                     color: PirschColors.red(isDark),
                   ),
                   const SizedBox(width: 4),
@@ -319,7 +387,7 @@ class HeroBalanceCard extends StatelessWidget {
                     CurrencyFormatter.format(spent),
                     style: TextStyle(
                       color: PirschColors.red(isDark),
-                      fontSize: 14,
+                      fontSize: 12,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.2,
                     ),

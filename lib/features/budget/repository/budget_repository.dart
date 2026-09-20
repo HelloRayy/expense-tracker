@@ -30,12 +30,51 @@ class BudgetRepository extends ChangeNotifier {
   int get weeklyIncome => _budget?.weeklyIncome ?? 0;
   int get weeklySavingsTarget => _budget?.weeklySavingsTarget ?? 0;
   int get carryoverBalance => _budget?.carryoverBalance ?? 0;
+  int get initialCash => _budget?.initialCash ?? 0;
   bool get isPeriodConfirmed => _budget?.isPeriodConfirmed ?? true;
   int get spendableBudget => _budget?.spendableBudget ?? 0;
 
-  /// Sisa seluruh uang yang dipegang (termasuk tabungan + uang carryover)
+  /// Total pengeluaran via E-Wallet
+  int get ewalletSpent {
+    return _expenses
+        .where((e) => !e.isIncome && e.walletType != 'cash')
+        .fold<int>(0, (sum, e) => sum + e.amount);
+  }
+
+  /// Total pengeluaran via Uang Tunai (Cash)
+  int get cashSpent {
+    return _expenses
+        .where((e) => !e.isIncome && e.walletType == 'cash')
+        .fold<int>(0, (sum, e) => sum + e.amount);
+  }
+
+  /// Total pemasukan / top-up tunai
+  int get cashIncome {
+    return _expenses
+        .where((e) => e.isIncome && e.walletType == 'cash')
+        .fold<int>(0, (sum, e) => sum + e.amount);
+  }
+
+  /// Sisa saldo uang tunai fisik
+  int get cashBalance {
+    return initialCash + cashIncome - cashSpent;
+  }
+
+  /// Sisa saldo di e-wallet (seluruh total budget dikurangi cash balance awal & mutasi cash & mutasi ewallet)
+  int get ewalletBalance {
+    // Total budget mencakup weeklyIncome + carryover.
+    // cashBalance sudah mencakup initialCash + cashIncome - cashSpent.
+    // Maka ewalletBalance adalah total budget + ewalletIncome - ewalletSpent - initialCash - cashIncome.
+    final totalEwalletBudget = (_budget?.totalBudget ?? 0) - initialCash - cashIncome;
+    final ewalletIncome = _expenses
+        .where((e) => e.isIncome && e.walletType != 'cash')
+        .fold<int>(0, (sum, e) => sum + e.amount);
+    return totalEwalletBudget + ewalletIncome - ewalletSpent;
+  }
+
+  /// Sisa seluruh uang yang dipegang (gabungan ewallet + cash)
   int get remainingBalance {
-    return (_budget?.totalBudget ?? 0) - _totalSpent;
+    return ewalletBalance + cashBalance;
   }
 
   /// Sisa budget belanja mingguan yang boleh dipakai jajan
@@ -164,6 +203,7 @@ class BudgetRepository extends ChangeNotifier {
     String note = 'Jajan',
     String? categoryId,
     bool isIncome = false,
+    String walletType = 'ewallet',
   }) async {
     if (kIsWeb) {
       final expense = ExpenseModel(
@@ -172,6 +212,7 @@ class BudgetRepository extends ChangeNotifier {
         note: note,
         categoryId: categoryId,
         isIncome: isIncome,
+        walletType: walletType,
         createdAt: DateTime.now(),
       );
       _expenses.insert(0, expense);
@@ -187,6 +228,7 @@ class BudgetRepository extends ChangeNotifier {
       note: note,
       categoryId: categoryId,
       isIncome: isIncome,
+      walletType: walletType,
       createdAt: DateTime.now(),
     );
     await _db.insertExpense(expense);
@@ -216,6 +258,7 @@ class BudgetRepository extends ChangeNotifier {
     int amount, {
     bool allocateToSavings = false,
     String note = 'Top Up Saldo',
+    String walletType = 'ewallet',
   }) async {
     if (amount <= 0 || _budget == null) return;
 
@@ -236,6 +279,7 @@ class BudgetRepository extends ChangeNotifier {
       note: note,
       categoryId: ExpenseCategory.topUp.id,
       isIncome: true,
+      walletType: walletType,
       createdAt: DateTime.now(),
     );
 
@@ -251,28 +295,34 @@ class BudgetRepository extends ChangeNotifier {
     await loadData();
   }
 
-  /// Reconciles real wallet balance: calculates discrepancy automatically.
+  /// Reconciles real wallet balance: calculates discrepancy automatically for specific wallet.
   /// If positive -> top up ad-hoc.
   /// If negative -> records forgotten expense adjustment.
   Future<void> adjustRealBalance({
     required int actualBalance,
     bool allocateToSavings = false,
+    String walletType = 'ewallet',
   }) async {
-    final diff = actualBalance - remainingBalance;
+    final targetBalance = walletType == 'cash' ? cashBalance : ewalletBalance;
+    final diff = actualBalance - targetBalance;
     if (diff == 0) return;
 
     if (diff > 0) {
       await addTopUp(
         diff,
         allocateToSavings: allocateToSavings,
-        note: 'Top Up Saldo',
+        note: walletType == 'cash' ? 'Tambah Uang Tunai' : 'Top Up Saldo',
+        walletType: walletType,
       );
     } else {
       await addExpense(
         diff.abs(),
-        note: 'Penyesuaian Saldo (Terlupa)',
+        note: walletType == 'cash'
+            ? 'Penyesuaian Saldo Tunai (Terlupa)'
+            : 'Penyesuaian Saldo E-Wallet (Terlupa)',
         categoryId: ExpenseCategory.penyesuaian.id,
         isIncome: false,
+        walletType: walletType,
       );
     }
   }
@@ -374,17 +424,20 @@ class BudgetRepository extends ChangeNotifier {
     required int newIncome,
     int? carryover,
     int? savingsTarget,
+    int? initialCash,
   }) async {
     final now = DateTime.now();
     final effectiveCarryover = carryover ?? (_budget?.carryoverBalance ?? 0);
     final income = newIncome;
     final savings = savingsTarget ?? (income > 0 ? (income * 0.3).round() : 0);
+    final cash = initialCash ?? (_budget?.initialCash ?? 0);
 
     final newBudget = BudgetModel(
       id: 1,
       weeklyIncome: income,
       weeklySavingsTarget: savings,
       carryoverBalance: effectiveCarryover,
+      initialCash: cash,
       isPeriodConfirmed: true,
       startDate: BudgetModel.getMondayOfWeek(now),
       endDate: BudgetModel.getSundayOfWeek(now),
@@ -404,6 +457,7 @@ class BudgetRepository extends ChangeNotifier {
     int? weeklySavingsTarget,
     int? totalBudget,
     int? carryoverBalance,
+    int? initialCash,
     bool? isPeriodConfirmed,
     int? paydayDay,
   }) async {
@@ -411,6 +465,7 @@ class BudgetRepository extends ChangeNotifier {
     final income = weeklyIncome ?? totalBudget ?? _budget?.weeklyIncome ?? 0;
     final savings = weeklySavingsTarget ?? (income > 0 ? (income * 0.3).round() : 0);
     final carryover = carryoverBalance ?? _budget?.carryoverBalance ?? 0;
+    final cash = initialCash ?? _budget?.initialCash ?? 0;
     final confirmed = isPeriodConfirmed ?? _budget?.isPeriodConfirmed ?? true;
 
     final newBudget = BudgetModel(
@@ -418,6 +473,7 @@ class BudgetRepository extends ChangeNotifier {
       weeklyIncome: income,
       weeklySavingsTarget: savings,
       carryoverBalance: carryover,
+      initialCash: cash,
       isPeriodConfirmed: confirmed,
       startDate: BudgetModel.getMondayOfWeek(now),
       endDate: BudgetModel.getSundayOfWeek(now),

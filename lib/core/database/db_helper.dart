@@ -31,7 +31,7 @@ class DbHelper {
 
     return await openDatabase(
       path,
-      version: 8,
+      version: 9,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE IF NOT EXISTS budget (
@@ -42,6 +42,7 @@ class DbHelper {
             payday_day INTEGER NOT NULL DEFAULT 25,
             carryover_balance INTEGER NOT NULL DEFAULT 0,
             is_period_confirmed INTEGER NOT NULL DEFAULT 1,
+            initial_cash INTEGER NOT NULL DEFAULT 0,
             start_date TEXT NOT NULL,
             end_date TEXT NOT NULL
           )
@@ -54,6 +55,7 @@ class DbHelper {
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN carryover_balance INTEGER NOT NULL DEFAULT 0');
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
+        await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN initial_cash INTEGER NOT NULL DEFAULT 0');
 
         await db.execute('''
           CREATE TABLE IF NOT EXISTS expenses (
@@ -62,6 +64,7 @@ class DbHelper {
             note TEXT NOT NULL,
             category_id TEXT DEFAULT NULL,
             is_income INTEGER NOT NULL DEFAULT 0,
+            wallet_type TEXT NOT NULL DEFAULT 'ewallet',
             created_at TEXT NOT NULL
           )
         ''');
@@ -137,6 +140,10 @@ class DbHelper {
         if (oldVersion < 8) {
           await _safeExecute(db, 'ALTER TABLE expenses ADD COLUMN is_income INTEGER NOT NULL DEFAULT 0');
         }
+        if (oldVersion < 9) {
+          await _safeExecute(db, 'ALTER TABLE expenses ADD COLUMN wallet_type TEXT NOT NULL DEFAULT \'ewallet\'');
+          await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN initial_cash INTEGER NOT NULL DEFAULT 0');
+        }
       },
       onOpen: (db) async {
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN total_budget INTEGER NOT NULL DEFAULT 0');
@@ -145,8 +152,10 @@ class DbHelper {
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN weekly_savings_target INTEGER NOT NULL DEFAULT 0');
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN carryover_balance INTEGER NOT NULL DEFAULT 0');
         await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN is_period_confirmed INTEGER NOT NULL DEFAULT 1');
+        await _safeExecute(db, 'ALTER TABLE budget ADD COLUMN initial_cash INTEGER NOT NULL DEFAULT 0');
         await _safeExecute(db, 'ALTER TABLE expenses ADD COLUMN category_id TEXT DEFAULT NULL');
         await _safeExecute(db, 'ALTER TABLE expenses ADD COLUMN is_income INTEGER NOT NULL DEFAULT 0');
+        await _safeExecute(db, 'ALTER TABLE expenses ADD COLUMN wallet_type TEXT NOT NULL DEFAULT \'ewallet\'');
         await _safeExecute(db, 'CREATE INDEX IF NOT EXISTS idx_expenses_category_id ON expenses (category_id)');
         await db.execute('''
           CREATE TABLE IF NOT EXISTS pending_transactions (

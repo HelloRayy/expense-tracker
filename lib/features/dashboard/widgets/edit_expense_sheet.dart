@@ -44,6 +44,7 @@ class _EditExpenseSheetState extends State<EditExpenseSheet> {
   late TextEditingController _amountController;
   late TextEditingController _noteController;
   late String? _selectedCategoryId;
+  late String _selectedWallet;
   bool _isSaving = false;
 
   @override
@@ -54,6 +55,7 @@ class _EditExpenseSheetState extends State<EditExpenseSheet> {
     );
     _noteController = TextEditingController(text: widget.expense.note);
     _selectedCategoryId = widget.expense.categoryId;
+    _selectedWallet = widget.expense.walletType;
   }
 
   @override
@@ -81,6 +83,7 @@ class _EditExpenseSheetState extends State<EditExpenseSheet> {
             : _noteController.text.trim(),
         categoryId: _selectedCategoryId,
         clearCategory: _selectedCategoryId == null,
+        walletType: _selectedWallet,
       );
 
       await widget.repository.updateExpense(updated);
@@ -237,6 +240,45 @@ class _EditExpenseSheetState extends State<EditExpenseSheet> {
           ),
           const SizedBox(height: 16),
 
+          // Metode Pembayaran / Dompet Selector
+          Text(
+            'Sumber Dompet',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: textSecondary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: _buildWalletChoice(
+                  label: 'E-Wallet',
+                  icon: Icons.account_balance_wallet_rounded,
+                  isSelected: _selectedWallet == 'ewallet',
+                  isDark: isDark,
+                  textPrimary: textPrimary,
+                  textSecondary: textSecondary,
+                  onTap: () => setState(() => _selectedWallet = 'ewallet'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildWalletChoice(
+                  label: 'Uang Tunai',
+                  icon: Icons.payments_rounded,
+                  isSelected: _selectedWallet == 'cash',
+                  isDark: isDark,
+                  textPrimary: textPrimary,
+                  textSecondary: textSecondary,
+                  onTap: () => setState(() => _selectedWallet = 'cash'),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
           // Kategori (hanya jika bukan income)
           if (!isIncome) ...[
             Text(
@@ -313,6 +355,55 @@ class _EditExpenseSheetState extends State<EditExpenseSheet> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWalletChoice({
+    required String label,
+    required IconData icon,
+    required bool isSelected,
+    required bool isDark,
+    required Color textPrimary,
+    required Color textSecondary,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.08))
+              : (isDark ? const Color(0xFF1E1E22) : const Color(0xFFF4F4F5)),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected
+                ? PirschColors.primaryBlue
+                : (isDark ? Colors.white10 : Colors.black12),
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isSelected ? PirschColors.primaryBlue : textSecondary,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color: isSelected ? textPrimary : textSecondary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

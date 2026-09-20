@@ -61,6 +61,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
   bool _cursorVisible = true;
   Timer? _cursorBlinkTimer;
   ExpenseCategory _selectedCategory = ExpenseCategory.makananMinuman;
+  String _selectedWallet = 'ewallet'; // 'ewallet' | 'cash'
 
   @override
   void initState() {
@@ -255,6 +256,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
           amount,
           note: _selectedCategory.displayName,
           categoryId: _selectedCategory.id,
+          walletType: _selectedWallet,
         );
       }
 
@@ -425,7 +427,44 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  // Wallet Selector Pill Strip (E-Wallet vs Tunai)
+                  Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildWalletOption(
+                            label: 'E-Wallet',
+                            icon: Icons.account_balance_wallet_rounded,
+                            isSelected: _selectedWallet == 'ewallet',
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            onTap: () => setState(() => _selectedWallet = 'ewallet'),
+                          ),
+                          const SizedBox(width: 4),
+                          _buildWalletOption(
+                            label: 'Tunai',
+                            icon: Icons.payments_rounded,
+                            isSelected: _selectedWallet == 'cash',
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            onTap: () => setState(() => _selectedWallet = 'cash'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
 
                   // Centered Category Pill Selector
                   Center(
@@ -454,6 +493,59 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildWalletOption({
+    required String label,
+    required IconData icon,
+    required bool isSelected,
+    required bool isDark,
+    required Color textPrimary,
+    required Color textSecondary,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark ? const Color(0xFF2C2C30) : Colors.white)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 14,
+              color: isSelected ? PirschColors.mintGreen : textSecondary,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color: isSelected ? textPrimary : textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
