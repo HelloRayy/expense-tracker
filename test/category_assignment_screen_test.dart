@@ -169,6 +169,13 @@ class MockCategoryBudgetRepo extends ChangeNotifier implements BudgetRepository 
     lastTargetCategoryId = targetCategoryId;
     lastUnassignIds = List.from(unassignIds);
   }
+
+
+  @override
+  Future<List<ExpenseModel>> getExpensesForPeriod(DateTime start, DateTime end) async => testExpenses;
+
+  @override
+  Future<List<ExpenseModel>> getAllExpensesHistory() async => testExpenses;
 }
 
 void main() {

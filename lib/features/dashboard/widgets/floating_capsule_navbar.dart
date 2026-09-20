@@ -11,7 +11,7 @@ class FloatingCapsuleNavbar extends StatelessWidget {
   final Color textSecondary;
   final VoidCallback onTapShopee;
   final VoidCallback onTapQuickLog;
-  final VoidCallback onTapCatalog;
+  final VoidCallback onTapRekap;
   final VoidCallback onTapSettings;
 
   const FloatingCapsuleNavbar({
@@ -21,7 +21,7 @@ class FloatingCapsuleNavbar extends StatelessWidget {
     required this.textSecondary,
     required this.onTapShopee,
     required this.onTapQuickLog,
-    required this.onTapCatalog,
+    required this.onTapRekap,
     required this.onTapSettings,
   });
 
@@ -116,11 +116,11 @@ class FloatingCapsuleNavbar extends StatelessWidget {
 
           const SizedBox(width: 12),
 
-          // Nav 4: Expense Catalog Cards
+          // Nav 4: Rekap Pengeluaran
           _buildNavItem(
-            icon: Icons.grid_view_rounded,
-            tooltip: 'Katalog Kartu Jajan',
-            onTap: onTapCatalog,
+            icon: Icons.bar_chart_rounded,
+            tooltip: 'Rekap Pengeluaran',
+            onTap: onTapRekap,
           ),
 
           const SizedBox(width: 12),

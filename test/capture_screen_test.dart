@@ -171,6 +171,12 @@ class MockBudgetRepo extends ChangeNotifier implements BudgetRepository {
 
   @override
   Future<void> batchAssignMultiCategories(Map<int, String?> categoryUpdates) async {}
+
+  @override
+  Future<List<ExpenseModel>> getExpensesForPeriod(DateTime start, DateTime end) async => expenses;
+
+  @override
+  Future<List<ExpenseModel>> getAllExpensesHistory() async => expenses;
 }
 
 Future<void> loadFonts() async {

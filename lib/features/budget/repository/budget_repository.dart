@@ -504,4 +504,23 @@ class BudgetRepository extends ChangeNotifier {
       formattedPeriod: _budget!.formattedPeriod,
     );
   }
+
+  /// Mengambil daftar pengeluaran untuk rentang waktu tertentu dari database SQLite.
+  Future<List<ExpenseModel>> getExpensesForPeriod(DateTime start, DateTime end) async {
+    if (kIsWeb) {
+      return _expenses.where((e) {
+        return (e.createdAt.isAfter(start) || e.createdAt.isAtSameMomentAs(start)) &&
+            (e.createdAt.isBefore(end) || e.createdAt.isAtSameMomentAs(end));
+      }).toList();
+    }
+    return await _db.getExpensesForPeriod(start, end);
+  }
+
+  /// Mengambil seluruh riwayat pengeluaran yang tersimpan di SQLite.
+  Future<List<ExpenseModel>> getAllExpensesHistory() async {
+    if (kIsWeb) {
+      return List.unmodifiable(_expenses);
+    }
+    return await _db.getAllExpenses();
+  }
 }

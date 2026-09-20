@@ -76,4 +76,12 @@ abstract final class UIKeys {
 
   // --- Home Widget 4x2 ---
   static const homeWidget4x2Card = ValueKey('home_widget_4x2_card');
+
+  // --- Rekap Elements ---
+  static const rekapScreen = ValueKey('rekap_screen');
+  static const rekapPeriodTabBar = ValueKey('rekap_period_tab_bar');
+  static const rekapSummaryCard = ValueKey('rekap_summary_card');
+  static const rekapCategoryBreakdown = ValueKey('rekap_category_breakdown');
+  static const rekapWalletBreakdown = ValueKey('rekap_wallet_breakdown');
+  static const rekapTopExpensesList = ValueKey('rekap_top_expenses_list');
 }

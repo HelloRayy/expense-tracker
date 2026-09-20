@@ -141,6 +141,12 @@ class TestMockBudgetRepo extends ChangeNotifier implements BudgetRepository {
 
   @override
   Future<void> dismissPendingTransaction(int pendingId) async {}
+
+  @override
+  Future<List<ExpenseModel>> getExpensesForPeriod(DateTime start, DateTime end) async => expenses;
+
+  @override
+  Future<List<ExpenseModel>> getAllExpensesHistory() async => expenses;
 }
 
 void main() {

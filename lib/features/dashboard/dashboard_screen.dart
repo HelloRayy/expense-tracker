@@ -4,8 +4,8 @@ import '../../core/constants/ui_keys.dart';
 import '../budget/repository/budget_repository.dart';
 import '../categories/models/expense_category.dart';
 import '../categories/screens/category_assignment_screen.dart';
-import '../expense_catalog/screens/expense_catalog_screen.dart';
 import '../quick_log/quick_log_dialog.dart';
+import '../rekap/screens/rekap_screen.dart';
 import '../settings/screens/budget_settings_detail_screen.dart';
 import '../settings/screens/settings_screen.dart';
 import '../settings/screens/shopee_settings_screen.dart';
@@ -106,12 +106,11 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
     );
   }
 
-  void _openExpenseCatalog([String category = 'Semua']) {
+  void _openRekap() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => ExpenseCatalogScreen(
+        builder: (_) => RekapScreen(
           repository: widget.repository,
-          initialCategory: category,
         ),
       ),
     );
@@ -391,7 +390,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                     textSecondary: textSecondary,
                     onTapShopee: _openShopee,
                     onTapQuickLog: _openQuickLog,
-                    onTapCatalog: () => _openExpenseCatalog('Semua'),
+                    onTapRekap: _openRekap,
                     onTapSettings: _openSettings,
                   ),
                 ),
