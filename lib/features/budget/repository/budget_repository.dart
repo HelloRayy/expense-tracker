@@ -37,14 +37,14 @@ class BudgetRepository extends ChangeNotifier {
   /// Total pengeluaran via E-Wallet
   int get ewalletSpent {
     return _expenses
-        .where((e) => !e.isIncome && e.walletType != 'cash')
+        .where((e) => !e.isIncome && e.walletType != 'cash' && !e.note.contains('Saldo Awal'))
         .fold<int>(0, (sum, e) => sum + e.amount);
   }
 
   /// Total pengeluaran via Uang Tunai (Cash)
   int get cashSpent {
     return _expenses
-        .where((e) => !e.isIncome && e.walletType == 'cash')
+        .where((e) => !e.isIncome && e.walletType == 'cash' && !e.note.contains('Saldo Awal'))
         .fold<int>(0, (sum, e) => sum + e.amount);
   }
 
@@ -158,15 +158,27 @@ class BudgetRepository extends ChangeNotifier {
           _budget!.startDate,
           _budget!.endDate,
         );
-        final oldTotalSpent = oldExpenses.fold<int>(0, (sum, e) => sum + e.amount);
+        final oldJajanExpenses = oldExpenses.where((e) => !e.isIncome && e.categoryId != ExpenseCategory.penyesuaian.id);
+        final oldTotalSpent = oldJajanExpenses.fold<int>(0, (sum, e) => sum + e.amount);
         // Only positive surplus is carried over; if overbudget, carryover is 0
-        final surplus = (_budget!.spendableBudget - oldTotalSpent).clamp(0, _budget!.spendableBudget);
+        int surplus = (_budget!.spendableBudget - oldTotalSpent).clamp(0, _budget!.spendableBudget);
+
+        // Cap surplus by the actual real wallet money held in the app
+        final currentRealBalance = remainingBalance;
+        if (currentRealBalance > 0 && surplus > currentRealBalance) {
+          surplus = currentRealBalance;
+        } else if (currentRealBalance <= 0) {
+          surplus = 0;
+        }
+
+        final newInitialCash = cashBalance.clamp(0, surplus);
 
         _budget = BudgetModel(
           id: 1,
           weeklyIncome: 0, // Reset to 0 until user confirms/inputs new weekly budget
           weeklySavingsTarget: 0,
           carryoverBalance: surplus,
+          initialCash: newInitialCash,
           isPeriodConfirmed: false, // Flag that user input is needed
           startDate: BudgetModel.getMondayOfWeek(now),
           endDate: BudgetModel.getSundayOfWeek(now),
@@ -179,7 +191,7 @@ class BudgetRepository extends ChangeNotifier {
         _budget!.startDate,
         _budget!.endDate,
       );
-      final actualExpenses = _expenses.where((e) => !e.isIncome);
+      final actualExpenses = _expenses.where((e) => !e.isIncome && e.categoryId != ExpenseCategory.penyesuaian.id);
       _totalSpent = actualExpenses.fold<int>(0, (sum, e) => sum + e.amount);
       _spentToday = actualExpenses.where((e) => e.isToday).fold<int>(0, (sum, e) => sum + e.amount);
       _spentUntilYesterday = _totalSpent - _spentToday;
@@ -307,23 +319,51 @@ class BudgetRepository extends ChangeNotifier {
     final diff = actualBalance - targetBalance;
     if (diff == 0) return;
 
+    final isPreConfirmation = !isPeriodConfirmed;
+
     if (diff > 0) {
       await addTopUp(
         diff,
         allocateToSavings: allocateToSavings,
-        note: walletType == 'cash' ? 'Tambah Uang Tunai' : 'Top Up Saldo',
+        note: isPreConfirmation
+            ? (walletType == 'cash' ? 'Penyesuaian Saldo Awal Tunai' : 'Penyesuaian Saldo Awal E-Wallet')
+            : (walletType == 'cash' ? 'Tambah Uang Tunai' : 'Top Up Saldo'),
         walletType: walletType,
       );
     } else {
       await addExpense(
         diff.abs(),
-        note: walletType == 'cash'
-            ? 'Penyesuaian Saldo Tunai (Terlupa)'
-            : 'Penyesuaian Saldo E-Wallet (Terlupa)',
+        note: isPreConfirmation
+            ? (walletType == 'cash' ? 'Penyesuaian Saldo Awal Tunai' : 'Penyesuaian Saldo Awal E-Wallet')
+            : (walletType == 'cash' ? 'Penyesuaian Saldo Tunai' : 'Penyesuaian Saldo E-Wallet'),
         categoryId: ExpenseCategory.penyesuaian.id,
         isIncome: false,
         walletType: walletType,
       );
+    }
+
+    // When adjusting real balance at the start of a period before confirmation,
+    // synchronize carryoverBalance and baseline so the banner and WeeklyBudgetInputSheet immediately reflect the actual money.
+    if (isPreConfirmation && _budget != null) {
+      int newCarryover;
+      int newInitialCash = _budget!.initialCash;
+      if (walletType == 'cash') {
+        newInitialCash = actualBalance;
+        newCarryover = ewalletBalance + actualBalance;
+      } else {
+        newCarryover = actualBalance + cashBalance;
+      }
+      final updatedBudget = _budget!.copyWith(
+        carryoverBalance: newCarryover.clamp(0, double.maxFinite.toInt()),
+        initialCash: newInitialCash.clamp(0, double.maxFinite.toInt()),
+      );
+      if (kIsWeb) {
+        _budget = updatedBudget;
+      } else {
+        await _db.updateBudget(updatedBudget);
+      }
+      _budget = updatedBudget;
+      notifyListeners();
     }
   }
 
