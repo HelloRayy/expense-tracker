@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jajan_tracker/core/services/app_settings_controller.dart';
 import 'package:jajan_tracker/features/dashboard/widgets/hero_balance_card.dart';
 
 void main() {
@@ -71,7 +72,9 @@ void main() {
     expect(find.text('Rp 20.000'), findsOneWidget);
   });
 
-  testWidgets('HeroBalanceCard accordion toggles E-Wallet and Tunai breakdown', (tester) async {
+  testWidgets('HeroBalanceCard shows single direct edit when cash wallet is disabled', (tester) async {
+    AppSettingsController.instance.setCashWalletEnabledForTest(false);
+
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -91,20 +94,55 @@ void main() {
       ),
     );
 
-    // Initial state: Sisa saldo is visible, breakdown row is collapsed
+    // Initial state: Sisa saldo has pen icon, no chevron
     expect(find.byIcon(Icons.south_west_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.edit_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.keyboard_arrow_down_rounded), findsNothing);
+    expect(find.text('E-Wallet '), findsNothing);
+    expect(find.text('Tunai '), findsNothing);
+  });
+
+  testWidgets('HeroBalanceCard accordion toggles E-Wallet and Tunai breakdown when cash wallet is enabled', (tester) async {
+    AppSettingsController.instance.setCashWalletEnabledForTest(true);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: HeroBalanceCard(
+            remaining: 110000,
+            spent: 40000,
+            remainingToday: 20000,
+            ewalletBalance: 110000,
+            cashBalance: 0,
+            formattedPeriod: '7 Sep - 13 Sep',
+            isOverBudget: false,
+            textPrimary: Colors.white,
+            textSecondary: Colors.grey,
+            onTapMenu: () {},
+          ),
+        ),
+      ),
+    );
+
+    // Initial state: Sisa saldo is visible, chevron is visible
+    expect(find.byIcon(Icons.south_west_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.keyboard_arrow_down_rounded), findsOneWidget);
     expect(find.text('Rp 40.000'), findsOneWidget);
 
     // Tap on accordion toggle (the south_west icon / arrow)
     await tester.tap(find.byIcon(Icons.south_west_rounded));
     await tester.pumpAndSettle();
 
-    // Verify breakdown is revealed
+    // Verify breakdown is revealed with pen icons
     expect(find.text('E-Wallet '), findsOneWidget);
     expect(find.text('Tunai '), findsOneWidget);
+    expect(find.byIcon(Icons.edit_rounded), findsNWidgets(2));
 
     // Tap again to collapse
     await tester.tap(find.byIcon(Icons.south_west_rounded));
     await tester.pumpAndSettle();
+
+    // Reset back to false
+    AppSettingsController.instance.setCashWalletEnabledForTest(false);
   });
 }

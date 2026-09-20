@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/services/app_settings_controller.dart';
 import '../../../core/utils/currency_formatter.dart';
 
 /// Enum to toggle between Daily ('hari ini') and Weekly ('mingguan') allowance view.
@@ -296,190 +297,207 @@ class _HeroBalanceCardState extends State<HeroBalanceCard> {
           ),
           const SizedBox(height: 16),
 
-          // Sub-metrics Row below Hero: Sisa Saldo (Expandable) & Terpakai (Matching typography)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+          // Sub-metrics Row below Hero: Sisa Saldo & Terpakai
+          ListenableBuilder(
+            listenable: AppSettingsController.instance,
+            builder: (context, _) {
+              final isCashEnabled = AppSettingsController.instance.cashWalletEnabled;
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Left: ↙ Sisa Saldo (WCAG AA Compliant Green) with tap to expand accordion
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          _isExpanded = !_isExpanded;
-                        });
-                      },
-                      borderRadius: BorderRadius.circular(6),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.south_west_rounded,
-                              size: 14,
-                              color: PirschColors.green(isDark),
+                  Row(
+                    children: [
+                      // Left: ↙ Sisa Saldo (WCAG AA Compliant Green)
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: isCashEnabled
+                              ? () {
+                                  setState(() {
+                                    _isExpanded = !_isExpanded;
+                                  });
+                                }
+                              : (onTapAdjustEwallet ?? onTapAdjustBalance),
+                          borderRadius: BorderRadius.circular(6),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.south_west_rounded,
+                                  size: 14,
+                                  color: PirschColors.green(isDark),
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  CurrencyFormatter.format(remaining),
+                                  style: TextStyle(
+                                    color: remaining < 0 ? PirschColors.red(isDark) : PirschColors.green(isDark),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: -0.2,
+                                  ),
+                                ),
+                                const SizedBox(width: 3),
+                                if (isCashEnabled)
+                                  AnimatedRotation(
+                                    turns: _isExpanded ? 0.5 : 0.0,
+                                    duration: const Duration(milliseconds: 200),
+                                    child: Icon(
+                                      Icons.keyboard_arrow_down_rounded,
+                                      size: 14,
+                                      color: textSecondary.withValues(alpha: 0.7),
+                                    ),
+                                  )
+                                else
+                                  Icon(
+                                    Icons.edit_rounded,
+                                    size: 11,
+                                    color: textSecondary.withValues(alpha: 0.6),
+                                  ),
+                              ],
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              CurrencyFormatter.format(remaining),
-                              style: TextStyle(
-                                color: remaining < 0 ? PirschColors.red(isDark) : PirschColors.green(isDark),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: -0.2,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 14),
+
+                      // Right: ↗ Terpakai (WCAG AA Compliant Red)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.north_east_rounded,
+                            size: 14,
+                            color: PirschColors.red(isDark),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            CurrencyFormatter.format(spent),
+                            style: TextStyle(
+                              color: PirschColors.red(isDark),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  // Animated Inline Accordion: Wallet breakdown (Only if Cash Wallet is enabled)
+                  if (isCashEnabled)
+                    AnimatedCrossFade(
+                      firstChild: const SizedBox.shrink(),
+                      secondChild: Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Row(
+                          children: [
+                            // E-Wallet breakdown item
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: onTapAdjustEwallet ?? onTapAdjustBalance,
+                                borderRadius: BorderRadius.circular(4),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'E-Wallet ',
+                                        style: TextStyle(
+                                          color: textSecondary,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      Text(
+                                        CurrencyFormatter.format(ewalletBalance ?? remaining),
+                                        style: TextStyle(
+                                          color: (ewalletBalance ?? remaining) < 0
+                                              ? PirschColors.red(isDark)
+                                              : textPrimary,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 3),
+                                      Icon(
+                                        Icons.edit_rounded,
+                                        size: 11,
+                                        color: textSecondary.withValues(alpha: 0.6),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
-                            const SizedBox(width: 3),
-                            AnimatedRotation(
-                              turns: _isExpanded ? 0.5 : 0.0,
-                              duration: const Duration(milliseconds: 200),
-                              child: Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                size: 14,
-                                color: textSecondary.withValues(alpha: 0.7),
+
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              child: Text(
+                                '•',
+                                style: TextStyle(
+                                  color: textSecondary.withValues(alpha: 0.5),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+
+                            // Tunai breakdown item
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: onTapAdjustCash ?? onTapAdjustBalance,
+                                borderRadius: BorderRadius.circular(4),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'Tunai ',
+                                        style: TextStyle(
+                                          color: textSecondary,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      Text(
+                                        CurrencyFormatter.format(cashBalance ?? 0),
+                                        style: TextStyle(
+                                          color: (cashBalance ?? 0) < 0
+                                              ? PirschColors.red(isDark)
+                                              : textPrimary,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 3),
+                                      Icon(
+                                        Icons.edit_rounded,
+                                        size: 11,
+                                        color: textSecondary.withValues(alpha: 0.6),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
+                      crossFadeState: _isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                      duration: const Duration(milliseconds: 200),
                     ),
-                  ),
-
-                  const SizedBox(width: 14),
-
-                  // Right: ↗ Terpakai (WCAG AA Compliant Red)
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.north_east_rounded,
-                        size: 14,
-                        color: PirschColors.red(isDark),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        CurrencyFormatter.format(spent),
-                        style: TextStyle(
-                          color: PirschColors.red(isDark),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.2,
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
-              ),
-
-              // Animated Inline Accordion: Wallet breakdown (E-Wallet & Tunai)
-              AnimatedCrossFade(
-                firstChild: const SizedBox.shrink(),
-                secondChild: Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Row(
-                    children: [
-                      // E-Wallet breakdown item
-                      Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: onTapAdjustEwallet ?? onTapAdjustBalance,
-                          borderRadius: BorderRadius.circular(4),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'E-Wallet ',
-                                  style: TextStyle(
-                                    color: textSecondary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Text(
-                                  CurrencyFormatter.format(ewalletBalance ?? remaining),
-                                  style: TextStyle(
-                                    color: (ewalletBalance ?? remaining) < 0
-                                        ? PirschColors.red(isDark)
-                                        : textPrimary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(width: 3),
-                                Icon(
-                                  Icons.edit_rounded,
-                                  size: 11,
-                                  color: textSecondary.withValues(alpha: 0.6),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          '•',
-                          style: TextStyle(
-                            color: textSecondary.withValues(alpha: 0.5),
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-
-                      // Tunai breakdown item
-                      Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: onTapAdjustCash ?? onTapAdjustBalance,
-                          borderRadius: BorderRadius.circular(4),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'Tunai ',
-                                  style: TextStyle(
-                                    color: textSecondary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Text(
-                                  CurrencyFormatter.format(cashBalance ?? 0),
-                                  style: TextStyle(
-                                    color: (cashBalance ?? 0) < 0
-                                        ? PirschColors.red(isDark)
-                                        : textPrimary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(width: 3),
-                                Icon(
-                                  Icons.edit_rounded,
-                                  size: 11,
-                                  color: textSecondary.withValues(alpha: 0.6),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                crossFadeState: _isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-                duration: const Duration(milliseconds: 200),
-              ),
-            ],
+              );
+            },
           ),
         ],
       ),

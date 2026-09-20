@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jajan_tracker/core/services/app_settings_controller.dart';
 import 'package:jajan_tracker/features/budget/models/budget_model.dart';
 import 'package:jajan_tracker/features/budget/models/expense_model.dart';
 import 'package:jajan_tracker/features/budget/models/pending_transaction_model.dart';
@@ -168,6 +169,9 @@ class TestBudgetRepo extends ChangeNotifier implements BudgetRepository {
 
 void main() {
   testWidgets('QuickLogDialog standard calculator multiplication and submission', (WidgetTester tester) async {
+    AppSettingsController.instance.setCashWalletEnabledForTest(true);
+    addTearDown(() => AppSettingsController.instance.setCashWalletEnabledForTest(false));
+
     tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 2.75;
     addTearDown(tester.view.resetPhysicalSize);
@@ -219,6 +223,9 @@ void main() {
   });
 
   testWidgets('QuickLogDialog keypad typing and division test with Cash selection', (WidgetTester tester) async {
+    AppSettingsController.instance.setCashWalletEnabledForTest(true);
+    addTearDown(() => AppSettingsController.instance.setCashWalletEnabledForTest(false));
+
     tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 2.75;
     addTearDown(tester.view.resetPhysicalSize);
@@ -271,6 +278,9 @@ void main() {
   });
 
   testWidgets('QuickLogDialog blocks submit and triggers validation error when wallet is unselected', (WidgetTester tester) async {
+    AppSettingsController.instance.setCashWalletEnabledForTest(true);
+    addTearDown(() => AppSettingsController.instance.setCashWalletEnabledForTest(false));
+
     tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 2.75;
     addTearDown(tester.view.resetPhysicalSize);
@@ -323,5 +333,49 @@ void main() {
     expect(repo.addedExpenses.length, 1);
     expect(repo.addedExpenses.first.amount, 35000);
     expect(repo.addedExpenses.first.walletType, 'cash');
+  });
+
+  testWidgets('QuickLogDialog automatically logs as ewallet when cash wallet is disabled', (WidgetTester tester) async {
+    AppSettingsController.instance.setCashWalletEnabledForTest(false);
+
+    tester.view.physicalSize = const Size(1080, 2340);
+    tester.view.devicePixelRatio = 2.75;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final repo = TestBudgetRepo();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData.dark(),
+        home: Scaffold(
+          body: QuickLogDialog(repository: repo),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    Finder keyBtn(String text) => text == '='
+        ? find.byIcon(Icons.check_rounded)
+        : find.widgetWithText(InkWell, text);
+
+    // Wallet selector should not be present
+    expect(find.text('E-Wallet'), findsNothing);
+    expect(find.text('Tunai'), findsNothing);
+
+    // Type 20.000 and submit immediately
+    await tester.tap(keyBtn('2'));
+    await tester.pumpAndSettle();
+    await tester.tap(keyBtn('0'));
+    await tester.pumpAndSettle();
+    await tester.tap(keyBtn('000'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(keyBtn('='));
+    await tester.pumpAndSettle();
+
+    expect(repo.addedExpenses.length, 1);
+    expect(repo.addedExpenses.first.amount, 20000);
+    expect(repo.addedExpenses.first.walletType, 'ewallet');
   });
 }

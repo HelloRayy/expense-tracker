@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/services/app_settings_controller.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../budget/repository/budget_repository.dart';
 
@@ -194,56 +195,58 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
             ),
             const SizedBox(height: 14),
 
-            // Wallet Selector Pill Strip (E-Wallet vs Tunai)
-            Center(
-              child: Container(
-                padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+            // Wallet Selector Pill Strip (E-Wallet vs Tunai) (Only when cashWalletEnabled)
+            if (AppSettingsController.instance.cashWalletEnabled) ...[
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildWalletChip(
+                        label: 'E-Wallet',
+                        icon: Icons.account_balance_wallet_rounded,
+                        isSelected: _selectedWallet == 'ewallet',
+                        isDark: isDark,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        onTap: () {
+                          setState(() {
+                            _selectedWallet = 'ewallet';
+                            _topUpNoteController.text = 'Top Up Saldo';
+                            _errorMessage = null;
+                          });
+                        },
+                      ),
+                      const SizedBox(width: 4),
+                      _buildWalletChip(
+                        label: 'Uang Tunai',
+                        icon: Icons.payments_rounded,
+                        isSelected: _selectedWallet == 'cash',
+                        isDark: isDark,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        onTap: () {
+                          setState(() {
+                            _selectedWallet = 'cash';
+                            _topUpNoteController.text = 'Tambah Uang Tunai';
+                            _errorMessage = null;
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildWalletChip(
-                      label: 'E-Wallet',
-                      icon: Icons.account_balance_wallet_rounded,
-                      isSelected: _selectedWallet == 'ewallet',
-                      isDark: isDark,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                      onTap: () {
-                        setState(() {
-                          _selectedWallet = 'ewallet';
-                          _topUpNoteController.text = 'Top Up Saldo';
-                          _errorMessage = null;
-                        });
-                      },
-                    ),
-                    const SizedBox(width: 4),
-                    _buildWalletChip(
-                      label: 'Uang Tunai',
-                      icon: Icons.payments_rounded,
-                      isSelected: _selectedWallet == 'cash',
-                      isDark: isDark,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                      onTap: () {
-                        setState(() {
-                          _selectedWallet = 'cash';
-                          _topUpNoteController.text = 'Tambah Uang Tunai';
-                          _errorMessage = null;
-                        });
-                      },
-                    ),
-                  ],
-                ),
               ),
-            ),
-            const SizedBox(height: 14),
+              const SizedBox(height: 14),
+            ],
 
             // Tab Header (Top Up vs Koreksi Saldo)
             Container(

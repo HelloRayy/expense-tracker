@@ -276,6 +276,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           showDivider: true,
                         ),
                         SettingTile(
+                          icon: Icons.payments_outlined,
+                          title: 'Lacak Uang Tunai (Cash Wallet)',
+                          subtitle: AppSettingsController.instance.cashWalletEnabled
+                              ? 'Dompet tunai & saldo fisik aktif'
+                              : 'Fokus dompet digital (E-Wallet saja)',
+                          onTap: () {
+                            AppSettingsController.instance.setCashWalletEnabled(
+                              !AppSettingsController.instance.cashWalletEnabled,
+                            );
+                          },
+                          trailing: Switch.adaptive(
+                            value: AppSettingsController.instance.cashWalletEnabled,
+                            activeThumbColor: PirschColors.mintGreen,
+                            activeTrackColor: PirschColors.mintGreen.withValues(alpha: 0.35),
+                            inactiveThumbColor: isDark ? const Color(0xFFA3A3A3) : const Color(0xFF666666),
+                            inactiveTrackColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE5E2D9),
+                            onChanged: (val) {
+                              AppSettingsController.instance.setCashWalletEnabled(val);
+                            },
+                          ),
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                          isDark: isDark,
+                          showDivider: true,
+                        ),
+                        SettingTile(
                           icon: Icons.account_balance_wallet_outlined,
                           title: 'Atur Budget Mingguan',
                       subtitle: 'Uang mingguan, target tabungan & kuota',
