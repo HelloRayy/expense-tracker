@@ -369,6 +369,9 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
           key: UIKeys.balanceSheetTopUpInput,
           controller: _topUpAmountController,
           keyboardType: TextInputType.number,
+          inputFormatters: [
+            ThousandsSeparatorInputFormatter(),
+          ],
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: textPrimary),
           decoration: InputDecoration(
             prefixText: 'Rp ',
@@ -521,6 +524,9 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
           key: UIKeys.balanceSheetRealBalanceInput,
           controller: _realBalanceController,
           keyboardType: TextInputType.number,
+          inputFormatters: [
+            ThousandsSeparatorInputFormatter(),
+          ],
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: textPrimary),
           decoration: InputDecoration(
             prefixText: 'Rp ',

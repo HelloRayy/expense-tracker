@@ -51,6 +51,54 @@ class ThousandsSeparatorInputFormatter extends TextInputFormatter {
       return newValue;
     }
 
+    // Handle Backspace when cursor is positioned right after a separator dot (.)
+    if (oldValue.text.length > newValue.text.length &&
+        oldValue.selection.isCollapsed &&
+        oldValue.selection.end > 0 &&
+        oldValue.selection.end <= oldValue.text.length &&
+        oldValue.text[oldValue.selection.end - 1] == '.') {
+      final indexToRemove = oldValue.selection.end - 2;
+      if (indexToRemove >= 0) {
+        final textWithoutDigit = oldValue.text.substring(0, indexToRemove) +
+            oldValue.text.substring(oldValue.selection.end);
+        final digitsClean = textWithoutDigit.replaceAll(RegExp(r'[^0-9]'), '');
+        if (digitsClean.isEmpty) {
+          return const TextEditingValue();
+        }
+        final number = int.tryParse(digitsClean) ?? 0;
+        final formatted = CurrencyFormatter.formatNumber(number);
+
+        final digitsBeforeCursor = textWithoutDigit
+            .substring(0, indexToRemove)
+            .replaceAll(RegExp(r'[^0-9]'), '')
+            .length;
+
+        int newCursorPos = 0;
+        int digitCount = 0;
+        for (int i = 0; i < formatted.length; i++) {
+          if (RegExp(r'[0-9]').hasMatch(formatted[i])) {
+            digitCount++;
+          }
+          if (digitCount == digitsBeforeCursor) {
+            newCursorPos = i + 1;
+            break;
+          }
+        }
+        if (digitsBeforeCursor == 0) {
+          newCursorPos = 0;
+        } else if (newCursorPos == 0) {
+          newCursorPos = formatted.length;
+        }
+
+        return TextEditingValue(
+          text: formatted,
+          selection: TextSelection.collapsed(
+            offset: newCursorPos.clamp(0, formatted.length),
+          ),
+        );
+      }
+    }
+
     final digits = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
     if (digits.isEmpty) {
       return const TextEditingValue();
@@ -90,3 +138,4 @@ class ThousandsSeparatorInputFormatter extends TextInputFormatter {
     );
   }
 }
+

@@ -51,7 +51,7 @@ class _EditExpenseSheetState extends State<EditExpenseSheet> {
   void initState() {
     super.initState();
     _amountController = TextEditingController(
-      text: widget.expense.amount > 0 ? widget.expense.amount.toString() : '',
+      text: widget.expense.amount > 0 ? CurrencyFormatter.formatNumber(widget.expense.amount) : '',
     );
     _noteController = TextEditingController(text: widget.expense.note);
     _selectedCategoryId = widget.expense.categoryId;
@@ -188,7 +188,9 @@ class _EditExpenseSheetState extends State<EditExpenseSheet> {
           TextField(
             controller: _amountController,
             keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            inputFormatters: [
+              ThousandsSeparatorInputFormatter(),
+            ],
             autofocus: true,
             style: TextStyle(
               fontSize: 24,

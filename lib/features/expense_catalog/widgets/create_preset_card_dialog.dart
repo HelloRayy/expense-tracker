@@ -179,12 +179,14 @@ class _CreatePresetCardDialogState extends State<CreatePresetCardDialog> {
           TextField(
             controller: _amountController,
             keyboardType: TextInputType.number,
+            inputFormatters: [
+              ThousandsSeparatorInputFormatter(),
+            ],
             style: TextStyle(color: textPrimary, fontSize: 15, fontWeight: FontWeight.w700),
             decoration: InputDecoration(
               labelText: 'Nominal (Rp)',
               labelStyle: TextStyle(color: textSecondary, fontSize: 13),
-              hintText: '20000',
-              hintStyle: TextStyle(color: textSecondary.withValues(alpha: 0.4), fontSize: 13),
+              hintText: '20.000',
               prefixText: 'Rp ',
               prefixStyle: TextStyle(color: PirschColors.green(isDark), fontWeight: FontWeight.w700),
               enabledBorder: OutlineInputBorder(

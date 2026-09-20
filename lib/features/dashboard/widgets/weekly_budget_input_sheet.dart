@@ -259,6 +259,9 @@ class _WeeklyBudgetInputSheetState extends State<WeeklyBudgetInputSheet> {
             TextField(
               controller: _incomeController,
               keyboardType: TextInputType.number,
+              inputFormatters: [
+                ThousandsSeparatorInputFormatter(),
+              ],
               style: TextStyle(color: textPrimary, fontSize: 16, fontWeight: FontWeight.w700),
               decoration: InputDecoration(
                 hintText: 'Contoh: 150.000',
@@ -296,6 +299,9 @@ class _WeeklyBudgetInputSheetState extends State<WeeklyBudgetInputSheet> {
             TextField(
               controller: _savingsController,
               keyboardType: TextInputType.number,
+              inputFormatters: [
+                ThousandsSeparatorInputFormatter(),
+              ],
               style: TextStyle(color: textPrimary, fontSize: 15, fontWeight: FontWeight.w600),
               decoration: InputDecoration(
                 hintText: '0 (atau default 30%)',
