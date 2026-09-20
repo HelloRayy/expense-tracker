@@ -99,6 +99,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       repository: widget.repository,
       initialAmount: pending.amount,
       initialCategory: category,
+      initialWallet: 'ewallet',
       pendingTransactionId: pending.id,
       onComplete: () => setState(() {}),
     );

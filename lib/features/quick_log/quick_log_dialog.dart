@@ -17,6 +17,7 @@ class QuickLogDialog extends StatefulWidget {
   final VoidCallback? onComplete;
   final int? initialAmount;
   final ExpenseCategory? initialCategory;
+  final String? initialWallet;
   final int? pendingTransactionId;
 
   const QuickLogDialog({
@@ -25,6 +26,7 @@ class QuickLogDialog extends StatefulWidget {
     this.onComplete,
     this.initialAmount,
     this.initialCategory,
+    this.initialWallet,
     this.pendingTransactionId,
   });
 
@@ -34,6 +36,7 @@ class QuickLogDialog extends StatefulWidget {
     VoidCallback? onComplete,
     int? initialAmount,
     ExpenseCategory? initialCategory,
+    String? initialWallet,
     int? pendingTransactionId,
   }) {
     return showModalBottomSheet(
@@ -45,6 +48,7 @@ class QuickLogDialog extends StatefulWidget {
         onComplete: onComplete,
         initialAmount: initialAmount,
         initialCategory: initialCategory,
+        initialWallet: initialWallet,
         pendingTransactionId: pendingTransactionId,
       ),
     );
@@ -54,14 +58,18 @@ class QuickLogDialog extends StatefulWidget {
   State<QuickLogDialog> createState() => _QuickLogDialogState();
 }
 
-class _QuickLogDialogState extends State<QuickLogDialog> {
+class _QuickLogDialogState extends State<QuickLogDialog> with SingleTickerProviderStateMixin {
   String _expression = '';
   int _rawCursorPos = 0;
   bool _isSaving = false;
   bool _cursorVisible = true;
   Timer? _cursorBlinkTimer;
   ExpenseCategory _selectedCategory = ExpenseCategory.makananMinuman;
-  String _selectedWallet = 'ewallet'; // 'ewallet' | 'cash'
+  String? _selectedWallet; // 'ewallet' | 'cash' | null (must be chosen)
+  bool _walletError = false;
+
+  late final AnimationController _shakeController;
+  late final Animation<double> _shakeAnimation;
 
   @override
   void initState() {
@@ -73,6 +81,21 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     if (widget.initialCategory != null) {
       _selectedCategory = widget.initialCategory!;
     }
+    _selectedWallet = widget.initialWallet;
+
+    _shakeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _shakeAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: -10.0), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: -10.0, end: 10.0), weight: 2),
+      TweenSequenceItem(tween: Tween(begin: 10.0, end: -8.0), weight: 2),
+      TweenSequenceItem(tween: Tween(begin: -8.0, end: 8.0), weight: 2),
+      TweenSequenceItem(tween: Tween(begin: 8.0, end: -4.0), weight: 2),
+      TweenSequenceItem(tween: Tween(begin: -4.0, end: 0.0), weight: 1),
+    ]).animate(CurvedAnimation(parent: _shakeController, curve: Curves.easeInOut));
+
     _startCursorBlink();
   }
 
@@ -94,6 +117,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
 
   @override
   void dispose() {
+    _shakeController.dispose();
     _cursorBlinkTimer?.cancel();
     super.dispose();
   }
@@ -112,6 +136,14 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
       );
 
   bool get _hasOperator => CalculatorEvaluator.hasOperator(_expression);
+
+  void _selectWallet(String wallet) {
+    HapticFeedback.selectionClick();
+    setState(() {
+      _selectedWallet = wallet;
+      _walletError = false;
+    });
+  }
 
   void _onKeyPress(String key) {
     HapticFeedback.selectionClick();
@@ -240,6 +272,13 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
     final amount = _currentTotal;
     if (amount <= 0 || _isSaving) return;
 
+    if (_selectedWallet == null) {
+      HapticFeedback.heavyImpact();
+      _shakeController.forward(from: 0.0);
+      setState(() => _walletError = true);
+      return;
+    }
+
     setState(() => _isSaving = true);
     HapticFeedback.mediumImpact();
 
@@ -256,7 +295,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
           amount,
           note: _selectedCategory.displayName,
           categoryId: _selectedCategory.id,
-          walletType: _selectedWallet,
+          walletType: _selectedWallet!,
         );
       }
 
@@ -427,41 +466,86 @@ class _QuickLogDialogState extends State<QuickLogDialog> {
                       ),
                     ),
                   ),
-                  // Wallet Selector Pill Strip (E-Wallet vs Tunai)
+                  // Wallet Selector Pill Strip (E-Wallet vs Tunai) with Shake & Error Highlight
                   Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AnimatedBuilder(
+                          animation: _shakeAnimation,
+                          builder: (context, child) {
+                            return Transform.translate(
+                              offset: Offset(_shakeAnimation.value, 0),
+                              child: child,
+                            );
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              color: _walletError
+                                  ? PirschColors.roseRed.withValues(alpha: isDark ? 0.12 : 0.08)
+                                  : (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04)),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: _walletError
+                                    ? PirschColors.roseRed
+                                    : (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06)),
+                                width: _walletError ? 1.5 : 1.0,
+                              ),
+                              boxShadow: _walletError
+                                  ? [
+                                      BoxShadow(
+                                        color: PirschColors.roseRed.withValues(alpha: isDark ? 0.35 : 0.20),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ]
+                                  : null,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _buildWalletOption(
+                                  label: 'E-Wallet',
+                                  icon: Icons.account_balance_wallet_rounded,
+                                  isSelected: _selectedWallet == 'ewallet',
+                                  isDark: isDark,
+                                  textPrimary: textPrimary,
+                                  textSecondary: textSecondary,
+                                  onTap: () => _selectWallet('ewallet'),
+                                ),
+                                const SizedBox(width: 4),
+                                _buildWalletOption(
+                                  label: 'Tunai',
+                                  icon: Icons.payments_rounded,
+                                  isSelected: _selectedWallet == 'cash',
+                                  isDark: isDark,
+                                  textPrimary: textPrimary,
+                                  textSecondary: textSecondary,
+                                  onTap: () => _selectWallet('cash'),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _buildWalletOption(
-                            label: 'E-Wallet',
-                            icon: Icons.account_balance_wallet_rounded,
-                            isSelected: _selectedWallet == 'ewallet',
-                            isDark: isDark,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            onTap: () => setState(() => _selectedWallet = 'ewallet'),
+                        AnimatedCrossFade(
+                          firstChild: const Padding(
+                            padding: EdgeInsets.only(top: 6),
+                            child: Text(
+                              'Pilih metode pembayaran (E-Wallet / Tunai)',
+                              style: TextStyle(
+                                color: PirschColors.roseRed,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
-                          const SizedBox(width: 4),
-                          _buildWalletOption(
-                            label: 'Tunai',
-                            icon: Icons.payments_rounded,
-                            isSelected: _selectedWallet == 'cash',
-                            isDark: isDark,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            onTap: () => setState(() => _selectedWallet = 'cash'),
-                          ),
-                        ],
-                      ),
+                          secondChild: const SizedBox.shrink(),
+                          crossFadeState: _walletError ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                          duration: const Duration(milliseconds: 200),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 10),

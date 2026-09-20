@@ -204,6 +204,10 @@ void main() {
     // Verify preview shows 50.000
     expect(find.text('50.000'), findsOneWidget);
 
+    // Select E-Wallet
+    await tester.tap(find.text('E-Wallet'));
+    await tester.pumpAndSettle();
+
     // Tap submit (=)
     await tester.tap(keyBtn('='));
     await tester.pumpAndSettle();
@@ -211,9 +215,10 @@ void main() {
     expect(repo.addedExpenses.length, 1);
     expect(repo.addedExpenses.first.amount, 50000);
     expect(repo.addedExpenses.first.note, 'Makanan / Minuman');
+    expect(repo.addedExpenses.first.walletType, 'ewallet');
   });
 
-  testWidgets('QuickLogDialog keypad typing and division test', (WidgetTester tester) async {
+  testWidgets('QuickLogDialog keypad typing and division test with Cash selection', (WidgetTester tester) async {
     tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 2.75;
     addTearDown(tester.view.resetPhysicalSize);
@@ -251,6 +256,10 @@ void main() {
 
     expect(find.text('25.000'), findsOneWidget);
 
+    // Select Tunai
+    await tester.tap(find.text('Tunai'));
+    await tester.pumpAndSettle();
+
     // Submit (=)
     await tester.tap(keyBtn('='));
     await tester.pumpAndSettle();
@@ -258,5 +267,61 @@ void main() {
     expect(repo.addedExpenses.length, 1);
     expect(repo.addedExpenses.first.amount, 25000);
     expect(repo.addedExpenses.first.note, 'Makanan / Minuman');
+    expect(repo.addedExpenses.first.walletType, 'cash');
+  });
+
+  testWidgets('QuickLogDialog blocks submit and triggers validation error when wallet is unselected', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1080, 2340);
+    tester.view.devicePixelRatio = 2.75;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final repo = TestBudgetRepo();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData.dark(),
+        home: Scaffold(
+          body: QuickLogDialog(repository: repo),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    Finder keyBtn(String text) => text == '='
+        ? find.byIcon(Icons.check_rounded)
+        : find.widgetWithText(InkWell, text);
+
+    // Type 35.000
+    await tester.tap(keyBtn('3'));
+    await tester.pumpAndSettle();
+    await tester.tap(keyBtn('5'));
+    await tester.pumpAndSettle();
+    await tester.tap(keyBtn('000'));
+    await tester.pumpAndSettle();
+
+    // Do NOT select wallet yet. Attempt submit (=)
+    await tester.tap(keyBtn('='));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+
+    // Submit should be blocked, no expense recorded
+    expect(repo.addedExpenses.isEmpty, isTrue);
+
+    // Error helper text should be visible
+    expect(find.text('Pilih metode pembayaran (E-Wallet / Tunai)'), findsOneWidget);
+
+    // Now user selects Tunai
+    await tester.tap(find.text('Tunai'));
+    await tester.pumpAndSettle();
+
+    // Submit again (=)
+    await tester.tap(keyBtn('='));
+    await tester.pumpAndSettle();
+
+    // Now it should succeed
+    expect(repo.addedExpenses.length, 1);
+    expect(repo.addedExpenses.first.amount, 35000);
+    expect(repo.addedExpenses.first.walletType, 'cash');
   });
 }
