@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import '../../core/constants/ui_keys.dart';
 import '../../core/utils/currency_formatter.dart';
 
 /// 4x2 Android Home Screen Widget component mirroring the native AppWidget layout.
@@ -37,6 +38,7 @@ class HomeWidget4x2Card extends StatelessWidget {
     final redColor = isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626);
 
     return Material(
+      key: UIKeys.homeWidget4x2Card,
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,

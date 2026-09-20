@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/ui_keys.dart';
 import '../../core/services/app_settings_controller.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../budget/repository/budget_repository.dart';
@@ -329,6 +330,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> with SingleTickerProvid
         final textSecondary = isDark ? const Color(0xFF8E8E93) : const Color(0xFF707070);
 
         return Container(
+          key: UIKeys.quickLogDialog,
           decoration: BoxDecoration(
             color: sheetBg,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
@@ -379,6 +381,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> with SingleTickerProvid
                             Flexible(
                               child: Text(
                                 'Kalkulator',
+                                key: UIKeys.quickLogTitle,
                                 style: TextStyle(
                                   color: textPrimary,
                                   fontSize: 16,
@@ -411,6 +414,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> with SingleTickerProvid
                       const SizedBox(width: 8),
                       Text(
                         'Batas Hari Ini: ${CurrencyFormatter.formatCompact(todayLimit)}',
+                        key: UIKeys.quickLogTodayLimit,
                         style: TextStyle(
                           color: todayLimit < 0 ? PirschColors.roseRed : textSecondary,
                           fontSize: 12,
@@ -435,6 +439,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> with SingleTickerProvid
                             fit: BoxFit.scaleDown,
                             alignment: Alignment.centerRight,
                             child: QuickLogExpressionDisplay(
+                              key: UIKeys.quickLogExpressionDisplay,
                               expression: _expression,
                               rawCursorPos: _rawCursorPos,
                               cursorVisible: _cursorVisible,
@@ -454,6 +459,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> with SingleTickerProvid
                                     _currentTotal > 0)
                                 ? Text(
                                     CurrencyFormatter.format(_currentTotal).replaceAll('Rp ', ''),
+                                    key: UIKeys.quickLogTotalPreview,
                                     style: TextStyle(
                                       color: isOverBudget ? PirschColors.roseRed : textSecondary,
                                       fontSize: 24,
@@ -482,6 +488,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> with SingleTickerProvid
                               );
                             },
                             child: AnimatedContainer(
+                              key: UIKeys.quickLogWalletSelector,
                               duration: const Duration(milliseconds: 200),
                               padding: const EdgeInsets.all(3),
                               decoration: BoxDecoration(
@@ -509,6 +516,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> with SingleTickerProvid
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   _buildWalletOption(
+                                    key: UIKeys.quickLogWalletEwallet,
                                     label: 'E-Wallet',
                                     icon: Icons.account_balance_wallet_rounded,
                                     isSelected: _selectedWallet == 'ewallet',
@@ -519,6 +527,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> with SingleTickerProvid
                                   ),
                                   const SizedBox(width: 4),
                                   _buildWalletOption(
+                                    key: UIKeys.quickLogWalletCash,
                                     label: 'Tunai',
                                     icon: Icons.payments_rounded,
                                     isSelected: _selectedWallet == 'cash',
@@ -556,6 +565,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> with SingleTickerProvid
                   // Centered Category Pill Selector
                   Center(
                     child: CategoryPillSelector(
+                      key: UIKeys.quickLogCategorySelector,
                       selectedCategory: _selectedCategory,
                       onCategoryChanged: (cat) {
                         setState(() => _selectedCategory = cat);
@@ -569,6 +579,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> with SingleTickerProvid
 
                   // 4-Column Standard Calculator Keypad
                   QuickLogKeypad(
+                    key: UIKeys.quickLogKeypad,
                     onKeyPress: _onKeyPress,
                     btnBg: btnBg,
                     textPrimary: textPrimary,
@@ -584,6 +595,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> with SingleTickerProvid
   }
 
   Widget _buildWalletOption({
+    Key? key,
     required String label,
     required IconData icon,
     required bool isSelected,
@@ -593,6 +605,7 @@ class _QuickLogDialogState extends State<QuickLogDialog> with SingleTickerProvid
     required VoidCallback onTap,
   }) {
     return GestureDetector(
+      key: key,
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(

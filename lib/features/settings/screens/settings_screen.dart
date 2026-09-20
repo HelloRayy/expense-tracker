@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/ui_keys.dart';
 import '../../../core/services/app_settings_controller.dart';
 import '../../../core/theme/theme_controller.dart';
 import '../../budget/repository/budget_repository.dart';
@@ -163,6 +164,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         final textSecondary = PirschColors.textSecondary(isDark);
 
         return Scaffold(
+          key: UIKeys.settingsScreen,
           backgroundColor: bgColor,
           body: SafeArea(
             child: CustomScrollView(
@@ -228,6 +230,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         const SizedBox(height: 4),
                         SettingTile(
+                          key: UIKeys.settingsDarkModeTile,
                           icon: isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
                           title: 'Mode Gelap',
                           subtitle: isDark ? 'Tema gelap aktif' : 'Tema terang aktif',
@@ -250,6 +253,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           showDivider: true,
                         ),
                         SettingTile(
+                          key: UIKeys.settingsAutoKiloTile,
                           icon: Icons.auto_awesome_rounded,
                           title: 'Input Cepat Ribuan (Eksperimental)',
                           subtitle: AppSettingsController.instance.autoKiloEnabled
@@ -276,6 +280,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           showDivider: true,
                         ),
                         SettingTile(
+                          key: UIKeys.settingsCashWalletTile,
                           icon: Icons.payments_outlined,
                           title: 'Lacak Uang Tunai (Cash Wallet)',
                           subtitle: AppSettingsController.instance.cashWalletEnabled
@@ -302,96 +307,100 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           showDivider: true,
                         ),
                         SettingTile(
+                          key: UIKeys.settingsBudgetTile,
                           icon: Icons.account_balance_wallet_outlined,
                           title: 'Atur Budget Mingguan',
-                      subtitle: 'Uang mingguan, target tabungan & kuota',
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => BudgetSettingsDetailScreen(
-                              repository: widget.repository,
-                            ),
-                          ),
-                        );
-                      },
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                      isDark: isDark,
-                      showDivider: true,
+                          subtitle: 'Uang mingguan, target tabungan & kuota',
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => BudgetSettingsDetailScreen(
+                                  repository: widget.repository,
+                                ),
+                              ),
+                            );
+                          },
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                          isDark: isDark,
+                          showDivider: true,
+                        ),
+                        SettingTile(
+                          key: UIKeys.settingsShopeeTile,
+                          icon: Icons.notifications_none_rounded,
+                          title: 'Notifikasi & Shopee Watcher',
+                          subtitle: 'Deteksi checkout, floating bubble & tile',
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => ShopeeSettingsScreen(
+                                  repository: widget.repository,
+                                ),
+                              ),
+                            );
+                          },
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                          isDark: isDark,
+                          showDivider: true,
+                        ),
+                      ],
                     ),
-                    SettingTile(
-                      icon: Icons.notifications_none_rounded,
-                      title: 'Notifikasi & Shopee Watcher',
-                      subtitle: 'Deteksi checkout, floating bubble & tile',
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => ShopeeSettingsScreen(
-                              repository: widget.repository,
-                            ),
-                          ),
-                        );
-                      },
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                      isDark: isDark,
-                      showDivider: true,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 28)),
+                const SliverToBoxAdapter(child: SizedBox(height: 28)),
 
-            // Section 2: Support & Data
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Support & Data',
-                      style: TextStyle(
-                        color: textPrimary,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.2,
-                      ),
+                // Section 2: Support & Data
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Support & Data',
+                          style: TextStyle(
+                            color: textPrimary,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.2,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        SettingTile(
+                          key: UIKeys.settingsResetTile,
+                          icon: Icons.delete_outline_rounded,
+                          iconColor: PirschColors.red(isDark),
+                          title: 'Hapus Riwayat Pengeluaran',
+                          subtitle: 'Bersihkan seluruh catatan jajan minggu ini',
+                          onTap: _confirmResetData,
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                          isDark: isDark,
+                          showDivider: true,
+                        ),
+                        SettingTile(
+                          key: UIKeys.settingsAboutTile,
+                          icon: Icons.info_outline_rounded,
+                          title: 'Tentang Aplikasi',
+                          subtitle: 'Versi 1.0.0 • Info sistem adaptive jajan',
+                          onTap: _showAboutDialog,
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                          isDark: isDark,
+                          showDivider: true,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    SettingTile(
-                      icon: Icons.delete_outline_rounded,
-                      iconColor: PirschColors.red(isDark),
-                      title: 'Hapus Riwayat Pengeluaran',
-                      subtitle: 'Bersihkan seluruh catatan jajan minggu ini',
-                      onTap: _confirmResetData,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                      isDark: isDark,
-                      showDivider: true,
-                    ),
-                    SettingTile(
-                      icon: Icons.info_outline_rounded,
-                      title: 'Tentang Aplikasi',
-                      subtitle: 'Versi 1.0.0 • Info sistem adaptive jajan',
-                      onTap: _showAboutDialog,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                      isDark: isDark,
-                      showDivider: true,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 40)),
-          ],
-        ),
-      ),
-    );
+                const SliverToBoxAdapter(child: SizedBox(height: 40)),
+              ],
+            ),
+          ),
+        );
       },
     );
   }

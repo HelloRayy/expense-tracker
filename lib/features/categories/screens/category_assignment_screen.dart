@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/ui_keys.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../budget/repository/budget_repository.dart';
 import '../models/expense_category.dart';
@@ -158,6 +159,7 @@ class _CategoryAssignmentScreenState extends State<CategoryAssignmentScreen>
     final hasChanges = totalChanges > 0;
 
     return Scaffold(
+      key: UIKeys.categoryAssignScreen,
       backgroundColor: bgColor,
       body: SafeArea(
         child: Stack(
@@ -234,6 +236,7 @@ class _CategoryAssignmentScreenState extends State<CategoryAssignmentScreen>
                     border: Border(bottom: BorderSide(color: dividerColor, width: 1.0)),
                   ),
                   child: TabBar(
+                    key: UIKeys.categoryAssignTabBar,
                     controller: _tabController,
                     isScrollable: true,
                     tabAlignment: TabAlignment.start,
@@ -269,6 +272,7 @@ class _CategoryAssignmentScreenState extends State<CategoryAssignmentScreen>
                       }
 
                       return ListView.builder(
+                        key: UIKeys.categoryAssignList,
                         padding: const EdgeInsets.fromLTRB(20, 6, 20, 96),
                         physics: const BouncingScrollPhysics(),
                         itemCount: expenses.length,
@@ -311,6 +315,7 @@ class _CategoryAssignmentScreenState extends State<CategoryAssignmentScreen>
                     width: double.infinity,
                     height: 52,
                     child: ElevatedButton(
+                      key: UIKeys.categoryAssignSaveBar,
                       onPressed: hasChanges && !_isSaving ? _commitChanges : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: PirschColors.pill(isDark),

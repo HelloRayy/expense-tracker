@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/ui_keys.dart';
 import '../../../core/services/app_settings_controller.dart';
 import '../../../core/utils/currency_formatter.dart';
 
@@ -105,6 +106,7 @@ class _HeroBalanceCardState extends State<HeroBalanceCard> {
                   children: [
                     Text(
                       'Hi, Sobat',
+                      key: UIKeys.heroGreeting,
                       style: TextStyle(
                         color: textPrimary,
                         fontSize: 16,
@@ -117,6 +119,7 @@ class _HeroBalanceCardState extends State<HeroBalanceCard> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         PopupMenuButton<BudgetPeriodView>(
+                          key: UIKeys.heroPeriodDropdown,
                           initialValue: periodView,
                           tooltip: '',
                           position: PopupMenuPosition.under,
@@ -224,6 +227,7 @@ class _HeroBalanceCardState extends State<HeroBalanceCard> {
                         if (formattedPeriod.isNotEmpty) ...[
                           const SizedBox(width: 6),
                           InkWell(
+                            key: UIKeys.heroPeriodDates,
                             onTap: onTapPeriod,
                             borderRadius: BorderRadius.circular(4),
                             child: Padding(
@@ -248,6 +252,7 @@ class _HeroBalanceCardState extends State<HeroBalanceCard> {
               Material(
                 color: Colors.transparent,
                 child: InkWell(
+                  key: UIKeys.heroMenuButton,
                   onTap: onTapMenu,
                   borderRadius: BorderRadius.circular(16),
                   child: Container(
@@ -274,6 +279,7 @@ class _HeroBalanceCardState extends State<HeroBalanceCard> {
               children: [
                 Text(
                   displayAmount,
+                  key: UIKeys.heroRemainingAmount,
                   style: TextStyle(
                     color: isNegative || isOverBudget ? PirschColors.roseRed : textPrimary,
                     fontSize: 42,
@@ -312,6 +318,7 @@ class _HeroBalanceCardState extends State<HeroBalanceCard> {
                       Material(
                         color: Colors.transparent,
                         child: InkWell(
+                          key: isCashEnabled ? UIKeys.heroAccordionToggle : UIKeys.heroSingleWalletRow,
                           onTap: isCashEnabled
                               ? () {
                                   setState(() {
@@ -367,6 +374,7 @@ class _HeroBalanceCardState extends State<HeroBalanceCard> {
 
                       // Right: ↗ Terpakai (WCAG AA Compliant Red)
                       Row(
+                        key: UIKeys.heroSpentMetric,
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
@@ -401,6 +409,7 @@ class _HeroBalanceCardState extends State<HeroBalanceCard> {
                             Material(
                               color: Colors.transparent,
                               child: InkWell(
+                                key: UIKeys.heroEwalletBreakdown,
                                 onTap: onTapAdjustEwallet ?? onTapAdjustBalance,
                                 borderRadius: BorderRadius.circular(4),
                                 child: Padding(
@@ -453,6 +462,7 @@ class _HeroBalanceCardState extends State<HeroBalanceCard> {
                             Material(
                               color: Colors.transparent,
                               child: InkWell(
+                                key: UIKeys.heroCashBreakdown,
                                 onTap: onTapAdjustCash ?? onTapAdjustBalance,
                                 borderRadius: BorderRadius.circular(4),
                                 child: Padding(

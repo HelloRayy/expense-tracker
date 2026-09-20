@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/ui_keys.dart';
 import '../budget/repository/budget_repository.dart';
 import '../categories/models/expense_category.dart';
 import '../categories/screens/category_assignment_screen.dart';
@@ -172,6 +173,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         final dividerColor = PirschColors.divider(isDark);
 
         return Scaffold(
+          key: UIKeys.dashboardScaffold,
           backgroundColor: bgColor,
           body: Stack(
             children: [
@@ -195,6 +197,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
                           child: DashboardHeader(
+                            key: UIKeys.dashboardHeader,
                             textPrimary: textPrimary,
                             textSecondary: textSecondary,
                             elevatedColor: elevatedColor,
@@ -215,6 +218,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                           // Unconfirmed period rollover prompt banner
                           if (!widget.repository.isPeriodConfirmed)
                             WeeklyRolloverBanner(
+                              key: UIKeys.dashboardRolloverBanner,
                               carryoverBalance: widget.repository.carryoverBalance,
                               isDark: isDark,
                               onInputBudget: () => WeeklyBudgetInputSheet.show(context, widget.repository),
@@ -222,6 +226,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
                           // Hero Balance Card
                           HeroBalanceCard(
+                            key: UIKeys.dashboardHeroCard,
                             remaining: remaining,
                             spent: spent,
                             remainingToday: remainingToday,
@@ -256,6 +261,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
                           // 3-Action Quick Bar (Tabungan, Kategori, Catat)
                           DashboardActionBar(
+                            key: UIKeys.dashboardActionBar,
                             weeklySavingsTarget: widget.repository.weeklySavingsTarget,
                             currentSaved: (widget.repository.weeklySavingsTarget -
                                     (widget.repository.totalSpent > widget.repository.spendableBudget
@@ -282,6 +288,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             children: [
                               Text(
                                 'Recent Activity',
+                                key: UIKeys.dashboardRecentActivityHeader,
                                 style: TextStyle(
                                   color: textPrimary,
                                   fontSize: 18,
@@ -291,6 +298,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                               ),
                               if (expenses.isNotEmpty)
                                 InkWell(
+                                  key: UIKeys.dashboardRecentActivityToggle,
                                   onTap: () {
                                     setState(() {
                                       _showAllTransactions = !_showAllTransactions;
@@ -377,6 +385,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 bottom: 20 + MediaQuery.of(context).padding.bottom,
                 child: Center(
                   child: FloatingCapsuleNavbar(
+                    key: UIKeys.dashboardFloatingNavbar,
                     isDark: isDark,
                     borderColor: borderColor,
                     textSecondary: textSecondary,

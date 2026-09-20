@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/ui_keys.dart';
 import '../../budget/repository/budget_repository.dart';
 import '../../categories/models/expense_category.dart';
 import '../models/expense_preset_model.dart';
@@ -112,6 +113,7 @@ class _ExpenseCatalogScreenState extends State<ExpenseCatalogScreen> {
       listenable: widget.repository,
       builder: (context, _) {
         return Scaffold(
+          key: UIKeys.catalogScreen,
           backgroundColor: bgColor,
           body: SafeArea(
             child: CustomScrollView(
@@ -122,6 +124,7 @@ class _ExpenseCatalogScreenState extends State<ExpenseCatalogScreen> {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                     child: CatalogLiveHeader(
+                      key: UIKeys.catalogLiveHeader,
                       remainingToday: widget.repository.remainingToday,
                       onBack: () => Navigator.of(context).pop(),
                       isDark: isDark,
@@ -173,6 +176,7 @@ class _ExpenseCatalogScreenState extends State<ExpenseCatalogScreen> {
                         const SizedBox(width: 8),
                         // Add Custom Preset Card Button
                         IconButton(
+                          key: UIKeys.catalogAddPresetBtn,
                           tooltip: 'Buat Kartu Baru',
                           onPressed: _openCreateCardDialog,
                           icon: Container(
@@ -194,6 +198,7 @@ class _ExpenseCatalogScreenState extends State<ExpenseCatalogScreen> {
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   sliver: SliverGrid(
+                    key: UIKeys.catalogPresetGrid,
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 12,

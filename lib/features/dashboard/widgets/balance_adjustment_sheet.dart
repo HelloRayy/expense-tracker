@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/ui_keys.dart';
 import '../../../core/services/app_settings_controller.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../budget/repository/budget_repository.dart';
@@ -162,6 +163,7 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
     final textSecondary = PirschColors.textSecondary(isDark);
 
     return Container(
+      key: UIKeys.balanceSheet,
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
@@ -199,6 +201,7 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
             if (AppSettingsController.instance.cashWalletEnabled) ...[
               Center(
                 child: Container(
+                  key: UIKeys.balanceSheetWalletSelector,
                   padding: const EdgeInsets.all(3),
                   decoration: BoxDecoration(
                     color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
@@ -211,6 +214,7 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       _buildWalletChip(
+                        key: UIKeys.balanceSheetWalletEwallet,
                         label: 'E-Wallet',
                         icon: Icons.account_balance_wallet_rounded,
                         isSelected: _selectedWallet == 'ewallet',
@@ -227,6 +231,7 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
                       ),
                       const SizedBox(width: 4),
                       _buildWalletChip(
+                        key: UIKeys.balanceSheetWalletCash,
                         label: 'Uang Tunai',
                         icon: Icons.payments_rounded,
                         isSelected: _selectedWallet == 'cash',
@@ -257,6 +262,7 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
                 border: Border.all(color: borderColor),
               ),
               child: TabBar(
+                key: UIKeys.balanceSheetTabs,
                 controller: _tabController,
                 indicatorSize: TabBarIndicatorSize.tab,
                 dividerColor: Colors.transparent,
@@ -360,6 +366,7 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
         ),
         const SizedBox(height: 6),
         TextField(
+          key: UIKeys.balanceSheetTopUpInput,
           controller: _topUpAmountController,
           keyboardType: TextInputType.number,
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: textPrimary),
@@ -445,6 +452,7 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
           width: double.infinity,
           height: 46,
           child: ElevatedButton(
+            key: UIKeys.balanceSheetSubmitTopUp,
             onPressed: _submitTopUp,
             style: ElevatedButton.styleFrom(
               backgroundColor: PirschColors.incomeGreen,
@@ -510,6 +518,7 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
         ),
         const SizedBox(height: 6),
         TextField(
+          key: UIKeys.balanceSheetRealBalanceInput,
           controller: _realBalanceController,
           keyboardType: TextInputType.number,
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: textPrimary),
@@ -590,6 +599,7 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
           width: double.infinity,
           height: 46,
           child: ElevatedButton(
+            key: UIKeys.balanceSheetSubmitAdjustment,
             onPressed: _submitAdjustment,
             style: ElevatedButton.styleFrom(
               backgroundColor: PirschColors.primaryBlue,
@@ -608,6 +618,7 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
   }
 
   Widget _buildWalletChip({
+    Key? key,
     required String label,
     required IconData icon,
     required bool isSelected,
@@ -617,6 +628,7 @@ class _BalanceAdjustmentSheetState extends State<BalanceAdjustmentSheet>
     required VoidCallback onTap,
   }) {
     return GestureDetector(
+      key: key,
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
