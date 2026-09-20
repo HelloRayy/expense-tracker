@@ -54,6 +54,12 @@ class MockCategoryBudgetRepo extends ChangeNotifier implements BudgetRepository 
   int get dailyAllowance => 50000;
 
   @override
+  int get tomorrowDailyAllowance => 50000;
+
+  @override
+  void setForTest({BudgetModel? budget, List<ExpenseModel>? expenses, int? totalSpent, int? spentUntilYesterday, int? spentToday}) {}
+
+  @override
   double get spendingPercentage => totalSpent / 1500000;
 
   @override
